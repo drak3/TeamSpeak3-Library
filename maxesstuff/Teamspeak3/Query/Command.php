@@ -19,13 +19,10 @@ class Command
     public static function simpleCommand($cmdname, $params, $options=Array()) {
         $ops = Array();
         $pars = Array();
-        foreach($options as $name) {
-            $ops[$name] = true; 
-        }
         foreach($params as $name=>$value) {
             $pars[$name] = Array($value);
         }
-        return new Command($cmdname, $pars, $ops);
+        return new Command($cmdname, $pars, $options);
     }
         
 
@@ -46,6 +43,12 @@ class Command
      */
     protected $parameters = Array();
     
+    /**
+     *
+     * @param type $name
+     * @param array $parameters
+     * @param array $options the options in form Array("foo"=>true, "bar"=>false) 
+     */
     public function __construct($name, array $parameters = Array(), array $options=Array()) {
         $this->name = $name;
         $this->options = $options;
@@ -74,10 +77,7 @@ class Command
      * @return boolean 
      */
     public function optionIsSet($name) {
-        if(isset($this->options[$name]) && $this->options[$name] == TRUE)
-                return TRUE;
-        else
-            return FALSE;
+        return array_key_exists( $name, $this->options );
     }
     
     /**
@@ -110,10 +110,10 @@ class Command
         if(count($this->getOptions()) !== count($c->getOptions())) {
             return FALSE;
         }
-        foreach($this->getOptions() as $op=>$state) {
+        foreach($this->getOptions() as $op) {
             $found = FALSE;
-            foreach($c->getOptions() as $op2=>$state2) {
-                if($op === $op2 && $state === TRUE && $state2 === TRUE) {
+            foreach($c->getOptions() as $op2) {
+                if($op === $op2) {
                     $found = TRUE;
                     break;
                 }

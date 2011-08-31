@@ -1,6 +1,6 @@
 <?php
 
-namespace maxesstuff\Teamspeak3;
+namespace maxesstuff\Teamspeak3\Query;
 
 require_once dirname( __FILE__ ) . '/../../../../maxesstuff/Teamspeak3/Query/Command.php';
 

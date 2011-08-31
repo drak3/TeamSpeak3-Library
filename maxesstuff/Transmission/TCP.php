@@ -11,11 +11,26 @@ class TCP implements TransmissionInterface
 {
     const BLOCKING = 1;
     const NONBLOCKING = 0;
-
+    
+    /**
+     * @var string 
+     */
     protected $host;
+    /**
+     * @var int 
+     */
     protected $port;
+    /**
+     * @var int 
+     */
     protected $defaultTimeoutSec = 5;
+    /**
+     * @var int
+     */
     protected $defaultTimeoutMicro = 0;
+    /**
+     * @var resource 
+     */
     protected $stream;
 
     /**
@@ -140,7 +155,12 @@ class TCP implements TransmissionInterface
         return $data;
 
     }
-
+    
+    /**
+     * Returns all data currently on the stream
+     * This method is non-blocking 
+     * @return string 
+     */
     public function getAll() {
         \stream_set_blocking($this->stream, self::NONBLOCKING);
         $crnt = $data = '';
@@ -150,7 +170,12 @@ class TCP implements TransmissionInterface
         \stream_set_blocking($this->stream, self::BLOCKING);
         return $data;
     }
-
+    /**
+     * Receives data with the given length
+     * This method is blocking
+     * @param int $lenght
+     * @return string 
+     */
     public function  receiveData( $lenght = 4096 )
     {
         $data = '';

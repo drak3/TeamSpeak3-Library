@@ -9,9 +9,13 @@ namespace maxesstuff\Teamspeak3\Query\Transport\Common;
  */
 class CommandTranslator implements \maxesstuff\Teamspeak3\Query\Transport\CommandTranslatorInterface
 {
+    /**
+     * Translates a command to its query-representation
+     * @param \maxesstuff\Teamspeak3\Query\Command $cmd
+     * @return string the query representation 
+     */
     public function translate( \maxesstuff\Teamspeak3\Query\Command $cmd )
     {
-        var_dump($cmd);
         if ( !$this->isValid( $cmd ) )
         {
             throw new \InvalidArgumentException("Invalid command ".$cmd->getName());
@@ -41,7 +45,6 @@ class CommandTranslator implements \maxesstuff\Teamspeak3\Query\Transport\Comman
         }
         $queryRepresentation = \rtrim( $queryRepresentation );
         $queryRepresentation .= "\n";
-        var_dump($queryRepresentation); 
         return $queryRepresentation;
 
     }

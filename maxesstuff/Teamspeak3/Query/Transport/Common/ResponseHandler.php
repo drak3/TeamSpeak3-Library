@@ -95,7 +95,7 @@ class ResponseHandler implements \maxesstuff\Teamspeak3\Query\Transport\Response
     public function getResponseInstance( \maxesstuff\Teamspeak3\Query\Command $cmd ,
                                          $raw )
     {
-        $response = Array ( 'response' => '' , 'events' => Array ( ) );
+        $response = Array ( 'response' => NULL , 'events' => Array ( ) );
         $parsed = Array ( );
 
         $raw = \trim( $raw , "\r\n" );

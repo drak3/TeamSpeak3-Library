@@ -1,28 +1,31 @@
 <?php
-
 declare(encoding="UTF-8");
 namespace maxesstuff\Teamspeak3\FileTransfer;
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
- * 
- *
+ * The base class for all actions done on the Teamspeak3
  * @author drak3
  */
-class AbstractTransferer
+abstract class AbstractTransferer
 {
     
     /**
      * @var \maxessuff\Transmission\TransmissionInterface
      */
-    protected $transmission;
+    protected abstract $transmission;
     
+    /**
+     * This function should start the transfer action
+     * @return mixed
+     */
     public abstract function transfer();
     
-    public function sendFull($data, $bytesToSend) {
+    /**
+     * Sends given data to the transmission
+     * blocks until ALL data is written
+     * @param string $data the data to send
+     */
+    protected function sendFull($data, $bytesToSend) {
         while($bytesToSend !== 0) {
             $bytesToSend -= $this->transmission->send($data);
         }

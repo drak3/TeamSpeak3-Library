@@ -1,20 +1,16 @@
 <?php
 declare(encoding="UTF-8");
 namespace maxesstuff\Teamspeak3\Query;
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
- * 
- *
+ * The base class for all responses sent by the Query
+ * A response acts like an array, so you can acces all items directly via the response object
  * @author drak3
  */
 class Response implements \ArrayAccess, \Iterator, \Countable
 {
     /**
-     *
+     * 
      * @var array of array of (String=>String) 
      */
     protected $items;
@@ -67,7 +63,7 @@ class Response implements \ArrayAccess, \Iterator, \Countable
         return $assoc;
     }
     
-    
+    //implementing \ArrayAccess, \Iterator and \Countable
     public function offsetSet($offset,$value) {
         
     }
