@@ -4,7 +4,9 @@ use \maxesstuff\Teamspeak3\Query;
 
 class Client implements \ArrayAccess
 {    
-   
+    protected $query;
+    protected $properties;
+    
     public function __construct(QueryTransport $query, $properties=Array())
     {
         $this->query = $query;
@@ -34,7 +36,9 @@ class Client implements \ArrayAccess
             $this->properties = $response['response']->getItems();
             if(  is_array( $this->properties) )
                     $this->properties = $this->properties[0];
-        }       
+        }
+        if(!isset($this->properties['clid']))
+                throw new \InvalidArgumentException("Clid must be provided");
     }
     
     public function offsetExists( $offset )
@@ -52,7 +56,7 @@ class Client implements \ArrayAccess
     public function offsetUnset( $offset ) {}
 
     
-    public function getCid()
+    public function getId()
     {
         return $this->getProperty("cid");
     }
