@@ -1,12 +1,6 @@
 <?php
-
 declare(encoding="UTF-8");
 namespace maxesstuff\Transmission;
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
  * @author drak3
@@ -21,7 +15,7 @@ interface TransmissionInterface
     public function isEstablished();
 
     public function send( $data );
-
+        
     /**
      * waits until a line end and returns the data (blocking)
      */
