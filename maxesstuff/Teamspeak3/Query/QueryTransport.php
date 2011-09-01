@@ -9,7 +9,7 @@ use maxesstuff\Teamspeak3\Query\Transport\ResponseHandlerInterface;
  * Abstraction of the Teamspeak3-Query
  * @author drak3
  */
-class QueryTransport
+class QueryTransport implements Transport\TransportInterface
 {
     /**
      * Constructs a common Query which should fit to the official query
