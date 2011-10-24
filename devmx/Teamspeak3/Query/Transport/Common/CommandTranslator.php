@@ -1,20 +1,20 @@
 <?php
 declare(encoding="UTF-8");
-namespace maxesstuff\Teamspeak3\Query\Transport\Common;
+namespace devmx\Teamspeak3\Query\Transport\Common;
 
 /**
  * 
  *
  * @author drak3
  */
-class CommandTranslator implements \maxesstuff\Teamspeak3\Query\Transport\CommandTranslatorInterface
+class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTranslatorInterface
 {
     /**
      * Translates a command to its query-representation
-     * @param \maxesstuff\Teamspeak3\Query\Command $cmd
+     * @param \devmx\Teamspeak3\Query\Command $cmd
      * @return string the query representation 
      */
-    public function translate( \maxesstuff\Teamspeak3\Query\Command $cmd )
+    public function translate( \devmx\Teamspeak3\Query\Command $cmd )
     {
         if ( !$this->isValid( $cmd ) )
         {
@@ -51,10 +51,10 @@ class CommandTranslator implements \maxesstuff\Teamspeak3\Query\Transport\Comman
 
     /**
      * Checks if the given command is valid
-     * @param \maxesstuff\Teamspea3\Query\Command $cmd
+     * @param \devmx\Teamspea3\Query\Command $cmd
      * @return boolean
      */
-    public function isValid( \maxesstuff\Teamspeak3\Query\Command $cmd )
+    public function isValid( \devmx\Teamspeak3\Query\Command $cmd )
     {
 
         if ( !$this->isValidName( $cmd->getName() ) )

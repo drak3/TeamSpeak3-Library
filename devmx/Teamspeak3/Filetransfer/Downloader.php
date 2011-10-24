@@ -1,6 +1,6 @@
 <?php
 declare(encoding="UTF-8");
-namespace maxesstuff\Teamspeak3\FileTransfer;
+namespace devmx\Teamspeak3\FileTransfer;
 
 /**
  * A download action for the Teamspeak3 ft-Interface
@@ -19,11 +19,11 @@ class Downloader extends AbstractTransferer
     protected $bytesToRead;
     
     /**
-     * @param \maxesstuff\Transmission\TransmissionInterface $transmission the transmission on which the download is performed
+     * @param \devmx\Transmission\TransmissionInterface $transmission the transmission on which the download is performed
      * @param string $key the key to identify the ft-Session (normally sent by the Ts3-Query
      * @param int $bytesToRead 
      */
-    public function __construct(\maxesstuff\Transmission\TransmissionInterface $transmission, $key, $bytesToRead) {
+    public function __construct(\devmx\Transmission\TransmissionInterface $transmission, $key, $bytesToRead) {
         $this->transmission = $transmission;
         $this->key = $key;
         $this->bytesToRead = $bytesToRead;

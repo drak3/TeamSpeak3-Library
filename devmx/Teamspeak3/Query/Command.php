@@ -1,7 +1,6 @@
 <?php
-
 declare(encoding="UTF-8");
-namespace maxesstuff\Teamspeak3\Query;
+namespace devmx\Teamspeak3\Query;
 /**
  * 
  *

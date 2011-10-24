@@ -1,6 +1,6 @@
 <?php
 declare(encoding="UTF-8");
-namespace maxesstuff\Teamspeak3\Query\Transport;
+namespace devmx\Teamspeak3\Query\Transport;
 
 /**
  * Base class for an QueryTransport decorator
@@ -36,7 +36,7 @@ abstract class AbstractQueryDecorator implements TransportInterface
         return $this->decorated->isConnected();
     }
 
-    public function sendCommand( \maxesstuff\Teamspeak3\Query\Command $command )
+    public function sendCommand( \devmx\Teamspeak3\Query\Command $command )
     {
         return $this->decorated->sendCommand($command);
     }

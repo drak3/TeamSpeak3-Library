@@ -1,8 +1,8 @@
 <?php
 
-namespace maxesstuff\Teamspeak3\Query;
+namespace devmx\Teamspeak3\Query;
 
-require_once dirname( __FILE__ ) . '/../../../../maxesstuff/Teamspeak3/Query/Command.php';
+require_once dirname( __FILE__ ) . '/../../../../devmx/Teamspeak3/Query/Command.php';
 
 /**
  * Test class for Command.

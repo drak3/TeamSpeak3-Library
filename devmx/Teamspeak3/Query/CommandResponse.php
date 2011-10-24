@@ -1,7 +1,6 @@
 <?php
-
 declare(encoding="UTF-8");
-namespace maxesstuff\Teamspeak3\Query;
+namespace devmx\Teamspeak3\Query;
 /**
  * A response caused directly by a command (e.g. channellist)
  * @author drak3
@@ -10,7 +9,7 @@ class CommandResponse extends Response
 {
     /**
      *
-     * @var \maxesstuff\Teamspeak3\Query\Command 
+     * @var \devmx\Teamspeak3\Query\Command 
      */
     protected $command;
     /**
@@ -45,7 +44,7 @@ class CommandResponse extends Response
     
     /**
      * Returns the command that caused the response
-     * @return \maxesstuff\Teamspeak3\Query\Command 
+     * @return \devmx\Teamspeak3\Query\Command 
      */
     public function getCommand() { return $this->command;}
     /**

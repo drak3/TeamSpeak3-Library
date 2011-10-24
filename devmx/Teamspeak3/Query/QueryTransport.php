@@ -1,9 +1,9 @@
 <?php
 declare(encoding="UTF-8");
-namespace maxesstuff\Teamspeak3\Query;
-use maxesstuff\Transmission\TransmissionInterface;
-use maxesstuff\Teamspeak3\Transport\CommandTranslatorInterface;
-use maxesstuff\Teamspeak3\Query\Transport\ResponseHandlerInterface;
+namespace devmx\Teamspeak3\Query;
+use devmx\Transmission\TransmissionInterface;
+use devmx\Teamspeak3\Transport\CommandTranslatorInterface;
+use devmx\Teamspeak3\Query\Transport\ResponseHandlerInterface;
 
 /**
  * Abstraction of the Teamspeak3-Query
@@ -18,7 +18,7 @@ class QueryTransport implements Transport\TransportInterface
      * @return QueryTransport 
      */
     public static function getCommon($host, $port)  {
-        $trans = new \maxesstuff\Transmission\TCP($host, $port);
+        $trans = new \devmx\Transmission\TCP($host, $port);
         return new QueryTransport($trans, new Transport\Common\CommandTranslator(), new Transport\Common\ResponseHandler());
     }
     
@@ -41,11 +41,11 @@ class QueryTransport implements Transport\TransportInterface
     /**
      *
      * @param TransmissionInterface $transmission
-     * @param \maxesstuff\Teamspeak3\Query\Transport\CommandTranslatorInterface $translator
+     * @param \devmx\Teamspeak3\Query\Transport\CommandTranslatorInterface $translator
      * @param ResponseHandlerInterface $responseHandler 
      */
     public function __construct(TransmissionInterface $transmission,
-                                \maxesstuff\Teamspeak3\Query\Transport\CommandTranslatorInterface $translator,
+                                \devmx\Teamspeak3\Query\Transport\CommandTranslatorInterface $translator,
                                 ResponseHandlerInterface $responseHandler) {
         $this->transmission = $transmission;
         $this->commandTranslator = $translator;
@@ -113,10 +113,10 @@ class QueryTransport implements Transport\TransportInterface
     
     /**
      * Sends a command to the query and returns the result plus all occured events
-     * @param \maxesstuff\Teamspeak3\Query\Command $command
+     * @param \devmx\Teamspeak3\Query\Command $command
      * @return array Array in form Array("events"=>Array(Event e1, Event e2,...) "response"=>CommandResponse resp) 
      */
-    public function sendCommand( \maxesstuff\Teamspeak3\Query\Command $command )
+    public function sendCommand( \devmx\Teamspeak3\Query\Command $command )
     {
      
         $data = '';

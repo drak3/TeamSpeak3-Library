@@ -1,6 +1,6 @@
 <?php
 declare(encoding="UTF-8");
-namespace maxesstuff\Transmission;
+namespace devmx\Transmission;
 /**
  *
  * @author drak3

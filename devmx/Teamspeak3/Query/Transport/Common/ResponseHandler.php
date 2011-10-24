@@ -1,13 +1,13 @@
 <?php
 declare(encoding="UTF-8");
-namespace maxesstuff\Teamspeak3\Query\Transport\Common;
+namespace devmx\Teamspeak3\Query\Transport\Common;
 
 /**
  * 
  *
  * @author drak3
  */
-class ResponseHandler implements \maxesstuff\Teamspeak3\Query\Transport\ResponseHandlerInterface
+class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandlerInterface
 {
     /**
      * The Length of the message sent by a common query on connect
@@ -88,11 +88,11 @@ class ResponseHandler implements \maxesstuff\Teamspeak3\Query\Transport\Response
     /**
      * Parses a response coming from the query for a given command
      * Event notifications occured before sending the command are parsed too
-     * @param \maxesstuff\Teamspeak3\Query\Command $cmd
+     * @param \devmx\Teamspeak3\Query\Command $cmd
      * @param string $raw
      * @return Array in form Array('response' => $responseObject, 'events' => Array($eventobject1,$eventobject2));  
      */
-    public function getResponseInstance( \maxesstuff\Teamspeak3\Query\Command $cmd ,
+    public function getResponseInstance( \devmx\Teamspeak3\Query\Command $cmd ,
                                          $raw )
     {
         $response = Array ( 'response' => NULL , 'events' => Array ( ) );
@@ -116,11 +116,11 @@ class ResponseHandler implements \maxesstuff\Teamspeak3\Query\Transport\Response
     /**
      * Parses a response (no events in it) for a given command
      * Splits up the response in data and error message and builds a response object
-     * @param \maxesstuff\Teamspeak3\Query\Command $cmd
+     * @param \devmx\Teamspeak3\Query\Command $cmd
      * @param string $response
-     * @return \maxesstuff\Teamspeak3\Query\Response 
+     * @return \devmx\Teamspeak3\Query\Response 
      */
-    protected function parseResponse( \maxesstuff\Teamspeak3\Query\Command $cmd ,
+    protected function parseResponse( \devmx\Teamspeak3\Query\Command $cmd ,
                                       $response )
     {
         $parsed = Array ( );
@@ -148,14 +148,14 @@ class ResponseHandler implements \maxesstuff\Teamspeak3\Query\Transport\Response
         }
 
 
-        return new \maxesstuff\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $extra);
+        return new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $extra);
 
     }
 
     /**
      * Parses a single event
      * @param string $event
-     * @return \maxesstuff\Teamspeak3\Query\Event\ChannelEvent 
+     * @return \devmx\Teamspeak3\Query\Event\ChannelEvent 
      */
     protected function parseEvent( $event )
     {
@@ -168,7 +168,7 @@ class ResponseHandler implements \maxesstuff\Teamspeak3\Query\Transport\Response
         $data = $data[0]; //because we have just one block (no |) we can use data[0]
         
         
-        return new \maxesstuff\Teamspeak3\Query\Event($reason , $data);
+        return new \devmx\Teamspeak3\Query\Event($reason , $data);
 
     }
 
@@ -273,7 +273,7 @@ class ResponseHandler implements \maxesstuff\Teamspeak3\Query\Transport\Response
     /**
      * Parses Events coming from the query
      * @param string $raw
-     * @return \maxesstuff\Teamspeak3\Query\Response 
+     * @return \devmx\Teamspeak3\Query\Response 
      */
     public function getEventInstances( $raw )
     {

@@ -1,6 +1,6 @@
 <?php
 declare(encoding="UTF-8");
-namespace maxesstuff\Teamspeak3\FileTransfer;
+namespace devmx\Teamspeak3\FileTransfer;
 
 /**
  * 
@@ -11,13 +11,13 @@ class Uploader extends AbstractTransferer
 {
    /**
     *
-    * @var \maxesstuff\Transmission\TransmissionInterface
+    * @var \devmx\Transmission\TransmissionInterface
     */ 
    protected $transmission;
    protected $key;
    protected $data;
 
-   public function __construct(\maxesstuff\Transmission\TransmissionInterface $transmission, $key, $data) {
+   public function __construct(\devmx\Transmission\TransmissionInterface $transmission, $key, $data) {
        $this->transmission = $transmission;
        $this->key = $key;
    }

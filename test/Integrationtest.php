@@ -1,6 +1,6 @@
 <?php
 require_once 'bootstrap.php';
-use maxesstuff\Teamspeak3\Query;
+use devmx\Teamspeak3\Query;
 
 
 $query = Query\QueryTransport::getCommon( "79.133.47.201", 10011 );

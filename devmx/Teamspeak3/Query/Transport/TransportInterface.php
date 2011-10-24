@@ -1,7 +1,6 @@
 <?php
-
 declare(encoding="UTF-8");
-namespace maxesstuff\Teamspeak3\Query\Transport;
+namespace devmx\Teamspeak3\Query\Transport;
 /**
  *
  * @author drak3
@@ -29,10 +28,10 @@ interface TransportInterface
     
     /**
      * Sends a command to the query and returns the result plus all occured events
-     * @param \maxesstuff\Teamspeak3\Query\Command $command
+     * @param \devmx\Teamspeak3\Query\Command $command
      * @return array Array in form Array("events"=>Array(Event e1, Event e2,...) "response"=>CommandResponse resp) 
      */
-    public function sendCommand( \maxesstuff\Teamspeak3\Query\Command $command );
+    public function sendCommand( \devmx\Teamspeak3\Query\Command $command );
     
     /**
      * Waits until an event occurs

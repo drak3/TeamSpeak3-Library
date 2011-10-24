@@ -1,6 +1,6 @@
 <?php
 declare(encoding="UTF-8");
-namespace maxesstuff\Teamspeak3\FileTransfer;
+namespace devmx\Teamspeak3\FileTransfer;
 
 /**
  * The base class for all actions done on the Teamspeak3
