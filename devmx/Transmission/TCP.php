@@ -118,6 +118,8 @@ class TCP implements TransmissionInterface
      */
     public function isEstablished()
     {
+        if(!$this->stream)
+            return FALSE;
         return $this->isConnected;
 
     }
@@ -134,6 +136,8 @@ class TCP implements TransmissionInterface
     public function receiveLine( $length = 4096, $lineEnd ="\n",
                                  $timeoutSec = -1, $timeoutMicro=-1 )
     {
+        if(!$this->isEstablished())
+            throw new \RuntimeException("Connection not Established");
 
         $timeoutSec = (int) $timeoutSec;
         $timeoutMicro = (int) $timeoutMicro;
@@ -162,6 +166,8 @@ class TCP implements TransmissionInterface
      * @return string 
      */
     public function getAll() {
+        if(!$this->isEstablished())
+            throw new \RuntimeException("Connection not Established");
         \stream_set_blocking($this->stream, self::NONBLOCKING);
         $crnt = $data = '';
         while($crnt = \trim(\fgets($this->stream))) {
@@ -178,6 +184,8 @@ class TCP implements TransmissionInterface
      */
     public function  receiveData( $lenght = 4096 )
     {
+        if(!$this->isEstablished())
+            throw new \RuntimeException("Connection not Established");
         $data = '';
         while(strlen($data) < $lenght) {
             $data .= \fgets($this->stream);
@@ -197,6 +205,8 @@ class TCP implements TransmissionInterface
      */
     public function send( $data, $timeoutSec = -1, $timeoutMicro=-1 )
     {
+        if(!$this->isEstablished())
+            throw new \RuntimeException("Connection not Established");
         $timeoutSec = (int) $timeoutSec;
         $timeoutMicro = (int) $timeoutMicro;
 
