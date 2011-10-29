@@ -9,14 +9,13 @@ namespace devmx\Teamspeak3\Query;
 class Command
 {
     /**
-     * A simple builder which drops support for multiple values of params and falsed options
+     * A simple builder which drops support for multiple values of params
      * @param string $name
      * @param array $options
      * @param array $params 
      * @return Command
      */
-    public static function simpleCommand($cmdname, $params, $options=Array()) {
-        $ops = Array();
+    public static function simpleCommand($cmdname, $params=Array(), $options=Array()) {
         $pars = Array();
         foreach($params as $name=>$value) {
             $pars[$name] = Array($value);
@@ -33,12 +32,12 @@ class Command
     protected $name = '';
     /**
      * The options of the command
-     * @var array of (string => boolean) 
+     * @var array of String 
      */
     protected $options = Array();
     /**
      * The parameters of the command. Since a parameter could have
-     * @var array of (string => array(string))  
+     * @var array of (string => array(string))  or (string => string)
      */
     protected $parameters = Array();
     
@@ -61,7 +60,7 @@ class Command
     public function getName() { return $this->name; }
     /**
      * Returns the options of the command
-     * @return array of (String=>Boolean) 
+     * @return array of String 
      */
     public function getOptions() {return $this->options;}
     /**
