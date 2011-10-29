@@ -8,7 +8,7 @@ namespace devmx\Teamspeak3;
  */
 interface NodeInterface
 {
-    
+    public function update();
 }
 
 ?>
