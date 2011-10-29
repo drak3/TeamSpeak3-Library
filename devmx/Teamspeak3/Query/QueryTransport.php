@@ -105,26 +105,31 @@ class QueryTransport implements Transport\TransportInterface
      * This method is non-blocking, so it returns even if no event is on the query
      * @return array Array of all events lying on the query  
      */
-    public function getAllEvents()
+    public function getAllEvents($dryRun=FALSE)
     {
-        if(!$this->isConnected()) {
-            return;
-        }
-        $response = $this->transmission->getAll();
-        if ( $response )
-        {
-            while ( !$this->responseHandler->isCompleteEvent( $response ) )
-            {
-
-                $response .= $this->transmission->receiveLine();
+        if(!$dryRun) {
+            if(!$this->isConnected()) {
+                return;
             }
-        } else
-        {
-            return;
+            $response = $this->transmission->getAll();
+            if ( $response )
+            {
+                while ( !$this->responseHandler->isCompleteEvent( $response ) )
+                {
+                    $response .= $this->transmission->receiveLine();
+                }
+            } else {
+                return;
+            }
+            $events = array_merge($this->pendingEvents, $this->responseHandler->getEventInstances( $response ));
+            $this->pendingEvents = Array();
+           return $events;
         }
-        $events = array_merge($this->pendingEvents, $this->responseHandler->getEventInstances( $response ));
-        $this->pendingEvents = Array();
-        return $events;
+        else {
+            $events = $this->pendingEvents;
+            $this->pendingEvents = Array();
+            return $events;
+        }
     }
     
     /**
@@ -148,7 +153,7 @@ class QueryTransport implements Transport\TransportInterface
 
         $responses = $this->responseHandler->getResponseInstance( $command , $data );
         
-        $this->pendingEvents += $responses['events'];
+        $this->pendingEvents = array_merge($this->pendingEvents,$responses['events']);
         
         return $responses['response'];
     }
