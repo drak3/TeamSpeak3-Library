@@ -38,6 +38,8 @@ class QueryTransport implements Transport\TransportInterface
      */
     protected $responseHandler;
     
+    protected $pendingEvents;
+    
     /**
      *
      * @param TransmissionInterface $transmission
@@ -108,7 +110,9 @@ class QueryTransport implements Transport\TransportInterface
         {
             return;
         }
-        $events = $this->responseHandler->getEventInstances( $response );
+        $events = array_merge($this->pendingEvents, $this->responseHandler->getEventInstances( $response ));
+        $this->pendingEvents = Array();
+        return $events;
     }
     
     /**
@@ -130,8 +134,10 @@ class QueryTransport implements Transport\TransportInterface
         }
 
         $responses = $this->responseHandler->getResponseInstance( $command , $data );
-
-        return $responses;
+        
+        $this->pendingEvents += $responses['events'];
+        
+        return $responses['response'];
     }
     
     /**
@@ -141,6 +147,11 @@ class QueryTransport implements Transport\TransportInterface
      */
     public function waitForEvent()
     {
+        if($this->pendingEvents !== Array()) {
+            $events =  $this->pendingEvents;
+            $this->pendingEvents = Array();
+            return $events;
+        }
         
         $response = '';
         while ( !$this->responseHandler->isCompleteEvent( $response ))

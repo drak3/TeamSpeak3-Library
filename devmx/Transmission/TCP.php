@@ -118,7 +118,7 @@ class TCP implements TransmissionInterface
      */
     public function isEstablished()
     {
-        if(!$this->stream)
+        if($this->stream === FALSE)
             return FALSE;
         return $this->isConnected;
 

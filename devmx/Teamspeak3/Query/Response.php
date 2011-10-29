@@ -15,10 +15,14 @@ class Response implements \ArrayAccess, \Iterator, \Countable
      */
     protected $items;
     /**
-     *
+     * Returns all holded items
      * @return array of array of (String=>misc) 
      */
     public function getItems() { return $this->items;}
+    
+    public function setItems(array $items) {
+        $this->items = $items;
+    }
     
     /**
      * Returns a item of the response
@@ -34,7 +38,7 @@ class Response implements \ArrayAccess, \Iterator, \Countable
     }
     
     /**
-     *
+     * Returns the value of an item
      * @param int $index
      * @param string $name
      * @param misc $else
@@ -48,7 +52,7 @@ class Response implements \ArrayAccess, \Iterator, \Countable
     }
     
     /**
-     *
+     * Converts the items array to an associative array with $key as key
      * @param string $key
      * @return array 
      */
