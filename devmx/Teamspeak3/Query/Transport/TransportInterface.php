@@ -15,9 +15,7 @@ interface TransportInterface
      * Returns wether the transport is connected to a server or not
      * @return boolean 
      */
-    public function isConnected() {
-        return $this->isConnected;
-    }
+    public function isConnected();
     
     /**
      * Returns all events occured since last time checking the query
