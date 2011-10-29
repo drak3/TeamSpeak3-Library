@@ -63,12 +63,24 @@ class QueryTransport implements Transport\TransportInterface
         $this->commandTranslator = $translator;
     }
     
+    public function getTranslator() {
+        return $this->commandTranslator;
+    }
+    
     /**
      * Sets a new ResponseHandler
      * @param ResponseHandlerInterface $handler 
      */
     public function setHandler(ResponseHandlerInterface $handler) {
         $this->responseHandler = $handler;
+    }
+    
+    public function getHandler() {
+        return $this->responseHandler;
+    }
+    
+    public function getTransmission() {
+        return $this->transmission;
     }
     
     /**
@@ -116,9 +128,10 @@ class QueryTransport implements Transport\TransportInterface
     }
     
     /**
-     * Sends a command to the query and returns the result plus all occured events
+     * Sends a command to the query and returns the result
+     * All occured events are stored internaly, and can be get via getAllEvents
      * @param \devmx\Teamspeak3\Query\Command $command
-     * @return array Array in form Array("events"=>Array(Event e1, Event e2,...) "response"=>CommandResponse resp) 
+     * @return CommandResponse
      */
     public function sendCommand( \devmx\Teamspeak3\Query\Command $command )
     {
@@ -138,6 +151,10 @@ class QueryTransport implements Transport\TransportInterface
         $this->pendingEvents += $responses['events'];
         
         return $responses['response'];
+    }
+    
+    public function query($cmdname, $params=Array(), $options=Array()) {
+        $this->sendCommand(Command::simpleCommand($cmdname , $params , $options));
     }
     
     /**
