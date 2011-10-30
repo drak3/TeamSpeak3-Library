@@ -1,5 +1,24 @@
 <?php
-declare(encoding="UTF-8");
+
+/*
+  This file is part of TeamSpeak3 Library.
+
+  TeamSpeak3 Library is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  TeamSpeak3 Library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+declare(encoding = "UTF-8");
+
 namespace devmx\Teamspeak3\Query\Transport\Common;
 
 /**
@@ -12,6 +31,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     /**
      * The Length of the message sent by a common query on connect
      */
+
     const WELCOME_LENGTH = 150;
 
     /**
@@ -53,19 +73,20 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * The chars masked by the query and their replacements
      * @var Array 
      */
-    protected $unEscapeMap = Array (
-        "\\\\" => "\\" ,
-        "\\/" => "/" ,
-        "\\n" => "\n" ,
-        "\\s" => " " ,
-        "\\p" => "|" ,
-        "\\a" => "\a" ,
-        "\\b" => "\b" ,
-        "\\f" => "\f" ,
-        "\\r" => "\r" ,
-        "\\t" => "\t" ,
-        "\\v" => "\v" ,
+    protected $unEscapeMap = Array(
+        "\\\\" => "\\",
+        "\\/" => "/",
+        "\\n" => "\n",
+        "\\s" => " ",
+        "\\p" => "|",
+        "\\a" => "\a",
+        "\\b" => "\b",
+        "\\f" => "\f",
+        "\\r" => "\r",
+        "\\t" => "\t",
+        "\\v" => "\v",
     );
+
     /**
      * The regular expression for describing a response
      * @var string 
@@ -78,11 +99,10 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @param string $string
      * @return string the unmasked string 
      */
-    public function unescape( $string )
+    public function unescape($string)
     {
-        $string = strtr( $string , $this->unEscapeMap );
+        $string = strtr($string, $this->unEscapeMap);
         return $string;
-
     }
 
     /**
@@ -92,25 +112,22 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @param string $raw
      * @return Array in form Array('response' => $responseObject, 'events' => Array($eventobject1,$eventobject2));  
      */
-    public function getResponseInstance( \devmx\Teamspeak3\Query\Command $cmd ,
-                                         $raw )
+    public function getResponseInstance(\devmx\Teamspeak3\Query\Command $cmd, $raw)
     {
-        $response = Array ( 'response' => NULL , 'events' => Array ( ) );
-        $parsed = Array ( );
+        $response = Array('response' => NULL, 'events' => Array());
+        $parsed = Array();
 
-        $raw = \trim( $raw , "\r\n" );
-        $parsed = \explode( self::SEPERATOR_RESPONSE , $raw );
+        $raw = \trim($raw, "\r\n");
+        $parsed = \explode(self::SEPERATOR_RESPONSE, $raw);
 
-        $response['response'] = \array_pop( $parsed ); //the last element is our response
+        $response['response'] = \array_pop($parsed); //the last element is our response
         $response['events'] = $parsed; // the rest are events
-        $response['response'] = $this->parseResponse( $cmd ,
-                                                      $response['response'] );
-        foreach ( $response['events'] as $key => $event )
+        $response['response'] = $this->parseResponse($cmd, $response['response']);
+        foreach ($response['events'] as $key => $event)
         {
-            $response['events'][$key] = $this->parseEvent( $event );
+            $response['events'][$key] = $this->parseEvent($event);
         }
         return $response;
-
     }
 
     /**
@@ -120,36 +137,36 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @param string $response
      * @return \devmx\Teamspeak3\Query\Response 
      */
-    protected function parseResponse( \devmx\Teamspeak3\Query\Command $cmd ,
-                                      $response )
+    protected function parseResponse(\devmx\Teamspeak3\Query\Command $cmd, $response)
     {
-        $parsed = Array ( );
-        
-        preg_match( $this->responseRegex , $response , $parsed );
-        
-        $errorID = (int) $parsed[2] ; // parsed[2] holds the error id
-        $errorMessage = $this->unEscape( $parsed[3] ) ; //parsed[4] hold the error string
-        
-        if ( $parsed[1] !== '' ) // parsed[1] holds the data if it is a fetching command
+        $parsed = Array();
+
+        preg_match($this->responseRegex, $response, $parsed);
+
+        $errorID = (int) $parsed[2]; // parsed[2] holds the error id
+        $errorMessage = $this->unEscape($parsed[3]); //parsed[4] hold the error string
+
+        if ($parsed[1] !== '') // parsed[1] holds the data if it is a fetching command
         {
-            $items = $this->parseData( $parsed[1] );
+            $items = $this->parseData($parsed[1]);
         }
-        else {
+        else
+        {
             $items = Array();
         }
-       
-        
-        if ( isset( $parsed[4] ) ) //parsed[4] holds the whole key/value pair of the extramessage
+
+
+        if (isset($parsed[4])) //parsed[4] holds the whole key/value pair of the extramessage
         {
-            $extra = $parsed[5] ; //parsed[5] holds the pure extramessage
+            $extra = $parsed[5]; //parsed[5] holds the pure extramessage
         }
-        else {
+        else
+        {
             $extra = '';
         }
 
 
         return new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $extra);
-
     }
 
     /**
@@ -157,19 +174,18 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @param string $event
      * @return \devmx\Teamspeak3\Query\Event\ChannelEvent 
      */
-    protected function parseEvent( $event )
+    protected function parseEvent($event)
     {
         $reason = '';
         $eventObject = NULL;
-        $event = explode( self::SEPERAOR_DATA , $event , 2 );
-        $reason = $this->parseValue( $event[0] ); //the eventtype or eventreason is a single word at the beginnning of the event
+        $event = explode(self::SEPERAOR_DATA, $event, 2);
+        $reason = $this->parseValue($event[0]); //the eventtype or eventreason is a single word at the beginnning of the event
         $event = $event[1];
-        $data = $this->parseData( $event ); //the rest is a single block of data
+        $data = $this->parseData($event); //the rest is a single block of data
         $data = $data[0]; //because we have just one block (no |) we can use data[0]
-        
-        
-        return new \devmx\Teamspeak3\Query\Event($reason , $data);
 
+
+        return new \devmx\Teamspeak3\Query\Event($reason, $data);
     }
 
     /**
@@ -180,26 +196,25 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @param string $data
      * @return Array in form Array(0=>Array('key0'=>'val0','key1'=>'val1'), 1=>Array('key0'=>'val2','key1','val3'));
      */
-    protected function parseData( $data )
+    protected function parseData($data)
     {
-        $parsed = Array ( );
-        $items = \explode( self::SEPERATOR_ITEM , $data ); //split up into single lists or blocks
-        foreach ( $items as $itemkey => $item )
+        $parsed = Array();
+        $items = \explode(self::SEPERATOR_ITEM, $data); //split up into single lists or blocks
+        foreach ($items as $itemkey => $item)
         {
-            $keyvals = explode( self::SEPERAOR_DATA , $item ); //split up into data items or keyvalue pairs
-            foreach ( $keyvals as $keyval )
+            $keyvals = explode(self::SEPERAOR_DATA, $item); //split up into data items or keyvalue pairs
+            foreach ($keyvals as $keyval)
             {
-                $keyval = explode( self::SEPERATOR_KEY_VAL , $keyval , 2 ); //parses key value pairs
-                if ( \trim( $keyval[0] ) === '' )
+                $keyval = explode(self::SEPERATOR_KEY_VAL, $keyval, 2); //parses key value pairs
+                if (\trim($keyval[0]) === '')
                 {
                     continue;
                 }
-                $keyval[1] = isset( $keyval[1] ) ? $keyval[1] : NULL;
-                $parsed[$itemkey][$keyval[0]] = $this->parseValue( $keyval[1] );
+                $keyval[1] = isset($keyval[1]) ? $keyval[1] : NULL;
+                $parsed[$itemkey][$keyval[0]] = $this->parseValue($keyval[1]);
             }
         }
         return $parsed;
-
     }
 
     /**
@@ -209,29 +224,28 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @param string $val
      * @return string|int|boolean|null 
      */
-    protected function parseValue( $val )
+    protected function parseValue($val)
     {
-        $val = \trim( $val );
-        if ( ctype_digit( $val ) )
+        $val = \trim($val);
+        if (ctype_digit($val))
         {
             return (int) $val;
         }
-        if ( \preg_match( "/^true$/Di" , $val ) === 1 )
+        if (\preg_match("/^true$/Di", $val) === 1)
         {
             return TRUE;
         }
-        if ( \preg_match( "/^false$/Di" , $val ) === 1 )
+        if (\preg_match("/^false$/Di", $val) === 1)
         {
             return FALSE;
         }
-        if ( $val === '' || $val === NULL )
+        if ($val === '' || $val === NULL)
         {
             return NULL;
         }
 
 
-        return $this->unescape( $val );
-
+        return $this->unescape($val);
     }
 
     /**
@@ -240,16 +254,16 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @param type $raw
      * @return type 
      */
-    public function isCompleteEvent( $raw )
+    public function isCompleteEvent($raw)
     {
-        if ( \trim( $raw ) !== '' )
+        if (\trim($raw) !== '')
         {
             return TRUE;
-        } else
+        }
+        else
         {
             return FALSE;
         }
-
     }
 
     /**
@@ -258,16 +272,16 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @param string $raw
      * @return boolean 
      */
-    public function isCompleteResponse( $raw )
+    public function isCompleteResponse($raw)
     {
-        if ( \preg_match( "/error id=[0-9]* msg=/" , $raw ) )
+        if (\preg_match("/error id=[0-9]* msg=/", $raw))
         {
             return TRUE;
-        } else
+        }
+        else
         {
             return FALSE;
         }
-
     }
 
     /**
@@ -275,15 +289,14 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @param string $raw
      * @return \devmx\Teamspeak3\Query\Response 
      */
-    public function getEventInstances( $raw )
+    public function getEventInstances($raw)
     {
-        $events = \explode( self::SEPERATOR_RESPONSE , $raw );
-        foreach ( $events as $rawevent )
+        $events = \explode(self::SEPERATOR_RESPONSE, $raw);
+        foreach ($events as $rawevent)
         {
-            $ret[] = $this->parseEvent( $rawevent );
+            $ret[] = $this->parseEvent($rawevent);
         }
         return $ret;
-
     }
 
     /**
@@ -293,7 +306,6 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     public function getWelcomeMessageLength()
     {
         return self::WELCOME_LENGTH;
-
     }
 
     /**
@@ -302,18 +314,19 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @param string $welcome
      * @return boolean
      */
-    public function isWelcomeMessage( $welcome )
+    public function isWelcomeMessage($welcome)
     {
-        if ( \strlen( $welcome ) !== self::WELCOME_LENGTH ||
-                !\strstr( $welcome , self::WELCOME_IDENTIFY ) )
+        if (\strlen($welcome) !== self::WELCOME_LENGTH ||
+                !\strstr($welcome, self::WELCOME_IDENTIFY))
         {
             return FALSE;
-        } else
+        }
+        else
         {
             return TRUE;
         }
-
     }
+
 }
 
 ?>
