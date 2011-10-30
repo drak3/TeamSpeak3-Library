@@ -79,6 +79,11 @@ interface ServerInterface
      * @return int Received Packets
      */
     public function getReceivedPackets();
+    
+    /**
+     * @since 1.0
+     * @param int $receivedPackets Received Packets 
+     */
     public function setReceivedPackets($receivedPackets);
     
     
@@ -339,7 +344,7 @@ interface ServerInterface
      * @since 1.0
      * @param int $commandsAllowedPerFloodtime Commands allowed per floodtime 
      */
-    public function setCommandsAllowedPerFloodtime($commansAllowedPerFloodtime);
+    public function setCommandsAllowedPerFloodtime($commandsAllowedPerFloodtime);
     
     
     /**
