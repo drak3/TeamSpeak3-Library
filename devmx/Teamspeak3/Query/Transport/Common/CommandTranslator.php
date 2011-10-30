@@ -1,5 +1,24 @@
 <?php
-declare(encoding="UTF-8");
+
+/*
+  This file is part of TeamSpeak3 Library.
+
+  TeamSpeak3 Library is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  TeamSpeak3 Library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+declare(encoding = "UTF-8");
+
 namespace devmx\Teamspeak3\Query\Transport\Common;
 
 /**
@@ -9,44 +28,45 @@ namespace devmx\Teamspeak3\Query\Transport\Common;
  */
 class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTranslatorInterface
 {
+
     /**
      * Translates a command to its query-representation
      * @param \devmx\Teamspeak3\Query\Command $cmd
      * @return string the query representation 
      */
-    public function translate( \devmx\Teamspeak3\Query\Command $cmd )
+    public function translate(\devmx\Teamspeak3\Query\Command $cmd)
     {
-        if ( !$this->isValid( $cmd ) )
+        if (!$this->isValid($cmd))
         {
-            throw new \InvalidArgumentException("Invalid command ".$cmd->getName());
+            throw new \InvalidArgumentException("Invalid command " . $cmd->getName());
         }
 
         $queryRepresentation = $cmd->getName() . " ";
 
-        foreach ( $cmd->getParameters() as $name => $value )
+        foreach ($cmd->getParameters() as $name => $value)
         {
-            $name = $this->escape( $name );
-            if ( is_array( $value ) )
+            $name = $this->escape($name);
+            if (is_array($value))
             {
-                foreach ( $value as $param )
+                foreach ($value as $param)
                 {
-                    $queryRepresentation .= $name . "=" . $this->escape( $param ) . "|";
+                    $queryRepresentation .= $name . "=" . $this->escape($param) . "|";
                 }
-                $queryRepresentation = \rtrim( $queryRepresentation , "|" ) . " ";
-            } else
+                $queryRepresentation = \rtrim($queryRepresentation, "|") . " ";
+            }
+            else
             {
-                $queryRepresentation .= $name . "=" . $this->escape( $value ) . " ";
+                $queryRepresentation .= $name . "=" . $this->escape($value) . " ";
             }
         }
 
-        foreach ( $cmd->getOptions() as $name => $flag )
+        foreach ($cmd->getOptions() as $name => $flag)
         {
-            $queryRepresentation .= "-" . $this->escape( $name ) . " ";
+            $queryRepresentation .= "-" . $this->escape($name) . " ";
         }
-        $queryRepresentation = \rtrim( $queryRepresentation );
+        $queryRepresentation = \rtrim($queryRepresentation);
         $queryRepresentation .= "\n";
         return $queryRepresentation;
-
     }
 
     /**
@@ -54,26 +74,25 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      * @param \devmx\Teamspea3\Query\Command $cmd
      * @return boolean
      */
-    public function isValid( \devmx\Teamspeak3\Query\Command $cmd )
+    public function isValid(\devmx\Teamspeak3\Query\Command $cmd)
     {
 
-        if ( !$this->isValidName( $cmd->getName() ) )
+        if (!$this->isValidName($cmd->getName()))
         {
             return FALSE;
         }
 
-        if ( !$this->areValidOptions( $cmd->getOptions() ) )
+        if (!$this->areValidOptions($cmd->getOptions()))
         {
             return FALSE;
         }
 
-        if ( !$this->areValidParams( $cmd->getParameters() ) )
+        if (!$this->areValidParams($cmd->getParameters()))
         {
             return FALSE;
         }
 
         return TRUE;
-
     }
 
     /**
@@ -81,12 +100,11 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      * @param $string $value
      * @return $string
      */
-    protected function escape( $value )
+    protected function escape($value)
     {
-        $to_escape = Array ( "\\" , "/" , "\n" , " " , "|" , "\a" , "\b" , "\f" , "\n" , "\r" , "\t" , "\v" );
-        $replace_with = Array ( "\\\\" , "\/" , "\\n" , "\\s" , "\\p" , "\\a" , "\\b" , "\\f" , "\\n" , "\\r" , "\\t" , "\\v" );
-        return str_replace( $to_escape , $replace_with , $value );
-
+        $to_escape = Array("\\", "/", "\n", " ", "|", "\a", "\b", "\f", "\n", "\r", "\t", "\v");
+        $replace_with = Array("\\\\", "\/", "\\n", "\\s", "\\p", "\\a", "\\b", "\\f", "\\n", "\\r", "\\t", "\\v");
+        return str_replace($to_escape, $replace_with, $value);
     }
 
     /**
@@ -94,18 +112,17 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      * @param string $name
      * @return boolean
      */
-    protected function isValidName( $name )
+    protected function isValidName($name)
     {
-        if ( !is_string( $name ) )
+        if (!is_string($name))
         {
             return FALSE;
         }
-        if ( !preg_match( "/^[a-z_-]*$/iD" , $name ) )
+        if (!preg_match("/^[a-z_-]*$/iD", $name))
         {
             return FALSE;
         }
         return TRUE;
-
     }
 
     /**
@@ -113,25 +130,23 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      * @param array $params
      * @return boolean
      */
-    protected function areValidParams( array $params )
+    protected function areValidParams(array $params)
     {
-        foreach ( $params as $name => $param )
+        foreach ($params as $name => $param)
         {
-            if ( !is_string( $name ) )
+            if (!is_string($name))
             {
                 return FALSE;
             }
-            foreach ( $param as $val )
+            foreach ($param as $val)
             {
-                if ( !is_string( (string) $val ) )
+                if (!is_string((string) $val))
                 {
                     return FALSE;
                 }
-             }
-            
+            }
         }
         return TRUE;
-
     }
 
     /**
@@ -139,20 +154,19 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      * @param array $options
      * @return bool
      */
-    protected function areValidOptions( array $options )
+    protected function areValidOptions(array $options)
     {
-        foreach ( $options as $name => $option )
+        foreach ($options as $name => $option)
         {
-            if ( !is_string( $name ) )
+            if (!is_string($name))
             {
                 return FALSE;
             }
-            if( !is_bool( $option) )
-                return FALSE;
+            if (!is_bool($option)) return FALSE;
         }
         return TRUE;
-
     }
+
 }
 
 ?>
