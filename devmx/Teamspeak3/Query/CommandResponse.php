@@ -63,6 +63,19 @@ class CommandResponse extends Response
      */
     public function getExtraMessage() { return $this->extraMessage;}
     
+    public function errorOccured() {
+        return ($this->errorID !== 0);
+    }
+    
+    public function toException() {
+        if($this->errorOccured()) {
+            throw new \RuntimeException(sprintf("Error with id %d and message %s occured while sending command %s", 
+                                                $this->errorID,
+                                                $this->errorMessage,
+                                                $this->command->getName()));
+        }
+    }
+    
     
 }
 
