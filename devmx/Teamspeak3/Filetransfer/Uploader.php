@@ -35,7 +35,11 @@ class Uploader extends AbstractTransferer
     protected $transmission;
     protected $key;
     protected $data;
-
+    /**
+     * @param \devmx\Transmission\TransmissionInterface $transmission 
+     * @param string $key the key which identifies the ressource
+     * @param string $data the data to load up
+     */
     public function __construct(\devmx\Transmission\TransmissionInterface $transmission, $key, $data)
     {
         $this->transmission = $transmission;
