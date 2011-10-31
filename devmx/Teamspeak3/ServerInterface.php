@@ -32,8 +32,15 @@ interface ServerInterface
     public function getVirtualServerByID($id);
     public function getQueryPort();
     
+    /**
+     * @return \DateInterval the uptime of the server
+     */
     public function getUptime();
-    public function getTimestampAsUTC();
+    
+    /**
+     * @return \DateTime the current time on the server
+     */
+    public function getCurrentServerTime();
     
     /**
      * @since 1.0
