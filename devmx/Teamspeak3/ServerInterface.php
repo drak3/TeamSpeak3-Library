@@ -22,7 +22,7 @@ namespace devmx\Teamspeak3;
 
 /**
  * @since 1.0
- * @author drak3
+ * @author drak3, Maximilian Narr
  */
 interface ServerInterface
 {
