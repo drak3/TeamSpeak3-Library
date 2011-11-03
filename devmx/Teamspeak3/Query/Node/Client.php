@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -16,15 +15,13 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-declare(encoding = "UTF-8");
-
-namespace devmx\Teamspeak3;
+namespace devmx\Teamspeak3\Query\Node;
 
 /**
- *
+ * 
  * @author drak3
  */
-interface NodeInterface
+class Client
 {
     
 }

@@ -25,7 +25,7 @@ use devmx\Teamspeak3\Query\Transport\ResponseHandlerInterface;
  * Abstraction of the Teamspeak3-Query
  * @author drak3
  */
-class QueryTransport implements Transport\TransportInterface
+class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInterface
 {
     /**
      * Constructs a common Query which should fit to the official query
@@ -119,6 +119,8 @@ class QueryTransport implements Transport\TransportInterface
     /**
      * Returns all events occured since last time checking the query
      * This method is non-blocking, so it returns even if no event is on the query
+     * @param boolean $dryRun if this is true just the internal event storage, 
+     * where events occured before call to sendCommand are stored, is checked.
      * @return array Array of all events lying on the query  
      */
     public function getAllEvents($dryRun=FALSE)
@@ -201,6 +203,7 @@ class QueryTransport implements Transport\TransportInterface
     }
     
     public function disconnect() {
+        $this->query("quit");
         $this->transmission->close();
     }
     

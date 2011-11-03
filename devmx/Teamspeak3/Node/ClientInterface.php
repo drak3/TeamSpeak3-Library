@@ -16,7 +16,7 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 declare(encoding="UTF-8");
-namespace devmx\Teamspeak3;
+namespace devmx\Teamspeak3\Node;
 /**
  *
  * @author drak3
@@ -24,8 +24,39 @@ namespace devmx\Teamspeak3;
 interface ClientInterface extends NodeInterface
 {
     
+
+    
     const QUERY_CLIENT = 1;
     const REAL_CLIENT = 0;
+    
+    const ENDLESS_BAN = 0;
+    
+    /**
+     * Sends a private message to the client
+     * @param $msg the message to send
+     */
+    public function sendMessage($msg);
+    
+    /**
+     * Moves the client to a specific channel
+     */
+    public function move($toChannel);
+    
+    /**
+     * Kicks the client from the channel
+     */
+    public function kickFromChannel();
+    
+    /**
+     * Kicks the client from the server
+     */
+    public function kickFromServer();
+    
+    /**
+     * Bans the client for an given interval
+     * @param \DateInterval|int baninterval or bantime in seconds
+     */
+    public function ban($for);
     
     /**
      * Returns the ID of the client

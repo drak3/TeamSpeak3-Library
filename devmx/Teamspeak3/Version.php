@@ -71,7 +71,7 @@ class Version
     }
     
     /**
-     *
+     * Compares two version objects
      * @param Version $v the version to compare if
      * @return int -1 (== Version::LOWER) if this instance has a lower version than $v, 
      * 0 (== Version::Equal) if the two versions are equal or 1 (==Version::Equal) if this version is higher than $v  

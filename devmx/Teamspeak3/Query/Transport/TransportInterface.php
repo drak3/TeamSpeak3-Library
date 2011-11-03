@@ -49,7 +49,7 @@ interface TransportInterface
     /**
      * Sends a command to the query and returns the result plus all occured events
      * @param \devmx\Teamspeak3\Query\Command $command
-     * @return array Array in form Array("events"=>Array(Event e1, Event e2,...) "response"=>CommandResponse resp) 
+     * @return \devmx\Teamspeak3\Query\CommandResponse
      */
     public function sendCommand(\devmx\Teamspeak3\Query\Command $command);
 

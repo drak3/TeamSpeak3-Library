@@ -18,7 +18,7 @@
  */
 
 declare(encoding="UTF-8");
-namespace devmx\Teamspeak3;
+namespace devmx\Teamspeak3\Node;
 
 /**
  * @since 1.0
@@ -28,9 +28,28 @@ interface ServerInterface
 {
     
     public function createVirtualServer(VirtualServerInterface $vServerData);
+    
+    public function deleteVirtualServer($identifyer);
+    
     public function getVirtualServerByPort($port);
-    public function getVirtualServerByID($id);
+    
+    public function startVirtualServer($identifyer);
+    
+    public function stopVirtualServer($identifyer);
+    
+    public function getVirtualServerByID($id);  
+    
     public function getQueryPort();
+    
+    public function setQueryPort($port);
+    
+    public function stop();
+    
+    public function findVirtualServer($predicate);
+    
+    public function getVirtualServers($predicate=NULL);
+
+   
     
     /**
      * @return \DateInterval the uptime of the server

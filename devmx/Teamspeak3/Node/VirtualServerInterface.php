@@ -19,7 +19,7 @@
 
 declare(encoding = "UTF-8");
 
-namespace devmx\Teamspeak3;
+namespace devmx\Teamspeak3\Node;
 
 /**
  *
@@ -34,6 +34,20 @@ interface VirtualServerInterface
     const CODEC_CRYPT_INDIVIDUAL    = 0; //configure per channel
     const CODEC_CRYPT_DISABLED      = 1;  //globally disabled
     const CODEC_CRYPT_ENABLED       = 2;  //globally enabled
+
+    
+    public function createChannel(  ChannelInterface $channelData);
+    public function getChannelByID($id);
+    public function findChannelsByName($name);
+    public function findChannels($predicate); 
+    
+    public function getClients($predicate=NULL);
+    public function getClientById($id);
+    public function getClientByDBID($id);
+    public function findClients($predicate);
+    public function createClient(ClientInterface $clientData);
+    
+    public function sendMessage($msg);
 
     
     public function getName();
