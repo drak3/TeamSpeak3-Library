@@ -34,19 +34,7 @@ class ApcCache implements CachingInterface
         }
         else
         {
-            $ret =  dl("apc.so");
-            
-            if($ret)
-            {
-                if(extension_loaded("apc"))
-                {
-                    $this->isAvailable = true;
-                }
-            }
-            else
-            {
-                $this->isAvailable = false;
-            }
+            $this->isAvailable = false;
         }
         
         $this->cacheTime = $cachetime;

@@ -30,30 +30,69 @@ use devmx\Teamspeak3\Query\Transport;
  */
 class CachingDecorator extends Transport\AbstractQueryDecorator
 {
+
     protected $cache;
-    
+
     public function __construct(CachingInterface $cache)
     {
         parent::___construct($toDecorate);
         $this->cache = $cache;
     }
 
+    public function connect()
+    {
+        return;
+    }
+
+    public function disconnect()
+    {
+        if ($this->decorated->isConnected())
+        {
+            $this->decorated->connect();
+        }
+        else
+        {
+            return;
+        }
+    }
 
     public function sendCommand(\devmx\Teamspeak3\Query\Command $command)
     {
         $key = md5(serialize($command));
-        
-        if($this->cache->isCached($key))
+
+        if ($this->cache->isCached($key))
         {
             return $this->cache->getCache($key);
         }
         else
         {
+            if (!$this->decorated->isConnected())
+            {
+                $this->decorated->connect();
+            }
+
             $ret = $this->decorated->sendCommand($command);
-            
-            $this->cache->cache($key, $ret);   
+
+            $this->cache->cache($key, $ret);
             return $ret;
         }
     }
+    
+    public function getAllEvents()
+    {
+        if(!$this->decorated->isConnected())
+            $this->decorated->connect ();
+        
+        return $this->decorated->getAllEvents();
+    }
+ 
+    public function waitForEvent()
+    {
+        if(!$this->decorated->isConnected())
+            $this->decorated->connect ();
+        
+        return $this->decorated->waitForEvent();
+    }
 }
+
 ?>
