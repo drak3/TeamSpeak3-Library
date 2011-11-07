@@ -29,6 +29,9 @@ namespace devmx\Teamspeak3\Query\Transport;
 abstract class AbstractQueryDecorator implements TransportInterface
 {
 
+    /**
+     * @var \devmx\TeamSpeak3\Query\Transport\TransportInterface
+     */
     protected $decorated;
 
     public function __construct(TransportInterface $toDecorate)
