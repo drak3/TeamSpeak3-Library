@@ -56,6 +56,7 @@ class CommandResponse extends Response
         $this->items = $items;
         $this->errorID = $errorID;
         $this->errorMessage = $errorMessage;
+        $this->extraMessage = $extraMessage;
     }
     
     /**

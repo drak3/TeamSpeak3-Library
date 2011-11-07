@@ -127,6 +127,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         {
             $response['events'][$key] = $this->parseEvent($event);
         }
+
         return $response;
     }
 

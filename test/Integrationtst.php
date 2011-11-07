@@ -1,11 +1,13 @@
 <?php
+error_reporting(-1);
 require_once 'bootstrap.php';
 use devmx\Teamspeak3\Query;
 
 
-$query = Query\QueryTransport::getCommon( "79.133.47.201", 10011 );
-$query->connect();
-var_dump($query->sendCommand(Query\Command::simpleCommand( "use", Array("port" => 20007) )));
+$squery = new Query\ServerQuery(Query\QueryTransport::getCommon( "devmx.de", 10011 ));
+$squery->connect();
+//var_dump($query);
+var_dump($squery);
 var_dump($query->sendCommand(new Query\Command("clientlist")));        
 
 ?>

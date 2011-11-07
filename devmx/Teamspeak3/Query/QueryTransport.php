@@ -47,14 +47,14 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
      *
      * @var CommandTranslatorInterface 
      */
-    protected $translator;
+    protected $commandTranslator;
     /**
      *
      * @var ResponseHandlerInterface 
      */
     protected $responseHandler;
     
-    protected $pendingEvents;
+    protected $pendingEvents = Array();
     
     /**
      *
@@ -172,12 +172,12 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
         $responses = $this->responseHandler->getResponseInstance( $command , $data );
         
         $this->pendingEvents = array_merge($this->pendingEvents,$responses['events']);
-        
+
         return $responses['response'];
     }
     
     public function query($cmdname, $params=Array(), $options=Array()) {
-        $this->sendCommand(Command::simpleCommand($cmdname , $params , $options));
+        return $this->sendCommand(Command::simpleCommand($cmdname , $params , $options));
     }
     
     /**

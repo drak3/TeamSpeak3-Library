@@ -52,7 +52,7 @@ class Event extends Response
      */
     public function getReason()
     {
-        return $this->name;
+        return $this->reason;
     }
 
 }

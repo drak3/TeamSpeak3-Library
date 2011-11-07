@@ -52,7 +52,13 @@ interface TransportInterface
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
     public function sendCommand(\devmx\Teamspeak3\Query\Command $command);
-
+    
+    /**
+     * Wrapper for Command::simpleCommand and sendcommand
+     * @return \devmx\Teamspeak3\Query\CommandResponse
+     */
+    public function query($name, $args, $options);
+    
     /**
      * Waits until an event occurs
      * This method is blocking, it returns only if a event occurs, so avoid calling this method if you aren't registered to any events
