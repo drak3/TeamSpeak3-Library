@@ -35,7 +35,7 @@ class Command
      * @param array $params 
      * @return Command
      */
-    public static function simpleCommand($cmdname, $params = Array(), $options = Array())
+    public static function simpleCommand($cmdname, array $params = Array(), array $options = Array())
     {
         $pars = Array();
         foreach ($params as $name => $value)
@@ -67,7 +67,7 @@ class Command
      *
      * @param type $name
      * @param array $parameters
-     * @param array $options the options in form Array("foo"=>true, "bar"=>false) 
+     * @param array $options the options in form Array("foo", "bar") 
      */
     public function __construct($name, array $parameters = Array(), array $options = Array())
     {
@@ -122,12 +122,20 @@ class Command
      */
     public function getParameter($name, $else = NULL, $index = 0)
     {
-        if (isset($this->parameters[$name][$index]))
-        {
-            return $this->parameters[$name][$index];
+        if(isset($this->parameters[$name])) {
+            if(  is_array( $this->parameters[$name]) ) {
+                if(isset($this->parameters[$name][$index])) {
+                    return $this->parameters[$name][$index];
+                }
+                else {
+                    return $else;
+                }
+            }
+            else {
+                return $this->parameters[$name];
+            }
         }
-        else
-        {
+        else {
             return $else;
         }
     }
