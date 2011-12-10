@@ -1,6 +1,6 @@
 <?php
 
-declare(encoding="UTF-8");
+
 namespace devmx\Teamspeak3\Node;
 /*
  * To change this template, choose Tools | Templates
