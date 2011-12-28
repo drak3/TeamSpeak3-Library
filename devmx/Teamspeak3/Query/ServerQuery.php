@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 
 /*
@@ -23,7 +22,7 @@ namespace devmx\Teamspeak3\Query;
  *
  * @author drak3
  */
-class ServerQuery implements Transport\TransportInterface
+class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterface
 {
     
     /**
@@ -38,21 +37,28 @@ class ServerQuery implements Transport\TransportInterface
     protected $virtualServerIdentifyer = Array();
     protected $registerCommands = Array();
     protected $notInDefaultChannel = FALSE;
-    protected $channelID;
-    protected $virtualServerStatus;
-    protected $virtualServerPort;
-    protected $virtualServerID;
-    protected $uniqueID;
-    protected $nickname;
-    protected $databaseID;
-    protected $uniqueVirtualServerID;
-    protected $clientID;
+    protected $channelID = NULL;
+    protected $virtualServerStatus = NULL;
+    protected $virtualServerPort = NULL;
+    protected $virtualServerID = NULL;
+    protected $uniqueID = NULL;
+    protected $nickname = NULL;
+    protected $databaseID = NULL;
+    protected $uniqueVirtualServerID = NULL;
+    protected $clientID = NULL;
     
     public function __construct(Transport\TransportInterface $transport) {
         $this->transport = $transport;
     }
     
-    public function query($name, $args, $options) {
+    /**
+     *
+     * @param string $name
+     * @param array $args
+     * @param array $options
+     * @return \devmx\Teamspeak3\Query\CommandResponse
+     */
+    public function query($name, array $args=Array(), array $options=Array()) {
         return $this->sendCommand(Command::simpleCommand($name, $args, $options));
     }
     
@@ -76,45 +82,58 @@ class ServerQuery implements Transport\TransportInterface
            $this->databaseID = $response['client_database_id'];
            $this->clientID = $response['client_id'];
         }
+        else {
+            $response->toException();
+        }
+        return $this;
     }
     
     
     public function login($username, $pass) {
-        $response = $this->query("login", Array("client_login_name"=>$username, 'client_login_password'=>$pass));
-        if(!$response->errorOccured()) {
-            $this->isLoggedIn = TRUE;
-            $this->loginName = $username;
-            $this->loginPass = $pass;
-        }
-        return $response;
+        $response = $this->transport->query("login", Array("client_login_name"=>$username, 'client_login_password'=>$pass));
+        $response->toException();
+        $this->isLoggedIn = TRUE;
+        $this->loginName = $username;
+        $this->loginPass = $pass;
+        return $this;
     }
     
     public function logout() {
-        $response = $this->query('logout');
-        if(!$response->errorOccured()) {
-            $this->isLoggedIn = FALSE;
-            $this->loginName = '';
-            $this->loginPass = '';
-        }
-        return $response;
+        $response = $this->transport->query('logout');
+        $response->toException();
+        $this->isLoggedIn = FALSE;
+        $this->loginName = '';
+        $this->loginPass = '';
+        return $this;
     }
     
-    public function useByPort($port) {
-        $response = $this->query("use", Array('port'=>$port));
-        if(!$response->errorOccured()) {
-            $this->isOnVirtualServer = TRUE;
-            $this->virtualServerIdentifyer = Array('port'=>$port);
-        }
-        return $response;
+    public function useByPort($port,$virtual=TRUE) {
+        $options = $virtual ? Array('virtual') : Array();
+        $response = $this->transport->query("use", Array('port'=>$port), $options);
+        $response->toException();
+        $this->isOnVirtualServer = TRUE;
+        $this->virtualServerIdentifyer = Array('port'=>$port);
+        return $this;
     }
     
-    public function useByID($id) {
-        $response = $this->query("use", Array('id'=>$id));
-        if(!$response->errorOccured()) {
-            $this->isOnVirtualServer = TRUE;
-            $this->virtualServerIdentifyer = Array('id'=>$id);
+    public function useByID($id,$virtual=TRUE) {
+        if($id < 1) {
+            throw new \InvalidArgumentException("Invalid server ID, if you want to deselect the current server, please use deselect() instead");
         }
-        return $response;
+        $options = $virtual ? Array('virtual') : Array();
+        $response = $this->transport->query("use", Array('id'=>$id), $options);
+        $response->toException();
+        $this->isOnVirtualServer = TRUE;
+        $this->virtualServerIdentifyer = Array('id'=>$id);
+        return $this;
+    }
+    
+    public function deselect() {
+        $response = $this->transport->query('use', Array('id' => 0));
+        $response->toException();
+        $this->isOnVirtualServer = FALSE;
+        $this->virtualServerIdentifyer = Array();
+        return $this;
     }
     
     public function moveToChannel($cid) {
@@ -122,10 +141,9 @@ class ServerQuery implements Transport\TransportInterface
             throw new \BadMethodCallException("cannot move to channel when not on virtual server");
         }
         $response = $this->transport->query('clientmove', Array('clid'=>$this->getClientID(), 'cid'=>$cid));
-        if(!$response->errorOccured()) {
-            $this->notInDefaultChannel = TRUE;
-            $this->channelID = $cid;
-        }
+        $response->toException();
+        $this->notInDefaultChannel = TRUE;
+        $this->channelID = $cid;
     }
     
     public function registerForEvent($name, $cid=NULL) {
@@ -141,6 +159,7 @@ class ServerQuery implements Transport\TransportInterface
         else{
             $this->registerCommands[] = $command;
         }
+        return $this;
     }
     
     public function unregisterEvents() {
@@ -151,6 +170,11 @@ class ServerQuery implements Transport\TransportInterface
         else{
             throw new \RuntimeException("cannot unregister from events");
         }
+        return $this;
+    }
+    
+    public function quit() {
+        $this->transport->disconnect();
     }
     
     public function __clone()
@@ -166,8 +190,8 @@ class ServerQuery implements Transport\TransportInterface
 
     public function __wakeup()
     {
-        $this->transport->connect();
-        $this->recoverState();
+            $this->transport->connect();
+            $this->recoverState();
     }
     
     protected  function recoverState() {
@@ -205,6 +229,14 @@ class ServerQuery implements Transport\TransportInterface
     public function isOnVirtualServer()
     {
         return $this->isOnVirtualServer;
+    }
+    
+    public function getVirtualServerPort() {
+        return $this->virtualServerPort;
+    }
+    
+    public function getVirtualServerID() {
+        return $this->virtualServerID;
     }
 
     public function getVirtualServerIdentifyer()
@@ -289,7 +321,12 @@ class ServerQuery implements Transport\TransportInterface
         $args = $command->getParameters();
         if($command->getName() == 'use') {
             if(isset($args['id'])) {
-                return $this->useByID($args['id']);
+                if($args['id'] == 0) {
+                    return $this->deselect();
+                }
+                else {
+                   return $this->useByID($args['id']); 
+                }
             }
             elseif(isset($args['port'])) {
                 return $this->useByPort($args['port']);

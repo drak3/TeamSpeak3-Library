@@ -27,21 +27,13 @@ namespace devmx\Teamspeak3\Node;
 interface ServerInterface
 {
     
-    public function createVirtualServer(VirtualServerInterface $vServerData);
+    public function createVirtualServer($data);
     
     public function deleteVirtualServer($identifyer);
     
     public function getVirtualServerByPort($port);
     
-    public function startVirtualServer($identifyer);
-    
-    public function stopVirtualServer($identifyer);
-    
-    public function getVirtualServerByID($id);  
-    
-    public function getQueryPort();
-    
-    public function setQueryPort($port);
+    public function getVirtualServerByID($id);
     
     public function stop();
     
@@ -49,8 +41,7 @@ interface ServerInterface
     
     public function getVirtualServers($predicate=NULL);
 
-   
-    
+       
     /**
      * @return \DateInterval the uptime of the server
      */

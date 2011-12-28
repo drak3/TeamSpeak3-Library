@@ -176,7 +176,7 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
         return $responses['response'];
     }
     
-    public function query($cmdname, $params=Array(), $options=Array()) {
+    public function query($cmdname, array $params=Array(),array $options=Array()) {
         return $this->sendCommand(Command::simpleCommand($cmdname , $params , $options));
     }
     
@@ -221,6 +221,10 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
             throw new \RuntimeException( "Server is not valid" );
         }
 
+    }
+    
+    public function __clone() {
+        $this->transmission = clone $this->transmission;
     }
     
     

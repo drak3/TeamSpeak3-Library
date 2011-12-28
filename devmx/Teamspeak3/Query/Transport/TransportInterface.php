@@ -57,7 +57,7 @@ interface TransportInterface
      * Wrapper for Command::simpleCommand and sendcommand
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
-    public function query($name, $args, $options);
+    public function query($name, array $args=Array(),array $options=Array());
     
     /**
      * Waits until an event occurs

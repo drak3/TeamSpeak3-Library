@@ -36,7 +36,7 @@ interface VirtualServerInterface
     const CODEC_CRYPT_ENABLED       = 2;  //globally enabled
 
     
-    public function createChannel(  ChannelInterface $channelData);
+    public function createChannel($channelData);
     public function getChannelByID($id);
     public function findChannelsByName($name);
     public function findChannels($predicate); 
@@ -45,10 +45,12 @@ interface VirtualServerInterface
     public function getClientById($id);
     public function getClientByDBID($id);
     public function findClients($predicate);
-    public function createClient(ClientInterface $clientData);
+    public function createClient($data);
     
     public function sendMessage($msg);
-
+    
+    public function addToken($token);
+    public function getTokens();
     
     public function getName();
     public function setName($name);

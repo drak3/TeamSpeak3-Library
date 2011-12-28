@@ -234,6 +234,10 @@ class TCP implements TransmissionInterface
         return \fwrite($this->stream, $data);
     }
 
+    public function __clone() {
+        $this->establis();
+    }
+    
     /**
      * Sets the host
      * @param string $host

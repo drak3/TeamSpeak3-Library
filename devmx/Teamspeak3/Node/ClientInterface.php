@@ -30,6 +30,7 @@ interface ClientInterface extends NodeInterface
     const REAL_CLIENT = 0;
     
     const ENDLESS_BAN = 0;
+    const CHANNEL_DEFAULT = 0; //Move to default channel
     
     /**
      * Sends a private message to the client
@@ -40,7 +41,7 @@ interface ClientInterface extends NodeInterface
     /**
      * Moves the client to a specific channel
      */
-    public function move($toChannel);
+    public function move($toChannel=CHANNEL_DEFAULT);
     
     /**
      * Kicks the client from the channel

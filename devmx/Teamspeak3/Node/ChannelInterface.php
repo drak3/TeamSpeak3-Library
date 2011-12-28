@@ -48,10 +48,27 @@ interface ChannelInterface extends NodeInterface
     public function findClients($predicate);
     
     /**
-     * Moves the  to the given parent
-     * @param int $toParent the parent of the  (0 for top)
+     * creates a channel below this channel
+     * @param string|\devmx\Teamspeak3\Node\ChannelInterface 
+     * if just a name is provided, channel with this name will be created, if additional data via the ChannelInterface is given, this data is apllied in the same command
      */
-    public function move($toParent);
+    public function createChannel($data);
+    
+     /**
+     * creates a channel as a subchannel of this channel
+     * @param string|\devmx\Teamspeak3\Node\ChannelInterface 
+     * if just a name is provided, channel with this name will be created, if additional data via the ChannelInterface is given, this data is apllied in the same command
+     */
+    public function createSubChannel($data);
+    
+    /**
+     * Moves the  to the given parent
+     * @param int|ChannelInterface $toParent the parent of the  (0 for top)
+     * @param int|ChannelInterface $below   the channel under which this channel is sorted in 
+     */
+    public function move($toParent=0, $below=NULL);
+    
+    public function moveUnder($channel);
     
     /**
      * Sends a message to the 

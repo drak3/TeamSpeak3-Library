@@ -67,6 +67,10 @@ abstract class AbstractQueryDecorator implements TransportInterface
     {
         return $this->decorated->waitForEvent();
     }
+    
+    public function __clone() {
+        $this->decorated = clone $this->decorated;
+    }
 
 }
 
