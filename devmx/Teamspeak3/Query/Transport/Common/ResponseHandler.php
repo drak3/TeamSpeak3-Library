@@ -169,6 +169,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
 
         $response = new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $extra);
         $response->setRawResponse($response);
+        return $response;
     }
 
     /**
@@ -189,6 +190,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
 
         $event = \devmx\Teamspeak3\Query\Event($reason, $data);
         $event->setRawResponse($event);
+        return $event;
     }
 
     /**
