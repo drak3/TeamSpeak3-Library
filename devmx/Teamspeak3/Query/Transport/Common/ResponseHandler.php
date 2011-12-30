@@ -167,9 +167,9 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         }
 
 
-        $response = new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $extra);
-        $response->setRawResponse($response);
-        return $response;
+        $responseClass = new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $extra);
+        $responseClass->setRawResponse($response);
+        return $responseClass;
     }
 
     /**
@@ -188,9 +188,9 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         $data = $data[0]; //because we have just one block (no |) we can use data[0]
 
 
-        $event = \devmx\Teamspeak3\Query\Event($reason, $data);
-        $event->setRawResponse($event);
-        return $event;
+        $eventClass = \devmx\Teamspeak3\Query\Event($reason, $data);
+        $eventClass->setRawResponse($event);
+        return $eventClass;
     }
 
     /**
