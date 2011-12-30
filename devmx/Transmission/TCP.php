@@ -271,6 +271,10 @@ class TCP implements TransmissionInterface
             $this->port = $port;
         }
     }
+    
+    public function getStream() {
+        return $this->stream;
+    }
 
 }
 
