@@ -54,6 +54,8 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
      */
     protected $responseHandler;
     
+    protected $isConnected = FALSE;
+    
     protected $pendingEvents = Array();
     
     /**
@@ -205,6 +207,7 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
     public function disconnect() {
         $this->query("quit");
         $this->transmission->close();
+        $this->isConnected = FALSE;
     }
     
     /**

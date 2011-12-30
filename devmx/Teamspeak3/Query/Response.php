@@ -34,6 +34,8 @@ class Response implements \ArrayAccess, \Iterator, \Countable
      * @var array of array of (String=>String) 
      */
     protected $items;
+    
+    protected $raw;
 
     /**
      * Returns all holded items
@@ -90,6 +92,15 @@ class Response implements \ArrayAccess, \Iterator, \Countable
             }
         }
         return $assoc;
+    }
+    
+    
+    public function setRawResponse($raw) {
+        $this->raw = $raw;
+    }
+    
+    public function getRawResponse() {
+        return $this->raw;
     }
 
     //implementing \ArrayAccess, \Iterator and \Countable

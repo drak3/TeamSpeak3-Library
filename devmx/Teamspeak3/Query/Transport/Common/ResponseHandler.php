@@ -167,13 +167,14 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         }
 
 
-        return new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $extra);
+        $response = new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $extra);
+        $response->setRawResponse($response);
     }
 
     /**
      * Parses a single event
      * @param string $event
-     * @return \devmx\Teamspeak3\Query\Event\ChannelEvent 
+     * @return \devmx\Teamspeak3\Query\Event 
      */
     protected function parseEvent($event)
     {
@@ -186,7 +187,8 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         $data = $data[0]; //because we have just one block (no |) we can use data[0]
 
 
-        return new \devmx\Teamspeak3\Query\Event($reason, $data);
+        $event = \devmx\Teamspeak3\Query\Event($reason, $data);
+        $event->setRawResponse($event);
     }
 
     /**
