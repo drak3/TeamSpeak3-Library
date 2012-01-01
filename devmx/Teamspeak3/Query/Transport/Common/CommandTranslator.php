@@ -100,14 +100,24 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
 
     /**
      * Escapes a value so it can be used on the commonQuery
-     * @param $string $value
-     * @return $string
+     * @param string|bool $value
+     * @return string
      */
     protected function escape($value)
     {
-        $to_escape = Array("\\", "/", "\n", " ", "|", "\a", "\b", "\f", "\n", "\r", "\t", "\v");
-        $replace_with = Array("\\\\", "\/", "\\n", "\\s", "\\p", "\\a", "\\b", "\\f", "\\n", "\\r", "\\t", "\\v");
-        return str_replace($to_escape, $replace_with, $value);
+        if(is_bool($value)) {
+            if($value === TRUE) {
+                return '1';
+            }
+            else {
+                return '0';
+            }
+        }
+        else {
+            $to_escape = Array("\\", "/", "\n", " ", "|", "\a", "\b", "\f", "\n", "\r", "\t", "\v");
+            $replace_with = Array("\\\\", "\/", "\\n", "\\s", "\\p", "\\a", "\\b", "\\f", "\\n", "\\r", "\\t", "\\v");
+            return str_replace($to_escape, $replace_with, $value);
+        } 
     }
 
     /**
@@ -147,7 +157,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
                 }
             }
             else {
-                if(!is_string($param)) {
+                if(!is_string($param) && !is_bool($param)) {
                     return FALSE;
                 }
             }
@@ -159,7 +169,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
     protected function checkParamValues(array $paramvalues) {
         foreach ($paramvalues as $val)
         {
-            if (!is_string((string) $val))
+            if (!is_string($val) && !is_bool( $val))
             {
                 return FALSE;
             }
