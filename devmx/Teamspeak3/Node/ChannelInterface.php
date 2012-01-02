@@ -131,7 +131,7 @@ interface ChannelInterface extends NodeInterface
      * @since 1.0
      * @return bool If the  has a password 
      */
-    public function getHasPassword();
+    public function hasPassword();
 
     /**
      * @since 1.0 

@@ -15,6 +15,10 @@ namespace devmx\Teamspeak3;
 class Client implements devmx\Teamspeak3\Node\ClientInterface
 {
     
+    public function getData() {
+        return $this->data;
+    }
+    
 }
 
 ?>

@@ -12,23 +12,107 @@ namespace devmx\Teamspeak3;
  *
  * @author drak3
  */
-class VirtualServer implements \devmx\Teamspeak3\Node\VirtualServerInterface
+class VirtualServer implements \ArrayAccess//implements \devmx\Teamspeak3\Node\VirtualServerInterface
 {
-    public function createChannel($channelData);
-    public function getChannelByID($id);
-    public function findChannelsByName($name);
-    public function findChannels($predicate); 
     
-    public function getClients($predicate=NULL);
-    public function getClientById($id);
-    public function getClientByDBID($id);
-    public function findClients($predicate);
-    public function createClient($data);
+    public function createChannel($channelData) {
+        
+    }
     
-    public function sendMessage($msg);
+    public function getChannelByID($id) {
+        
+    }
     
-    public function addToken($token);
-    public function getTokens();
+    public function findChannelsByName($name) {
+        
+    }
+    
+    public function findChannels($predicate) {
+        
+    }
+    
+    public function getClients($predicate=NULL) {
+        
+    }
+    
+    public function getClientById($id) {
+        
+    }
+    public function getClientByDBID($id) {
+        
+    }
+    public function findClients($predicate) {
+        
+    }
+    public function createClient($data) {
+        
+    }
+    
+    public function sendMessage($msg) {
+        
+    }
+    
+    public function getServerGroups($predicate=NULL) {
+        
+    }
+    
+    public function getChannelGroups($predicate=NULL) {
+        
+    }
+    
+    public function getServerGroupByID($id) {
+        
+    }
+    
+    public function getChannelGroupByID($id) {
+        
+    }
+    
+    public function createChannelGroup($identifyer) {
+        
+    }
+    
+    public function createServerGroup($identifyer) {
+        
+    }
+    
+    public function addToken($token) {
+        
+    }
+    public function getTokens() {
+        
+    }
+    
+    public function offsetExists( $offset )
+    {
+        return TRUE;
+    }
+
+    public function offsetGet( $offset )
+    {
+        return $this->getValue($offset);
+    }
+
+    public function offsetSet( $offset , $value )
+    {
+        return $this->setValue($offset, $value);
+    }
+
+    public function offsetUnset( $offset )
+    {
+        
+    }
+    
+    public function getValue($name) {
+        
+    }
+    
+    public function setValue($name) {
+        
+    }
+
+
+    
     
     public function getName()
     {
@@ -68,7 +152,7 @@ class VirtualServer implements \devmx\Teamspeak3\Node\VirtualServerInterface
     
     public function hasPassword()
     {
-        return $this["VIRTUALSERVER_FLAG_PASSWORD"];
+        return $this["virtualserver_flag_password"];
     }
     
     public function getPassword()
@@ -307,61 +391,61 @@ class VirtualServer implements \devmx\Teamspeak3\Node\VirtualServerInterface
     
     public function getNumberOfClientsInChannelBeforeForcedSilence()
     {
-        return $this["VIRTUALSERVER_MIN_CLIENTS_IN_CHANNEL_BEFORE_FORCED_SILENCE"];
+        return $this["virtualserver_min_clients_in_channel_before_forced_silence"];
     }
     
     
     public function setNumberOfClientsInChannelBeforeForcedSilence($number)
     {
-        $this["VIRTUALSERVER_MIN_CLIENTS_IN_CHANNEL_BEFORE_FORCED_SILENCE"] = $number;
+        $this["virtualserver_min_clients_in_channel_before_forced_silence"] = $number;
         return $this;
     }
     
     
     public function getPrioritySpeakerDimmModificator()
     {
-        return $this["VIRTUALSERVER_PRIORITY_SPEAKER_DIMM_MODIFICATOR"];
+        return $this["virtualserver_priority_speaker_dimm_modificator"];
     }
     
     public function setPrioritySpeakerDimmModificatior($mod)
     {
-        $this["VIRTUALSERVER_PRIORITY_SPEAKER_DIMM_MODIFICATOR"] = $mod;
+        $this["virtualserver_priority_speaker_dimm_modificator"] = $mod;
         return $this;
     }
     
     
     public function getAntiFloodPointsReducedByTick()
     {
-        return $this["VIRTUALSERVER_ANTIFLOOD_POINTS_TICK_REDUCE"];
+        return $this["virtualserver_antiflood_points_tick_reduce"];
     }
     
     public function setAntiFloodPointsReducedByTick($points)
     {
-        $this["VIRTUALSERVER_ANTIFLOOD_POINTS_TICK_REDUCE"] = $points;
+        $this["virtualserver_antiflood_points_tick_reduce"] = $points;
         return $this;
     }
     
     
     public function getAntiFloodPointsNeededForWarning()
     {
-        return $this["VIRTUALSERVER_ANTIFLOOD_POINTS_NEEDED_WARNING"];
+        return $this["virtualserver_antiflood_points_needed_warning"];
     }
     
     public function setAntiFloodPointsNeededForWarning($points)
     {
-        $this["VIRTUALSERVER_ANTIFLOOD_POINTS_NEEDED_WARNING"] = $points;
+        $this["virtualserver_antiflood_points_needed_warning"] = $points;
         return $this;
     }
     
     
     public function getAntiFloodPointsNeededForBan()
     {
-        return $this["VIRTUALSERVER_ANTIFLOOD_POINTS_NEEDED_BAN"];
+        return $this["virtualserver_antiflood_points_needed_ban"];
     }
     
     public function setAntiFloodPointsNeededForBan($points)
     {
-        $this["VIRTUALSERVER_ANTIFLOOD_POINTS_NEEDED_BAN"] = $points;
+        $this["virtualserver_antiflood_points_needed_ban"] = $points;
         return $this;
     }
     
@@ -380,120 +464,120 @@ class VirtualServer implements \devmx\Teamspeak3\Node\VirtualServerInterface
     
     public function getClientConnections()
     {
-        return $this["VIRTUALSERVER_CLIENT_CONNECTIONS"];
+        return $this["virtualserver_client_connections"];
     }
     
     public function setClientConnections($cons)
     {
-        $this["VIRTUALSERVER_CLIENT_CONNECTIONS"] = $cons;
+        $this["virtualserver_client_connections"] = $cons;
         return $this;
     }
     
     
     public function getQueryClientConnections()
     {
-        return $this["VIRTUALSERVER_QUERY_CLIENT_CONNECTIONS"];
+        return $this["virtualserver_query_client_connections"];
     }
     
     public function setQueryClientConnections($cons)
     {
-        $this["VIRTUALSERVER_QUERY_CLIENT_CONNECTIONS"] = $this;
+        $this["virtualserver_query_client_connections"] = $this;
         return $this;
     }
     
     
     public function getHostButtonTooltipText()
     {
-        return $this["VIRTUALSERVER_HOSTBUTTON_TOOLTIP"];
+        return $this["virtualserver_hostbutton_tooltip"];
     }
     
     public function setHostButtonTooltipText($text)
     {
-        $this["VIRTUALSERVER_HOSTBUTTON_TOOLTIP"] = $text;
+        $this["virtualserver_hostbutton_tooltip"] = $text;
         return $this;
     }
     
     
     public function getHostButtonGFXURL()
     {
-        return $this["VIRTUALSERVER_HOSTBUTTON_GFX_URL"];
+        return $this["virtualserver_hostbutton_gfx_url"];
     }
     
     public function setHostButtonGFXURL($url)
     {
-        $this["VIRTUALSERVER_HOSTBUTTON_GFX_URL"] = $url;
+        $this["virtualserver_hostbutton_gfx_url"] = $url;
         return $this;
     }
     
     
     public function getHostButtonURL()
     {
-        return $this["VIRTUALSERVER_HOSTBUTTON_URL"];
+        return $this["virtualserver_hostbutton_url"];
     }
     
     public function setHostButtonURL($url)
     {
-        $this["VIRTUALSERVER_HOSTBUTTON_URL"] = $url;
+        $this["virtualserver_hostbutton_url"] = $url;
         return $this;
     }
     
     
     public function getDownloadQuota()
     {
-       return $this["VIRTUALSERVER_DOWNLOAD_QUOTA"];
+       return $this["virtualserver_download_quota"];
     }
     
     public function setDownloadQuota($quota)
     {
-        $this["VIRTUALSERVER_DOWNLOAD_QUOTA"] = $quota;
+        $this["virtualserver_download_quota"] = $quota;
         return $this;
     }
     
     
     public function getUploadQuota()
     {
-        return $this["VIRTUALSERVER_UPLOAD_QUOTA"];
+        return $this["virtualserver_upload_quota"];
     }
     
     public function setUploadQuota($quota)
     {
-        $this["VIRTUALSERVER_UPLOAD_QUOTA"] = $quota;
+        $this["virtualserver_upload_quota"] = $quota;
         return $this;
     }
     
     
     public function getBytesUploadedThisMonth()
     {
-        return $this["VIRTUALSERVER_MONTH_BYTES_DOWNLOADED"];
+        return $this["virtualserver_month_bytes_downloaded"];
     }
     
     public function setBytesUploadedThisMonth($bytes)
     {
-        $this["VIRTUALSERVER_MONTH_BYTES_DOWNLOADED"] = $bytes;
+        $this["virtualserver_month_bytes_downloaded"] = $bytes;
         return $this;        
     }
     
     
     public function getBytesDownloadedThisMonth()
     {
-        return $this["VIRTUALSERVER_MONTH_BYTES_UPLOADED"];
+        return $this["virtualserver_month_bytes_uploaded"];
     }
     
     public function setBytesDownloadedThisMonth($bytes)
     {
-        $this["VIRTUALSERVER_MONTH_BYTES_UPLOADED"] = $bytes;
+        $this["virtualserver_month_bytes_uploaded"] = $bytes;
         return $this;
     }
     
     
     public function getBytesDownloaded()
     {
-        return $this["VIRTUALSERVER_TOTAL_BYTES_DOWNLOADED"];
+        return $this["virtualserver_total_bytes_downloaded"];
     }
     
     public function setBytesDownloaded($bytes)
     {
-        $this["VIRTUALSERVER_TOTAL_BYTES_DOWNLOADED"] = $bytes;
+        $this["virtualserver_total_bytes_downloaded"] = $bytes;
         return $this;
     }
     
@@ -512,191 +596,191 @@ class VirtualServer implements \devmx\Teamspeak3\Node\VirtualServerInterface
     
     public function getUniqueID()
     {
-        return $this["VIRTUALSERVER_UNIQUE_IDENTIFER"];
+        return $this["virtualserver_unique_identifer"];
     }
     
     public function setUniqueID($id)
     {
-        $this["VIRTUALSERVER_UNIQUE_IDENTIFER"] = $id;
+        $this["virtualserver_unique_identifer"] = $id;
         return $this;
     }
     
     
     public function getID()
     {
-        $this["VIRTUALSERVER_ID"];
+        return $this["virtualserver_id"];
     }
     
     public function setID($id)
     {
-        $this["VIRTUALSERVER_ID"] = $id;
+        $this["virtualserver_id"] = $id;
         return $this;
     }
     
     
     public function getMachineID()
     {
-        return $this["VIRTUALSERVER_MACHINE_ID"];
+        return $this["virtualserver_machine_id"];
     }
         
     public function setMachineID($id)
     {
-        $this["VIRTUALSERVER_MACHINE_ID"] = $id;
+        $this["virtualserver_machine_id"] = $id;
         return $this;
     }
     
     
     public function getPort()
     {
-        return $this["VIRTUALSERVER_PORT"];
+        return $this["virtualserver_port"];
     }
     
     public function setPort($port)
     {
-        $this["VIRTUALSERVER_PORT"] = $port;
+        $this["virtualserver_port"] = $port;
         return $this;
     }
     
     
     public function isAutostarting()
     {
-        return $this["VIRTUALSERVER_AUTOSTART"];
+        return $this["virtualserver_autostart"];
     }
     
     public function setIsAutostarting($isAutoStarting)
     {
-        $this["VIRTUALSERVER_AUTOSTART"] = $isAutoStarting;
+        $this["virtualserver_autostart"] = $isAutoStarting;
         return $this;
     }
     
     
     public function getFileTransferBandwidthSent()
     {
-        return $this["CONNECTION_FILETRANSFER_BANDWIDTH_SENT"];
+        return $this["connection_filetransfer_bandwidth_sent"];
     }
     
     public function setFileTransferBandwidthSent($bandwidth)
     {
-        $this["CONNECTION_FILETRANSFER_BANDWIDTH_SENT"] = $bandwidth;
+        $this["connection_filetransfer_bandwidth_sent"] = $bandwidth;
         return $this;
     }
     
     
     public function getFileTransferBandwidthReceived()
     {
-        return $this["CONNECTION_FILETRANSFER_BANDWIDTH_RECEIVED"];
+        return $this["connection_filetransfer_bandwidth_received"];
     }
     
     public function setFileTransferBandwidthReceived($bandwidth)
     {
-        $this["CONNECTION_FILETRANSFER_BANDWIDTH_RECEIVED"] = $bandwidth;
+        $this["connection_filetransfer_bandwidth_received"] = $bandwidth;
         return $this;
     }
     
     
     public function getPacketsSent()
     {
-        return $this["CONNECTION_PACKETS_SENT_TOTAL"];
+        return $this["connection_packets_sent_total"];
     }
     
     public function setPacketsSent($packets)
     {
-        $this["CONNECTION_PACKETS_SENT_TOTAL"] = $packets;
+        $this["connection_packets_sent_total"] = $packets;
         return $this;
     }
     
     
     public function getPacketsReceived()
     {
-        return $this["CONNECTION_PACKETS_RECEIVED_TOTAL"];
+        return $this["connection_packets_received_total"];
     }
     
     public function setPacketsReceived($packets)
     {
-        $this["CONNECTION_PACKETS_RECEIVED_TOTAL"] = $packets;
+        $this["connection_packets_received_total"] = $packets;
         return $this;
     }
     
     
     public function getBytesSent()
     {
-        return $this["CONNECTION_BYTES_SENT_TOTAL"];
+        return $this["connection_bytes_sent_total"];
     }
     
     public function setBytesSent($bytes)
     {
-        $this["CONNECTION_BYTES_SENT_TOTAL"] = $bytes;
+        $this["connection_bytes_sent_total"] = $bytes;
         return $this;
     }
    
   
     public function getBytesReceived()
     {
-        return $this["CONNECTION_BYTES_RECEIVED_TOTAL"];
+        return $this["connection_bytes_received_total"];
     }
     
     public function setBytesReceived($bytes)
     {
-        $this["CONNECTION_BYTES_RECEIVED_TOTAL"] = $bytes;
+        $this["connection_bytes_received_total"] = $bytes;
         return $this;
     }
     
     
     public function getBandwidthSentLastSecond()
     {
-        return $this["CONNECTION_BANDWIDTH_SENT_LAST_SECOND_TOTAL"];
+        return $this["connection_bandwidth_sent_last_second_total"];
     }
     
     public function setBandwidthSentLastSecond($bandwidth)
     {
-        $this["CONNECTION_BANDWIDTH_SENT_LAST_SECOND_TOTAL"] = $bandwidth;
+        $this["connection_bandwidth_sent_last_second_total"] = $bandwidth;
         return $this;
     }
     
     
     public function getBandwidthReceivedLastSecond()
     {
-        return $this["CONNECTION_BANDWIDTH_RECEIVED_LAST_SECOND_TOTAL"];
+        return $this["connection_bandwidth_received_last_second_total"];
     }
     
     public function setBandwidthReceivedLastSecond($bandwidth)
     {
-        $this["CONNECTION_BANDWIDTH_RECEIVED_LAST_SECOND_TOTAL"] = $bandwidth;
+        $this["connection_bandwidth_received_last_second_total"] = $bandwidth;
         return $this;
     }
     
     
     public function getBandwidthSentLastMinute()
     {
-        return $this["CONNECTION_BANDWIDTH_SENT_LAST_MINUTE_TOTAL"];
+        return $this["connection_bandwidth_sent_last_minute_total"];
     }
     
     public function setBandwidthSentLastMinute($bandwidth)
     {
-        $this["CONNECTION_BANDWIDTH_SENT_LAST_MINUTE_TOTAL"] = $bandwidth;
+        $this["connection_bandwidth_sent_last_minute_total"] = $bandwidth;
     }
     
     
     public function getBandwidthReceivedLastMinute()
     {
-        return $this["CONNECTION_BANDWIDTH_RECEIVED_LAST_MINUTE_TOTAL"];
+        return $this["connection_bandwidth_received_last_minute_total"];
     }
     
     public function setBandwidthReceivedLastMinute($bandwidth)
     {
-        $this["CONNECTION_BANDWIDTH_RECEIVED_LAST_MINUTE_TOTAL"] = $bandwidth;
+        $this["connection_bandwidth_received_last_minute_total"] = $bandwidth;
         return $this;
     }
     
     
     public function getStatus()
     {
-        return $this["VIRTUALSERVER_STATUS"];
+        return $this["virtualserver_status"];
     }
     
     public function setStatus($status)
     {
-        $this["VIRTUALSERVER_STATUS"] = $status;
+        $this["virtualserver_status"] = $status;
         return $this;
     }
     
@@ -775,168 +859,172 @@ class VirtualServer implements \devmx\Teamspeak3\Node\VirtualServerInterface
     
     public function getMinimalClientVersion()
     {
-        return $this["VIRTUALSERVER_MIN_CLIENT_VERSION"];
+        return $this["virtualserver_min_client_version"];
     }
     
     public function setMinimalClientVersion(Version $version)
     {
-        $this["VIRTUALSERVER_MIN_CLIENT_VERSION"] = $version;
+        $this["virtualserver_min_client_version"] = $version;
         return $this;
     }
     
     
     public function getNeededSecurityLevel()
     {
-        return $this["VIRTUALSERVER_NEEDED_IDENTITY_SECURITY_LEVEL"];
+        return $this["virtualserver_needed_identity_security_level"];
     }
     
     public function setNeededSecurityLevel($level)
     {
-        $this["VIRTUALSERVER_NEEDED_IDENTITY_SECURITY_LEVEL"] = $level;
+        $this["virtualserver_needed_identity_security_level"] = $level;
         return $this;
     }
     
     
     public function getPhoneticName()
     {
-        return $this["VIRTUALSERVER_NAME_PHONETIC"];
+        return $this["virtualserver_name_phonetic"];
     }
     
     public function setPhoneticName($name)
     {
-        $this["VIRTUALSERVER_NAME_PHONETIC"] = $name;
+        $this["virtualserver_name_phonetic"] = $name;
         return $this;
     }
     
     
     public function getIconID()
     {
-        return $this["VIRTUALSERVER_ICON_ID"];
+        return $this["virtualserver_icon_id"];
     }
     
     public function setIconID($id)
     {
-        $this["VIRTUALSERVER_ICON_ID"] = $id;
+        $this["virtualserver_icon_id"] = $id;
         return $this;
     }
     
     
     public function getReservedSlots()
     {
-        return $this["VIRTUALSERVER_RESERVED_SLOTS"];
+        return $this["virtualserver_reserved_slots"];
     }
     
     public function setReservedSlots($slots)
     {
-        $this["VIRTUALSERVER_RESERVED_SLOTS"] = $slots;
+        $this["virtualserver_reserved_slots"] = $slots;
         return $this;
     }
     
     public function getSpeechPacketLoss()
     {
-        return $this["VIRTUALSERVER_TOTAL_PACKETLOSS_SPEECH"];
+        return $this["virtualserver_total_packetloss_speech"];
     }
     
     public function setSpeechPacketLoss($loss)
     {
-        $this["VIRTUALSERVER_TOTAL_PACKETLOSS_SPEECH"] = $loss;
+        $this["virtualserver_total_packetloss_speech"] = $loss;
         return $this;
     }
     
     
     public function getKeepalivePacketLoss()
     {
-        return $this["VIRTUALSERVER_TOTAL_PACKETLOSS_KEEPALIVE"];
+        return $this["virtualserver_total_packetloss_keepalive"];
     }
     
     public function setKeepalivePacketLoss($loss)
     {
-        $this["VIRTUALSERVER_TOTAL_PACKETLOSS_KEEPALIVE"] = $loss;
+        $this["virtualserver_total_packetloss_keepalive"] = $loss;
         return $this;
     }
     
     
     public function getControlPacketLoss()
     {
-        return $this["VIRTUALSERVER_TOTAL_PACKETLOSS_CONTROL"];
+        return $this["virtualserver_total_packetloss_control"];
     }
     
     public function setControlPacketLoss($loss)
     {
-        $this["VIRTUALSERVER_TOTAL_PACKETLOSS_CONTROL"] = $loss;
+        $this["virtualserver_total_packetloss_control"] = $loss;
         return $this;
     }
     
     
     public function getTotalPacketLoss()
     {
-        return $this["VIRTUALSERVER_TOTAL_PACKETLOSS_TOTAL"];
+        return $this["virtualserver_total_packetloss_total"];
     }
     
     public function setTotalPacketLoss($loss)
     {
-        $this["VIRTUALSERVER_TOTAL_PACKETLOSS_TOTAL"] = $loss;
+        $this["virtualserver_total_packetloss_total"] = $loss;
         return $this;
     }
 
     
     public function getAverageClientPing()
     {
-        return $this["VIRTUALSERVER_TOTAL_PING"];
+        return $this["virtualserver_total_ping"];
     }
     
     public function setAverageClientPing($ping)
     {
-        $this["VIRTUALSERVER_TOTAL_PING"] = $ping;
+        $this["virtualserver_total_ping"] = $ping;
         return $this;
     }
     
     
     public function getIp()
     {
-        return $this["VIRTUALSERVER_IP"];
+        return $this["virtualserver_ip"];
     }
     
     public function setIp($ip)
     {
-        $this["VIRTUALSERVER_IP"] = $ip;
+        $this["virtualserver_ip"] = $ip;
         return $this;
     }
     
     
     public function hasWebListEnabled()
     {
-        return $this["VIRTUALSERVER_WEBLIST_ENABLED"];
+        return $this["virtualserver_weblist_enabled"];
     }
     
     public function setHasWebListEnabled($has)
     {
-        $this["VIRTUALSERVER_WEBLIST_ENABLED"] = $has;
+        $this["virtualserver_weblist_enabled"] = $has;
         return $this;
     }
     
     
     public function getCodecEncryptionMode()
     {
-        return $this["VIRTUALSERVER_CODEC_ENCRYPTION_MODE"];
+        return $this["virtualserver_codec_encryption_mode"];
     }
     
     public function setCodecEncryptionMode($encription)
     {
-        $this["VIRTUALSERVER_CODEC_ENCRYPTION_MODE"] = $encription;
+        $this["virtualserver_codec_encryption_mode"] = $encription;
         return $this;
     }
     
     
     public function getFileBase()
     {
-        return $this["VIRTUALSERVER_FILEBASE"];
+        return $this["virtualserver_filebase"];
     }
     
     public function setFileBase($base)
     {
-        $this["VIRTUALSERVER_FILEBASE"] = $base;
+        $this["virtualserver_filebase"] = $base;
         return $this;
+    }
+    
+    public function getData() {
+        return $this->data;
     }
 }
 

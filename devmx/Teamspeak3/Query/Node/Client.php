@@ -23,7 +23,9 @@ namespace devmx\Teamspeak3\Query\Node;
  */
 class Client
 {
-    
+    public function __construct($query, array $data) {
+        
+    }
 }
 
 ?>

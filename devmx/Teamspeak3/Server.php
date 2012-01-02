@@ -12,8 +12,14 @@ namespace devmx\Teamspeak3;
  *
  * @author drak3
  */
-class Server implements devmx\Teamspeak3\Node\ServerInterface, \ArrayAccess
+class Server implements \devmx\Teamspeak3\Node\ServerInterface, \ArrayAccess
 {
+    
+    const LOG_LEVEL_ERROR = 1;
+    const LOG_LEVEL_WARNING = 2;
+    const LOG_LEVEL_DEBUG = 3;
+    const LOG_LEVEL_INFO = 4;
+    
     /**
      * @var array  
      */

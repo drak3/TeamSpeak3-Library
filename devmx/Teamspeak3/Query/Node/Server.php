@@ -17,6 +17,8 @@ class Server extends \devmx\Teamspeak3\Server
     //error code when trying to delete server which is not stopped
     const ERROR_SERVER_NOT_STOPPED = 1035;
     
+    
+    
     /**
      *
      * @var \devmx\Teamspeak3\Query\ServerQuery
@@ -286,10 +288,7 @@ class Server extends \devmx\Teamspeak3\Server
             }
         }
         //test if we can switch to the server
-        $response = $this->query->useByPort($port);
-        if($response->errorOccured()) {
-            throw new \RuntimeException(sprintf('Server with port %s does not exist or cannot be accessed',$port));
-        }
+        $this->query->useByPort($port);
         $server = new VirtualServer($this->query, Array('port'=>$port));
         $this->virtualServers[$server->getID()] = $server;
         return $server;
@@ -347,7 +346,7 @@ class Server extends \devmx\Teamspeak3\Server
      * @param boolean $getAllData if this is set to true, more data is gathered. It seems that this option slows down this method around 1ms per vServer if setted to true. Defaults to FALSE.
      * @return \devmx\Teamspeak3\Query\Node\VirtualServer
      */
-    public function getVirtualServers($predicate=NULL,$getServerList=TRUE,$getAllData=FALSE) {
+    public function getVirtualServers($predicate=NULL,$getAllData=FALSE, $getServerList=TRUE) {
         if(!$this->requestedServerlist && $getServerList) {
             $this->getServerList($getAllData);
         }
@@ -386,7 +385,10 @@ class Server extends \devmx\Teamspeak3\Server
         if($imSure) {
             $this->query->query('serverprocessstop');
             $this->query->quit();     
-        }    
+        } 
+        else {
+            throw new \LogicException('You have to call the stop method with TRUE as parameter');
+        }
     }
     
     /**
@@ -404,6 +406,26 @@ class Server extends \devmx\Teamspeak3\Server
         else {
             throw new \InvalidArgumentException("Cannot resolve server");
         }
+    }
+    
+    public function addLogEntry($entry, $level=self::LOG_LEVEL_INFO, $instanceOnly=FALSE) {
+        if($instanceOnly && $this->query->isOnVirtualServer()) {
+            $this->query->deselect();
+        }
+        $this->query->query('logadd', Array('logmsg'=>$entry,'loglevel'=>$level))->toException();
+    }
+    
+    /**
+     * @todo implement appropriate log class to return
+     * @param int $lines
+     * @param int $startPosition
+     * @param boolean $reverse
+     * @return \devmx\Teamspeak3\Query\CommandResponse 
+     */
+    public function getLogEntries($lines,$startPosition,$reverse=FALSE) {
+        $resp = $this->query->query('logview',Array('lines'=>$lines,'instance'=>TRUE, 'begin_pos'=>$startPosition, 'reverse'=>$reverse));
+        $resp->toException();
+        return $resp;
     }
     
     /**
