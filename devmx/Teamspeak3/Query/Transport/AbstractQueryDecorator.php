@@ -62,6 +62,12 @@ abstract class AbstractQueryDecorator implements TransportInterface
     {
         return $this->decorated->sendCommand($command);
     }
+    
+    public function query($name, array $args=Array(),array $options=Array())
+    {
+        return $this->decorated->query($name, $args, $options);
+    }
+    
 
     public function waitForEvent()
     {

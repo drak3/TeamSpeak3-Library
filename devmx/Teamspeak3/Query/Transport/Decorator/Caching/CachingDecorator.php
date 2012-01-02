@@ -45,7 +45,7 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
     {
         if ($this->decorated->isConnected())
         {
-            $this->decorated->connect();
+            $this->decorated->disconnect();
         }
         else
         {

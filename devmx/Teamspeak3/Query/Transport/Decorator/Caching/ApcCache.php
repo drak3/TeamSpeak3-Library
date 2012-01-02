@@ -24,7 +24,7 @@ class ApcCache implements CachingInterface
     private $isAvailable;
     private $cacheTime;
     
-    public function __construct($cachetime)
+    public function __construct($cachetime=180)
     {
         if(extension_loaded("apc"))
         {
