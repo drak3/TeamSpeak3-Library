@@ -166,7 +166,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
     protected function checkParamValues(array $paramvalues) {
         foreach ($paramvalues as $val)
         {
-            if (!is_string($val) && !is_bool( $val))
+            if (!is_string($val) && !is_bool( $val) && !is_int($val))
             {
                 return FALSE;
             }
