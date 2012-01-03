@@ -79,19 +79,16 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
 
         if (!$this->isValidName($cmd->getName()))
         {
-            echo "invalid name\n";
             return FALSE;
         }
 
         if (!$this->areValidOptions($cmd->getOptions()))
         {
-            echo "invalid options\n";
             return FALSE;
         }
 
         if (!$this->areValidParams($cmd->getParameters()))
         {
-            echo "invalid params\n";
             return FALSE;
         }
 
@@ -157,7 +154,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
                 }
             }
             else {
-                if(!is_string($param) && !is_bool($param)) {
+                if(!is_string($param) && !is_bool($param) && !is_int($param)) {
                     return FALSE;
                 }
             }
