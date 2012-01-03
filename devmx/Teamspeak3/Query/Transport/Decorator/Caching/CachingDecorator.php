@@ -30,9 +30,9 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
 
     protected $cache;
 
-    public function __construct(CachingInterface $cache)
+    public function __construct($toDecorate, CachingInterface $cache)
     {
-        parent::___construct($toDecorate);
+        parent::__construct($toDecorate);
         $this->cache = $cache;
     }
 
@@ -45,7 +45,7 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
     {
         if ($this->decorated->isConnected())
         {
-            $this->decorated->connect();
+            $this->decorated->disconnect();
         }
         else
         {

@@ -32,7 +32,7 @@ class LoggingQueryDecorator extends Transport\AbstractQueryDecorator
 
     protected $logger;
 
-    public function __construct(LoggingInterface $logger)
+    public function __construct($toDecorate, LoggingInterface $logger)
     {
         parent::__construct($toDecorate);
         $this->logger = $logger;
