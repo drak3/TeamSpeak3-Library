@@ -1,0 +1,9 @@
+{
+    "name": "devmx/Teamspeak3-Library",
+    "type": "library",
+    "description": "Library using TeamSpeak3-Featuers via PHP",
+    "license": "LGPLv3",
+    "require": {
+        "php": ">=5.3.2"
+    },
+}
