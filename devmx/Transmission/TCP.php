@@ -149,7 +149,7 @@ class TCP implements TransmissionInterface
      * @param int $timeoutMicro
      * @return byte the received data
      */
-    public function receiveLine($length = 4096, $lineEnd = "\n", $timeoutSec = -1, $timeoutMicro = -1)
+    public function receiveLine($length = 4096, $timeoutSec = -1, $timeoutMicro = -1)
     {
         if (!$this->isEstablished()) throw new \RuntimeException("Connection not Established");
 
@@ -168,7 +168,7 @@ class TCP implements TransmissionInterface
 
         \stream_set_timeout($this->stream, $timeoutSec, $timeoutMicro);
 
-        $data = \stream_get_line($this->stream, $length, $lineEnd);
+        $data = \fgets($this->stream, $length);
 
         return $data;
     }
