@@ -56,6 +56,8 @@ class TCP implements TransmissionInterface
      * @var resource 
      */
     protected $stream;
+    
+    protected $isConnected = false;
 
     /**
      *
@@ -235,7 +237,7 @@ class TCP implements TransmissionInterface
     }
 
     public function __clone() {
-        $this->establis();
+        $this->establish();
     }
     
     /**
