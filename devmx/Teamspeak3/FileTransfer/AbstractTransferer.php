@@ -30,7 +30,7 @@ abstract class AbstractTransferer
     /**
      * @var \maxessuff\Transmission\TransmissionInterface
      */
-    protected abstract $transmission;
+    protected $transmission;
 
     /**
      * This function should start the transfer action
