@@ -120,15 +120,23 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         $raw = \trim($raw, "\r\n");
         $parsed = \explode(self::SEPERATOR_RESPONSE, $raw);
 
-        $response['response'] = \array_pop($parsed); //the last element is our response
-        $response['events'] = $parsed; // the rest are events
-        $response['response'] = $this->parseResponse($cmd, $response['response']);
-        foreach ($response['events'] as $key => $event)
-        {
-            $response['events'][$key] = $this->parseEvent($event);
+        $error = \array_pop($parsed); //the last element is our error message
+        $response['response'] = $this->parseResponse($cmd, $error);
+        foreach($parsed as $part) {
+            if(substr($part, 0, strlen($this->getEventPrefix())) === $this->getEventPrefix()) {
+                $response['events'][] = $this->parseEvent($part);
+            }
+            else {
+                $response['response'] = $this->parseResponse($cmd, $part.$error);
+            }
         }
+        
 
         return $response;
+    }
+    
+    protected function getEventPrefix() {
+        return 'notify';
     }
 
     /**
