@@ -92,6 +92,11 @@ class CommandResponse extends Response
                                                 $this->command->getName()));
         }
     }
+
+    public function getErrorValue( $name)
+    {
+        
+    }
     
     
 }

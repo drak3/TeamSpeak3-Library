@@ -41,6 +41,13 @@ class CommandResponseTest extends \PHPUnit_Framework_TestCase
     {
         
     }
+    
+    public function testExtraErrorItems() {
+        $cmd = Command::simpleCommand('foo');
+        $response = new CommandResponse($cmd, array(array('foo'=>'bar')), 0, 'ok', array('extra_message'=>'nothing happened', 'failed_permid'=>123));
+        $this->assertEquals('nothing happened', $response->getErrorValue('extra_message'));
+        $this->assertEquals(123, $response->getErrorValue('failed_permid'));
+    }
 
     /**
 

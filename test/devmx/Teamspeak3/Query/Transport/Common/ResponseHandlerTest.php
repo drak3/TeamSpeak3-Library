@@ -34,6 +34,17 @@ class ResponseHandlerTest extends \PHPUnit_Framework_TestCase
     {
         
     }
+    
+    public function testExtraErrorMessages() {
+        $cmd = new \devmx\Teamspeak3\Query\Command('foo');
+        $raw = "foo=bar\nerror id=32 msg=failed extra_message=what\\sthe\\shell failed_permid=123";
+        $response = $this->handler->getResponseInstance($cmd , $raw);
+        $response = $response['response'];
+        $this->assertEquals(32, $response->getErrorID());
+        $this->assertEquals('failed', $response->getErrorMessage());
+        $this->assertEquals('what the hell', $response->getErrorValue('extra_message'));
+        $this->assertEquals(123, $response->getErrorValue('extra_message'));
+    }
 
     /**
      * @dataProvider unescapeProvider
