@@ -57,7 +57,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetValue()
     {
-       $this->assertEquals($this->items[0]['cid'], $this->object->getValue(0,"cid"));
+       $this->assertEquals($this->items[0]['cid'], $this->object->getValue('cid',0));
     }
 
     /**

@@ -48,6 +48,10 @@ class CommandResponseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('nothing happened', $response->getErrorValue('extra_message'));
         $this->assertEquals(123, $response->getErrorValue('failed_permid'));
     }
+    
+    public function test0Shortcut() {
+        $this->assertEquals(1,$this->response['foo']);
+    }
 
     /**
 
