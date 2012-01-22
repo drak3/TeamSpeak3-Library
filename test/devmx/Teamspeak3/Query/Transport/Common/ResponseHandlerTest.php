@@ -43,7 +43,7 @@ class ResponseHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(32, $response->getErrorID());
         $this->assertEquals('failed', $response->getErrorMessage());
         $this->assertEquals('what the hell', $response->getErrorValue('extra_message'));
-        $this->assertEquals(123, $response->getErrorValue('extra_message'));
+        $this->assertEquals(123, $response->getErrorValue('failed_permid'));
     }
 
     /**

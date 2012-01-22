@@ -91,7 +91,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * The regular expression for describing a response
      * @var string 
      */
-    protected $responseRegex = "/^(.*?[[:blank:]\r\n]?)error id=([0-9]*) msg=([a-zA-Z\\\\]*)( failed_permid=([0-9]*))?$/";
+    protected $responseRegex = "/^(.*?[[:blank:]\r\n]?)(error (id=[0-9]* msg=[a-zA-Z\\\\]*.*))$/";
 
     /**
      * Replaces all masked characters with their regular replacements (e.g. \\ with \)
@@ -151,9 +151,11 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         $parsed = Array();
 
         preg_match($this->responseRegex, $response, $parsed);
-
-        $errorID = (int) $parsed[2]; // parsed[2] holds the error id
-        $errorMessage = $this->unEscape($parsed[3]); //parsed[4] hold the error string
+        var_dump($parsed);
+        $error = $this->parseData($parsed[3]);
+        var_dump($error);
+        $errorID = $error[0]['id'];
+        $errorMessage = $error[0]['msg'];
 
         if ($parsed[1] !== '') // parsed[1] holds the data if it is a fetching command
         {
@@ -165,17 +167,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         }
 
 
-        if (isset($parsed[4])) //parsed[4] holds the whole key/value pair of the extramessage
-        {
-            $extra = $parsed[5]; //parsed[5] holds the pure extramessage
-        }
-        else
-        {
-            $extra = '';
-        }
-
-
-        $responseClass = new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $extra);
+        $responseClass = new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $error[0]);
         $responseClass->setRawResponse($response);
         return $responseClass;
     }
