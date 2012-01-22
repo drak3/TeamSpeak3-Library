@@ -29,7 +29,7 @@ class CommandResponseTest extends \PHPUnit_Framework_TestCase
     {
         $this->command = Command::simpleCommand("asdf", Array("foo"=>"bar"), Array("fnord"));
         $this->response = new CommandResponse($this->command, Array(Array("foo"=>1, "bar"=>"asdf"), Array("foo"=>2, "bar"=>"fnord")),
-                                            12, "error!!", "you're dumb");
+                                            12, "error!!", array('extra_message'=>"you're dumb"));
 
     }
 
