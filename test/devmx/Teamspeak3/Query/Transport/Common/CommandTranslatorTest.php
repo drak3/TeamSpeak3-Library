@@ -29,17 +29,9 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    
     /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-        
-    }
-
-    /**
-     * @todo Implement testTranslate().
+     * tests if command with simple arguments is translated correctly
      */
     public function testTranslateArguments()
     {

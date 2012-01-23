@@ -64,7 +64,7 @@ class ResponseHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @todo Implement testGetResponseInstance().
+     * tests if responses with just error message in it are parsed correctly
      */
     public function testGetResponseInstance_ErrorOnly()
     {

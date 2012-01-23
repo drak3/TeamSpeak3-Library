@@ -27,17 +27,9 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
         $this->object->setItems($this->items);
     }
 
+    
     /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-        
-    }
-
-    /**
-     * @todo Implement testGetItems().
+     * tests if items given in constructor are returned right
      */
     public function testGetItems()
     {
@@ -45,7 +37,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @todo Implement testGetItem().
+     * tests if item given in constructor is returned right
      */
     public function testGetItem()
     {
@@ -53,7 +45,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @todo Implement testGetValue().
+     * tests if a value given in the constructor is returned right
      */
     public function testGetValue()
     {
@@ -61,7 +53,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @todo Implement testToAssoc().
+     * tests if response is converted into assocative array correctly
      */
     public function testToAssoc()
     {

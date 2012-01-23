@@ -11,14 +11,10 @@ require_once dirname( __FILE__ ) . '/../../../../devmx/Teamspeak3/FileTransfer/U
 class UploaderTest extends \PHPUnit_Framework_TestCase
 {
 
-    /**
-     * @var Uploader
-     */
-    protected $object;
 
    
     /**
-     * @todo Implement testTransfer().
+     *Test whole transfer proccess 
      */
     public function testTransfer()
     {

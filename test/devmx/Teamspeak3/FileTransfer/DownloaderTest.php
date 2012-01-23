@@ -14,7 +14,7 @@ class DownloaderTest extends \PHPUnit_Framework_TestCase
     
 
     /**
-     * @todo Implement testTransfer().
+     * Test whole transfer process
      */
     public function testTransfer()
     {
