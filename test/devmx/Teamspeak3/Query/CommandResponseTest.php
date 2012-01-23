@@ -33,25 +33,17 @@ class CommandResponseTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-        
-    }
+
     
     public function testExtraErrorItems() {
         $cmd = Command::simpleCommand('foo');
         $response = new CommandResponse($cmd, array(array('foo'=>'bar')), 0, 'ok', array('extra_message'=>'nothing happened', 'failed_permid'=>123));
         $this->assertEquals('nothing happened', $response->getErrorValue('extra_message'));
         $this->assertEquals(123, $response->getErrorValue('failed_permid'));
+        $this->assertEquals('sthelse', $response->getErrorValue('sdfsdfsdf', 'sthelse'));
     }
     
-    public function test0Shortcut() {
-        $this->assertEquals(1,$this->response['foo']);
-    }
+    
 
     /**
 

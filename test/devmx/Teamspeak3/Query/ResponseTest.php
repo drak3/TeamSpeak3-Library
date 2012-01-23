@@ -42,6 +42,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     public function testGetItem()
     {
         $this->assertEquals($this->items[0], $this->object->getItem(0));
+        $this->assertEquals('sthelse', $this->object->getItem(1234,'sthelse'));
     }
 
     /**
@@ -50,6 +51,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     public function testGetValue()
     {
        $this->assertEquals($this->items[0]['cid'], $this->object->getValue('cid',0));
+       $this->assertEquals('sthelse', $this->object->getValue('cdf',1234,'sthelse'));
     }
 
     /**
@@ -60,6 +62,38 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
        $assoc = Array(1 => Array("cid" => 1, "name"=>"foo"), 2 => Array("cid" => 2, "name" => "bar"));
        $this->assertEquals($assoc, $this->object->toAssoc("cid"));
 
+    }
+    
+    public function testIterator() {
+        foreach($this->object as $key=>$value) {
+            $this->assertEquals($this->items[$key], $value);
+        }
+    }
+    
+    public function testCount() {
+        $this->assertEquals(count($this->items), count($this->object));
+    }
+    
+    public function testIneffectiveSet() {
+        unset($this->object[1]);
+        $this->assertEquals($this->items[1],$this->object[1]);
+        $this->object[1] = 'asdf';
+        $this->assertEquals($this->items[1],$this->object[1]);
+    }
+    
+    public function testOffsetExists() {
+        $this->assertTrue(isset($this->object[1]));
+        $this->assertFalse(isset($this->object[123]));
+    }
+    
+    public function test0Shortcut() {
+        $this->assertTrue(isset($this->object['cid']));
+        $this->assertEquals(1,$this->object['cid']);
+    }
+    
+    public function testRawResponse() {
+        $this->object->setRawResponse('foo bar baz');
+        $this->assertEquals('foo bar baz', $this->object->getRawResponse());
     }
 
     
