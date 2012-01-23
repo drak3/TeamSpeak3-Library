@@ -35,10 +35,10 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testTranslateArguments()
     {
-        $cmd = new Command("use", Array("port"=>array(9987)));
+        $cmd = new Command("use", Array("port"=>9987));
         $this->assertEquals("use port=9987\n",$this->translator->translate($cmd));
         
-        $cmd = new Command("asdf", Array("foo"=>array("bar"), "asdf"=>array(123)));
+        $cmd = new Command("asdf", Array("foo"=>"bar", "asdf"=>123));
         $this->assertEquals("asdf foo=bar asdf=123\n", $this->translator->translate($cmd));
     }
     
@@ -69,6 +69,14 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
     public function testIsValidInvalidCommands($cmd)
     {
         $this->assertFalse($this->translator->isValid($cmd));
+    }
+    
+    /**
+     *@dataProvider invalidCommandProvider
+     *@expectedException \InvalidArgumentException 
+     */
+    public function testExceptionOnInvalidCommand($cmd) {
+        $this->translator->translate($cmd);
     }
     
     
