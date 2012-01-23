@@ -38,9 +38,9 @@ class CommandTest extends \PHPUnit_Framework_TestCase
    
 
    public function testEquals_orderIndependence() {
-        $cmd1 = new Command("foo", Array("foo" => true, "asdf" => true), Array("foo" => Array("bar"), "bar" => Array("foo")) );
+        $cmd1 = new Command("foo", Array("foo" => "bar", "bar" => "foo"), Array("foo", "asdf") );
          
-        $cmd2 = new Command("foo", Array("asdf" => true, "foo" => true), Array("bar" => Array("foo"), "foo" => Array("bar")) );
+        $cmd2 = new Command("foo", Array("bar" => "foo", "foo" => "bar"), Array("asdf", "foo") );
         
         $this->assertTrue($cmd1->equals($cmd2));
              
@@ -48,26 +48,32 @@ class CommandTest extends \PHPUnit_Framework_TestCase
     
     public function testEquals_otherOptionName() {
         $cmd1 = new Command("foo",
-                            Array("foo"=>TRUE,"asdf"=>TRUE), 
-                            Array("foo"=>"bar", "bar"=>"foo"));
+                            Array(), 
+                            Array("foo", "bar"));
         
         $cmd2 = new Command("foo", 
-                            Array("foo"=>TRUE, "asdfg"=>TRUE), 
-                            Array("foo"=>"bar", "bar"=>"foo"));
+                            Array(), 
+                            Array("foo", "barz"));
         $this->assertFalse($cmd1->equals($cmd2));
     }
     
     
     public function testEquals_additionalOption() {
         $cmd1 = new Command("foo",
-                            Array("foo"=>TRUE,"asdf"=>TRUE), 
-                            Array("foo"=>"bar", "bar"=>"foo"));
+                            Array(), 
+                            Array("foo", "bar"));
         
-        $cmd3 = new Command("foo", 
-                            Array("foo"=>TRUE, "asdfg"=>TRUE, "asdf"=>TRUE), 
-                            Array("foo"=>"bar", "bar"=>"foo"));
+        $cmd2 = new Command("foo", 
+                            Array(), 
+                            Array("foo", "bar", "asdf"));
         
-        $this->assertFalse($cmd1->equals($cmd3));
+        $this->assertFalse($cmd1->equals($cmd2));
+    }
+    
+    public function testEquals_Name() {
+        $cmd1 = new Command('foo');
+        $cmd2 = new Command('bar');
+        $this->assertFalse($cmd1->equals($cmd2));
     }
 }
 
