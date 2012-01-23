@@ -26,14 +26,6 @@ class ResponseHandlerTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-        
-    }
     
     public function testExtraErrorMessages() {
         $cmd = new \devmx\Teamspeak3\Query\Command('foo');
@@ -142,7 +134,7 @@ EOF;
     }
 
     /**
-     * @todo Implement testGetEventInstances().
+     * tests response with event instances only
      */
     public function testGetEventInstances()
     {
@@ -168,6 +160,13 @@ EOF;
         $message .= "\r\n";
         $this->assertTrue($this->handler->isWelcomeMessage($message));
         $this->assertFalse($this->handler->isWelcomeMessage("TS3\n"));
+    }
+    
+    public function testIsCompleteEvent() {
+        $incompleteEvent = "notifysomething this=that notyetfinished";
+        $completeEvent = "notifysomething this=that finished=1234\n";
+        $this->assertFalse($this->handler->isCompleteEvent($incompleteEvent));
+        $this->assertTrue($this->handler->isCompleteEvent($completeEvent));
     }
 
 }
