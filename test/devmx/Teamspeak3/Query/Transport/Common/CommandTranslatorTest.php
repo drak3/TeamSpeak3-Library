@@ -88,10 +88,15 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
             Array(new Command("as df")),
             Array(new Command("foo", array("fo\\bar"=>"bar"))),
             Array(new Command("foo", array(), array("fo o"))),
+            Array(new Command('foo', array('foo'=>array(new \DateTime(), 123.3)))),
+            Array(new Command('foo', array('foo'=>new \DateTime()))),
         );
     }
     
-    
+    public function testBooleanToIntTranslation() {
+        $cmd = new Command('foo', array('foo'=>true, 'bar'=>false));
+        $this->assertEquals("foo foo=1 bar=0\n", $this->translator->translate($cmd));
+    }
 
 }
 
