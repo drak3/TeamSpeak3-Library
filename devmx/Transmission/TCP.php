@@ -203,7 +203,7 @@ class TCP implements TransmissionInterface
     {
         if (!$this->isEstablished()) throw new \RuntimeException("Connection not Established");
         $data = '';
-        while (strlen($data) < $lenght)
+        while (strlen($data) < $length)
         {
             $data .= \fgets($this->stream, $length);
         }
