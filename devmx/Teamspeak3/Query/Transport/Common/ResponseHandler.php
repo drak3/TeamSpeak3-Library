@@ -290,7 +290,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     /**
      * Parses Events coming from the query
      * @param string $raw
-     * @return \devmx\Teamspeak3\Query\Response 
+     * @return array array of \devmx\Teamspeak3\Query\Event
      */
     public function getEventInstances($raw)
     {

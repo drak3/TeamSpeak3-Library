@@ -146,11 +146,15 @@ EOF;
      */
     public function testGetEventInstances()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+        $events = <<<'EOF'
+notifyservermoved cid=114 foo=bar
+notifysomeothercrap asdfg=345 bar=foo
+EOF;
+        $parsedEvents = $this->handler->getEventInstances($events);
+        $this->assertEquals(2,count($parsedEvents));
+        $this->assertInstanceOf('\devmx\Teamspeak3\Query\Event', $parsedEvents[0], $parsedEvents[1]);
+        $this->assertEquals(114, $parsedEvents[0]->getValue('cid'));
+        $this->assertEquals('notifysomeothercrap', $parsedEvents[1]->getReason());
     }
 
     
