@@ -30,6 +30,7 @@ class Command
 
     /**
      * A simple builder which drops support for multiple values of params
+     * @deprecated
      * @param string $name
      * @param array $options
      * @param array $params 
