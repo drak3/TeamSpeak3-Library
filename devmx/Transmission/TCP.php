@@ -205,7 +205,7 @@ class TCP implements TransmissionInterface
         $data = '';
         while (strlen($data) < $lenght)
         {
-            $data .= \fgets($this->stream);
+            $data .= \fgets($this->stream, $length);
         }
         return $data;
     }
