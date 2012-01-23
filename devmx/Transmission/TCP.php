@@ -160,7 +160,7 @@ class TCP implements TransmissionInterface
 
         if ($timeoutMicro < 0)
         {
-            $timoutMicro = $this->defaultTimeoutMicro;
+            $timeoutMicro = $this->defaultTimeoutMicro;
         }
 
         if ($timeoutSec < 0)
@@ -225,7 +225,7 @@ class TCP implements TransmissionInterface
 
         if ($timeoutMicro < 0)
         {
-            $timoutMicro = $this->defaultTimeoutMicro;
+            $timeoutMicro = $this->defaultTimeoutMicro;
         }
 
         if ($timeoutSec < 0)
