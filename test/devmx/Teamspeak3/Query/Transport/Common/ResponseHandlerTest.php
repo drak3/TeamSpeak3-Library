@@ -168,6 +168,19 @@ EOF;
         $this->assertFalse($this->handler->isCompleteEvent($incompleteEvent));
         $this->assertTrue($this->handler->isCompleteEvent($completeEvent));
     }
+    
+    public function testSpecialValues() {
+        $cmd = new \devmx\Teamspeak3\Query\Command('foo');
+        
+        $toParse = "foo= bar=true asdf=false error id=0 msg=ok";
+        
+        $response = $this->handler->getResponseInstance($cmd, $toParse);
+        $response = $response['response'];
+        
+        $parsed = array(array('foo'=>NULL, 'bar'=>true, 'asdf'=>false));
+        
+        $this->assertEquals($parsed, $response->getItems());
+    }
 
 }
 
