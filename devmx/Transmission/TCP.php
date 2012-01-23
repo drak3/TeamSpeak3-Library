@@ -199,12 +199,17 @@ class TCP implements TransmissionInterface
      * @param int $lenght
      * @return string 
      */
-    public function receiveData($length = 4096)
+    public function receiveData($length = 4096, $maxTries=5, $timeoutSec=-1, $timeoutMicro=-1)
     {
         if (!$this->isEstablished()) throw new \RuntimeException("Connection not Established");
         $data = '';
+        $tries = 0;
         while (strlen($data) < $length)
         {
+            $tries++;
+            if($tries > $maxTries) {
+                throw new \RuntimeException('Max tries exceeded');
+            }
             $data .= \fgets($this->stream, $length);
         }
         return $data;
