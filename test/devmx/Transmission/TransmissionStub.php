@@ -31,6 +31,7 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
     protected $toReceive = '';
     protected $received = '';
     protected $errorOnDelay = false;
+    protected static $cloned = 0;
     
     public function construct($host, $port) {
         $this->host = $host;
@@ -91,10 +92,10 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
             $ret = $lines[0]."\n";
         }
         else {
-            $ret = \substr($lines[0],0, $length-1)."\n";
+            $ret = \substr($lines[0],0, $length-1);
         }
         $count = 0;
-        $this->toReceive = \preg_replace(\preg_quote($ret,'/'),'', $this->toReceive, 1, $count);
+        $this->toReceive = \preg_replace('/'.\preg_quote($ret,'/').'/m','', $this->toReceive, 1, $count);
         if($count !== 1) {
             throw new \LogicException('string is not found, BUG');
         }
@@ -130,8 +131,9 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
             throw new \BadMethodCallException('Cannot receive, Connection not established');
         }
         $this->received .= $this->toReceive;
+        $ret = $this->toReceive;
         $this->toReceive = '';
-        return $this->toReceive;
+        return $ret;
     }
 
     /**
@@ -158,6 +160,14 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
 
     public function close() {
         $this->isEstablished = FALSE;
+    }
+    
+    public function __clone() {
+        self::$cloned++;
+    }
+    
+    public static function cloned() {
+        return self::$cloned;
     }
     
 }
