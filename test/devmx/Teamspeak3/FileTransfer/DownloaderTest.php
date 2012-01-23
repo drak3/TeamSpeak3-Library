@@ -19,10 +19,11 @@ class DownloaderTest extends \PHPUnit_Framework_TestCase
     public function testTransfer()
     {
        $transmission = new TransmissionStub('foo', 30033);
-       $toRead = "this is a file\n with newlines in it \n";
+       $toRead = "this is a file\n with newlines in it \n".  str_repeat( 'asdf', 5124);
        $downloader = new Downloader($transmission, 'foobar', strlen($toRead));
        $this->assertEquals('', $transmission->getReceived());
        $this->assertEquals('', $transmission->getSentData());
+       $this->assertFalse($transmission->isEstablished());
        $transmission->setToReceive($toRead);
        $file = $downloader->transfer();
        $this->assertEquals($toRead, $file);
