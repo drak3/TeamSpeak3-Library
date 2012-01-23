@@ -257,7 +257,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      */
     public function isCompleteEvent($raw)
     {
-        if (\trim($raw) !== '')
+        if ($raw[strlen($raw)-1] === self::SEPERATOR_RESPONSE)
         {
             return TRUE;
         }
