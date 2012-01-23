@@ -29,6 +29,11 @@ class CommandTest extends \PHPUnit_Framework_TestCase
        $this->assertEquals(array('foo'=>array('bar',123), 'asdf'=>array(123,'foo')), $cmd->getParameters());
    }
    
+   public function testGetParamElse() {
+       $cmd = new Command('foo');
+       $this->assertEquals('sthelse', $cmd->getParameter('foo', 'sthelse'));
+   }
+   
    public function testGetOption() {
        $cmd = new Command('foo', array(), array('a','b','c'));
        $this->assertTrue($cmd->optionIsSet('a'));
@@ -73,6 +78,12 @@ class CommandTest extends \PHPUnit_Framework_TestCase
     public function testEquals_Name() {
         $cmd1 = new Command('foo');
         $cmd2 = new Command('bar');
+        $this->assertFalse($cmd1->equals($cmd2));
+    }
+    
+    public function testEquals_AdditionalParam() {
+        $cmd1 = new Command('foo', array('a'=>'b'));
+        $cmd2 = new Command('foo', array('a'=>'b', 'c'=>'d'));
         $this->assertFalse($cmd1->equals($cmd2));
     }
 }
