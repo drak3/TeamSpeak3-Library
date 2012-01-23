@@ -183,8 +183,6 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         $reason = $this->parseValue($event[0]); //the eventtype or eventreason is a single word at the beginnning of the event
         $event = $event[1];
         $data = $this->parseData($event); //the rest is a single block of data
-        $data = $data[0]; //because we have just one block (no |) we can use data[0]
-
 
         $eventClass = new \devmx\Teamspeak3\Query\Event($reason, $data);
         $eventClass->setRawResponse($event);

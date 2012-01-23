@@ -130,7 +130,7 @@ EOF;
         $parsed = $this->handler->getResponseInstance($cmd , $raw);
         $this->assertEquals(1, count($parsed['events']));
         $event = $parsed['events'][0];
-        $this->assertEquals(array("cfid"=>12, "ctid"=>23), $event->getItems());
+        $this->assertEquals(array(array("cfid"=>12, "ctid"=>23)), $event->getItems());
     }
     
 
