@@ -71,7 +71,6 @@ class ResponseHandlerTest extends \PHPUnit_Framework_TestCase
         $cmd = new \devmx\Teamspeak3\Query\Command('foo');
         $raw = "error id=0 msg=ok";
         $parsed = $this->handler->getResponseInstance($cmd , $raw);
-        var_dump($parsed);
         $this->assertTrue(isset($parsed['response']));
         $resp = $parsed['response'];
         $this->assertEquals(0, $resp->getErrorID());

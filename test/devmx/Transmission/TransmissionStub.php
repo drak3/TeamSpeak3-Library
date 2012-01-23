@@ -138,8 +138,6 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
      * waits until given datalength is sent and returns data
      */
     public function receiveData($length = 4096) {
-        echo "in receive";
-        flush();
         if($this->errorOnDelay) {
             throw new \LogicException('This function causes delay, not allowed');
         }

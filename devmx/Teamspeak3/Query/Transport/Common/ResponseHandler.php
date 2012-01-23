@@ -151,9 +151,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         $parsed = Array();
 
         preg_match($this->responseRegex, $response, $parsed);
-        var_dump($parsed);
         $error = $this->parseData($parsed[3]);
-        var_dump($error);
         $errorID = $error[0]['id'];
         $errorMessage = $error[0]['msg'];
 
