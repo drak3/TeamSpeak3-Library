@@ -159,7 +159,8 @@ EOF;
         $raw = <<<'EOF'
 notifysomething foo=bar asdf=jklö
 notifybar asdf=sdff fnord=asd
-foo=bar asdf=sdg|foo=bar2 asdf=sdg2 error id=0 msg=ok
+foo=bar asdf=sdg|foo=bar2 asdf=sdg2 
+error id=0 msg=ok
 notifybar asdf=sdff fnord=asd
 
 EOF;
@@ -168,6 +169,7 @@ EOF;
         $this->assertCount(2, $parsed);
         $this->assertTrue(isset($parsed['events']));
         $this->assertCount(3, $parsed['events']);
+        $this->assertEquals('ok', $parsed['response']->getErrorMessage());
     }
 
     public function testIsWelcomeMessage()
