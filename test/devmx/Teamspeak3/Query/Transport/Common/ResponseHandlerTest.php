@@ -188,6 +188,7 @@ EOF;
         $completeEvent = "notifysomething this=that finished=1234\n";
         $this->assertFalse($this->handler->isCompleteEvent($incompleteEvent));
         $this->assertTrue($this->handler->isCompleteEvent($completeEvent));
+        $this->assertFalse($this->handler->isCompleteEvent(''));
     }
     
     public function testSpecialValues() {
