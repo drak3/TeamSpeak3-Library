@@ -183,7 +183,7 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
     }
     
     public function query($cmdname, array $params=Array(),array $options=Array()) {
-        return $this->sendCommand(Command::simpleCommand($cmdname , $params , $options));
+        return $this->sendCommand(new Command($cmdname , $params , $options));
     }
     
     /**

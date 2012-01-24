@@ -26,7 +26,7 @@ class CommandResponseTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->command = Command::simpleCommand("asdf", Array("foo"=>"bar"), Array("fnord"));
+        $this->command = new Command("asdf", Array("foo"=>"bar"), Array("fnord"));
         $this->response = new CommandResponse($this->command, Array(Array("foo"=>1, "bar"=>"asdf"), Array("foo"=>2, "bar"=>"fnord")),
                                             12, "error!!", array('extra_message'=>"you're dumb"));
 
@@ -35,7 +35,7 @@ class CommandResponseTest extends \PHPUnit_Framework_TestCase
 
     
     public function testExtraErrorItems() {
-        $cmd = Command::simpleCommand('foo');
+        $cmd = new Command('foo');
         $response = new CommandResponse($cmd, array(array('foo'=>'bar')), 0, 'ok', array('extra_message'=>'nothing happened', 'failed_permid'=>123));
         $this->assertEquals('nothing happened', $response->getErrorValue('extra_message'));
         $this->assertEquals(123, $response->getErrorValue('failed_permid'));

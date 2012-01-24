@@ -81,9 +81,9 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
     
     public function invalidCommandProvider() {
         return Array (
-            Array(Command::simpleCommand(new \DateTime())),
-            Array(Command::simpleCommand("!asddf")),
-            Array(Command::simpleCommand("asdf", array("foo" => "bar"), Array(false) )),
+            Array(new Command(new \DateTime())),
+            Array(new Command("!asddf")),
+            Array(new Command("asdf", array("foo" => "bar"), Array(false) )),
             Array(new Command("as df")),
             Array(new Command("foo", array("fo\\bar"=>"bar"))),
             Array(new Command("foo", array(), array("fo o"))),
