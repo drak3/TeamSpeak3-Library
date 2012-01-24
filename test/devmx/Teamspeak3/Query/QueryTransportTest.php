@@ -125,7 +125,7 @@ EOF;
         $events = $this->transport->getAllEvents();
         $this->assertTrue(is_array($events));
         $this->assertCount(2, $events);
-        $this->assertEquals('sdff', $events[1]->getValue('asdf',1));
+        $this->assertEquals('sdff', $events[1]->getValue('asdf'));
         $this->assertEquals('notifyfoo', $events[0]->getReason());
     }
     
@@ -150,20 +150,20 @@ EOF;
      */
     public function testGetAllEvents_DryRun() {
         $this->connectTransport();
-        //also cover case where a event occurs after a response but is also catched
+        //also cover case where a event occurs after a response which should not be catched
         $raw = <<<'EOF'
 notifysomething foo=bar asdf=jklö
 notifybar asdf=sdff fnord=asd
 foo=bar asdf=sdg|foo=bar2 asdf=sdg2 error id=0 msg=ok
-notifybar asdf=sdff fnord=asd
+notifybar asdf=sdfff fnord=asda
 
 EOF;
         $this->transmission->setToReceive($raw);
         $this->assertInstanceOf('\devmx\Teamspeak3\Query\CommandResponse',$this->transport->sendCommand(new Command('foo')));
         $this->transmission->close();
         $events = $this->transport->getAllEvents(true);
-        $this->assertCount(3, $events);
-        $this->assertEquals(array(array('foo'=>'bar', 'asdf'=>'jklö')), $events[3]->getItems());
+        $this->assertCount(2, $events);
+        $this->assertEquals(array(array('asdf'=>'sdff', 'fnord'=>'asd')), $events[1]->getItems());
     }
 
     /**
@@ -195,7 +195,7 @@ EOF;
         $events = $this->transport->waitForEvent();
         $this->assertTrue(is_array($events));
         $this->assertCount(1, $events);
-        $this->assertEquals('sdf', $events[0]->getValue('sdfg',1));
+        $this->assertEquals('sdf', $events[0]->getValue('sdfg'));
         $this->assertEquals('notifyfoo', $events[0]->getReason());
     }
 
