@@ -30,7 +30,7 @@ class Command
 
     /**
      * A simple builder which drops support for multiple values of params
-     * @deprecated
+     * @deprecated currently its just a alias for new Command();
      * @param string $name
      * @param array $options
      * @param array $params 
@@ -38,12 +38,7 @@ class Command
      */
     public static function simpleCommand($cmdname, array $params = Array(), array $options = Array())
     {
-        $pars = Array();
-        foreach ($params as $name => $value)
-        {
-            $pars[$name] = Array($value);
-        }
-        return new Command($cmdname, $pars, $options);
+        return new Command($cmdname, $params, $options);
     }
 
     /**
