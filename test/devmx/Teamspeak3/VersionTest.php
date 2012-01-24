@@ -2,7 +2,6 @@
 
 namespace devmx\Teamspeak3;
 
-require_once dirname( __FILE__ ) . '/../../../devmx/Teamspeak3/Version.php';
 
 /**
  * Test class for Version.

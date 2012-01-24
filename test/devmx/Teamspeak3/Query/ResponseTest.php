@@ -2,7 +2,6 @@
 
 namespace devmx\Teamspeak3\Query;
 
-require_once dirname( __FILE__ ) . '/../../../../devmx/Teamspeak3/Query/Response.php';
 
 /**
  * Test class for Response.

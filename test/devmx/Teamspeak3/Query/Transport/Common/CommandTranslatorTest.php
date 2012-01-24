@@ -3,8 +3,7 @@
 namespace devmx\Teamspeak3\Query\Transport\Common;
 use devmx\Teamspeak3\Query\Command;
 
-require_once dirname( __FILE__ ) . '/../../../../../../devmx/Teamspeak3/Query/Transport/Common/CommandTranslator.php';
-
+ 
 
 
 /**

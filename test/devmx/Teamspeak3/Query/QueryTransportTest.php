@@ -2,8 +2,7 @@
 
 namespace devmx\Teamspeak3\Query;
 use devmx\Test\Transmission\TransmissionStub;
-require_once dirname( __FILE__ ) . '/../../../../devmx/Teamspeak3/Query/QueryTransport.php';
-
+ 
 class TestTranslator extends Transport\Common\CommandTranslator {
     
 }
