@@ -8,4 +8,4 @@ Dependencies:
 License:
     This software is licensed under LGPLv3, see license.txt for further information
 Travis build status:
-https://secure.travis-ci.org/devMX/TeamSpeak3-Framework.png
+[![Build Status](https://secure.travis-ci.org/devMX/TeamSpeak3-Framework.png)](http://travis-ci.org/devMX/TeamSpeak3-Framework)
