@@ -150,7 +150,20 @@ EOF;
         $this->assertEquals('notifysomeothercrap', $parsedEvents[1]->getReason());
     }
 
-    
+    public function testGetResponseInstance_EventAfterCommand() {
+        $raw = <<<'EOF'
+notifysomething foo=bar asdf=jklö
+notifybar asdf=sdff fnord=asd
+foo=bar asdf=sdg|foo=bar2 asdf=sdg2 error id=0 msg=ok
+notifybar asdf=sdff fnord=asd
+
+EOF;
+        $cmd = new \devmx\Teamspeak3\Query\Command('foo');
+        $parsed = $this->handler->getResponseInstance($cmd, $raw);
+        $this->assertCount(2, $parsed);
+        $this->assertTrue(isset($parsed['events']));
+        $this->assertCount(3, $parsed['events']);
+    }
 
     public function testIsWelcomeMessage()
     {
