@@ -29,7 +29,7 @@ class ResponseHandlerTest extends \PHPUnit_Framework_TestCase
     
     public function testExtraErrorMessages() {
         $cmd = new \devmx\Teamspeak3\Query\Command('foo');
-        $raw = "foo=bar\nerror id=32 msg=failed extra_message=what\\sthe\\shell failed_permid=123";
+        $raw = "foo=bar\nerror id=32 msg=failed extra_message=what\\sthe\\shell failed_permid=123\n";
         $response = $this->handler->getResponseInstance($cmd , $raw);
         $response = $response['response'];
         $this->assertEquals(32, $response->getErrorID());
@@ -61,7 +61,7 @@ class ResponseHandlerTest extends \PHPUnit_Framework_TestCase
     public function testGetResponseInstance_ErrorOnly()
     {
         $cmd = new \devmx\Teamspeak3\Query\Command('foo');
-        $raw = "error id=0 msg=ok";
+        $raw = "error id=0 msg=ok\n";
         $parsed = $this->handler->getResponseInstance($cmd , $raw);
         $this->assertTrue(isset($parsed['response']));
         $resp = $parsed['response'];
@@ -95,14 +95,17 @@ class ResponseHandlerTest extends \PHPUnit_Framework_TestCase
         $raw1 = <<<'EOF'
 foo=bar bar=foo asdf=jklö
 error id=0 msg=ok
+
 EOF;
         $raw2 = <<<'EOF'
 foo=bar bar=foo asdf=jklö|foo=bar2 bar=foo asdf=jklö2
 error id=0 msg=ok
+
 EOF;
         $raw3 = <<<'EOF'
 foo=bar\sf bar=foo\n\t asdf=jklö|foo=bar2 bar=foo\ps asdf=jklö2
 error id=0 msg=ok
+
 EOF;
         return array(
           array($raw1, array(array("foo"=>"bar", "bar"=>"foo", "asdf"=>"jklö"))),
@@ -118,6 +121,7 @@ EOF;
 notifycliententerview cfid=12 ctid=23
 client=foo asdf=bar
 error id=0 msg=ok
+
 EOF;
         $parsed = $this->handler->getResponseInstance($cmd , $raw);
         $this->assertEquals(1, count($parsed['events']));
@@ -131,6 +135,7 @@ EOF;
     {
         $this->assertTrue($this->handler->isCompleteResponse('This\sis\sa\sresponse'."\n".'error id=0 msg=ok'."\n"));
         $this->assertFalse($this->handler->isCompleteResponse('This\sis\sa\sresponse'."\n".'error\sid=0\smsg=ok'."\n"));
+        $this->assertFalse($this->handler->isCompleteResponse("Test\nerror id=0 msg=ok"));
     }
 
     /**

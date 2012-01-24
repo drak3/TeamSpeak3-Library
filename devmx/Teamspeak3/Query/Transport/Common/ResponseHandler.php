@@ -92,6 +92,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @var string 
      */
     protected $responseRegex = "/^(.*?[[:blank:]\r\n]?)(error (id=[0-9]* msg=[a-zA-Z\\\\]*.*))$/";
+    protected $errorRegex = "/error id=[0-9]* msg=[a-zA-Z\\\\]*/";
 
     /**
      * Replaces all masked characters with their regular replacements (e.g. \\ with \)
@@ -120,7 +121,14 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         $raw = \trim($raw, "\r\n");
         $parsed = \explode(self::SEPERATOR_RESPONSE, $raw);
 
-        $error = \array_pop($parsed); //the last element is our error message
+        //find error message
+        foreach($parsed as $key=>$value) {
+            if(preg_match($this->errorRegex, $value)) {
+                $error = $value;
+                unset($parsed[$key]);
+                break;
+            }
+        }
         $response['response'] = $this->parseResponse($cmd, $error);
         foreach($parsed as $part) {
             if(substr($part, 0, strlen($this->getEventPrefix())) === $this->getEventPrefix()) {
@@ -178,9 +186,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     protected function parseEvent($event)
     {
         $reason = '';
-        var_dump($event);
         $event = explode(self::SEPERAOR_DATA, $event, 2);
-        var_dump($event);
         $reason = $this->parseValue($event[0]); //the eventtype or eventreason is a single word at the beginnning of the event
         $event = $event[1];
         $data = $this->parseData($event); //the rest is a single block of data
@@ -276,7 +282,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      */
     public function isCompleteResponse($raw)
     {
-        if (\preg_match("/error id=[0-9]* msg=/", $raw))
+        if (\preg_match($this->errorRegex, $raw) && $raw[strlen($raw)-1] == "\n")
         {
             return TRUE;
         }
