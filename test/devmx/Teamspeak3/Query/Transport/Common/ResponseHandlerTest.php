@@ -141,6 +141,7 @@ EOF;
         $events = <<<'EOF'
 notifyservermoved cid=114 foo=bar
 notifysomeothercrap asdfg=345 bar=foo
+
 EOF;
         $parsedEvents = $this->handler->getEventInstances($events);
         $this->assertEquals(2,count($parsedEvents));

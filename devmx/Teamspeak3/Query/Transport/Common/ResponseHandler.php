@@ -178,8 +178,9 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     protected function parseEvent($event)
     {
         $reason = '';
-        $eventObject = NULL;
+        var_dump($event);
         $event = explode(self::SEPERAOR_DATA, $event, 2);
+        var_dump($event);
         $reason = $this->parseValue($event[0]); //the eventtype or eventreason is a single word at the beginnning of the event
         $event = $event[1];
         $data = $this->parseData($event); //the rest is a single block of data
@@ -292,7 +293,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      */
     public function getEventInstances($raw)
     {
-        $events = \explode(self::SEPERATOR_RESPONSE, $raw);
+        $events = \explode(self::SEPERATOR_RESPONSE, rtrim($raw));
         foreach ($events as $rawevent)
         {
             $ret[] = $this->parseEvent($rawevent);
