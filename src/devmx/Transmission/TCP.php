@@ -58,6 +58,8 @@ class TCP implements TransmissionInterface
     protected $stream;
     
     protected $isConnected = false;
+    
+    protected $maxTries = -1;
 
     /**
      *
@@ -192,6 +194,14 @@ class TCP implements TransmissionInterface
         \stream_set_blocking($this->stream, self::BLOCKING);
         return $data;
     }
+    
+    public function setMaxTries($tries) {
+        $this->maxTries = $tries;
+    }
+    
+    public function getMaxTries() {
+        return $this->maxTries;
+    }
 
     /**
      * Receives data with the given length
@@ -199,7 +209,7 @@ class TCP implements TransmissionInterface
      * @param int $lenght
      * @return string 
      */
-    public function receiveData($length = 4096, $maxTries=5, $timeoutSec=-1, $timeoutMicro=-1)
+    public function receiveData($length = 4096, $timeoutSec=-1, $timeoutMicro=-1)
     {
         if (!$this->isEstablished()) throw new \RuntimeException("Connection not Established");
         $data = '';
@@ -207,7 +217,7 @@ class TCP implements TransmissionInterface
         while (strlen($data) < $length)
         {
             $tries++;
-            if($tries > $maxTries) {
+            if($this->maxTries > 0 && $tries > $this->maxTries) {
                 throw new \RuntimeException('Max tries exceeded');
             }
             $data .= \fgets($this->stream, $length);
