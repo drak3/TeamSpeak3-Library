@@ -153,9 +153,9 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      */
     protected function parseResponse(\devmx\Teamspeak3\Query\Command $cmd, $error, $data='')
     {
-        $error = $this->parseData($error);
-        $errorID = $error[0]['id'];
-        $errorMessage = $error[0]['msg'];
+        $parsedError = $this->parseData($error);
+        $errorID = $parsedError[0]['id'];
+        $errorMessage = $parsedError[0]['msg'];
 
         if ($data !== '') // parsed[1] holds the data if it is a fetching command
         {
@@ -167,8 +167,8 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         }
 
 
-        $responseClass = new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $error[0]);
-        $responseClass->setRawResponse($data.$error);
+        $responseClass = new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $parsedError[0]);
+        $responseClass->setRawResponse($data."\n".$error);
         return $responseClass;
     }
 

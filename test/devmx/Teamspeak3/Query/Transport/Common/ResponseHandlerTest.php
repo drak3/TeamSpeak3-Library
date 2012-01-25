@@ -136,7 +136,16 @@ EOF;
         $this->assertInstanceOF('\devmx\Teamspeak3\Query\CommandResponse', $parsed);
         $this->assertEquals(0, $parsed->getErrorID());
         $this->assertEquals('[spacer1]---', $parsed->getValue('channel_name', 2));
- }
+    }
+    
+    public function testGetResponseInstance_Raw() {
+        $raw = <<<'EOF'
+id=asdf foo=bar asdf=a\sb
+error id=0 msg=ok extra_message=you\sfailed
+EOF;
+        $parsed = $this->handler->getResponseInstance(new \devmx\Teamspeak3\Query\Command('foo'), $raw);
+        $this->assertEquals($raw, $parsed['response']->getRawResponse());
+    }
    
     public function testIsCompleteResponse()
     {
