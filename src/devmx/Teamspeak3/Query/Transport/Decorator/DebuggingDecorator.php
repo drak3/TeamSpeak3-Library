@@ -96,7 +96,7 @@ class DebuggingDecorator extends AbstractQueryDecorator
         return $response;
     }
     
-    public function query($name, $args=array(), $options=array()) {
+    public function query($name, array $args=array(), array $options=array()) {
         $response = $this->decorated->query($name , $args , $options);
         $this->sentCommands[] = new Command($name, $args, $options);
         $this->receivedResponses[] = $response;
