@@ -123,7 +123,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
 
         //find error message
         foreach($parsed as $key=>$value) {
-            if(preg_match($this->errorRegex, $value)) {
+            if($this->match($this->errorRegex, $value)) {
                 $error = $value;
                 unset($parsed[$key]);
                 break;
@@ -158,7 +158,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     {
         $parsed = Array();
 
-        preg_match($this->responseRegex, $response, $parsed);
+        $parsed = $this->match($this->responseRegex, $response, true);
         $error = $this->parseData($parsed[3]);
         $errorID = $error[0]['id'];
         $errorMessage = $error[0]['msg'];
@@ -239,11 +239,11 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         {
             return (int) $val;
         }
-        if (\preg_match("/^true$/Di", $val) === 1)
+        if ($this->match("/^true$/Di", $val))
         {
             return TRUE;
         }
-        if (\preg_match("/^false$/Di", $val) === 1)
+        if ($this->match("/^false$/Di", $val))
         {
             return FALSE;
         }
@@ -282,7 +282,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      */
     public function isCompleteResponse($raw)
     {
-        if (\preg_match($this->errorRegex, $raw) && $raw[strlen($raw)-1] == "\n")
+        if ($this->match($this->errorRegex, $raw) && $raw[strlen($raw)-1] == "\n")
         {
             return TRUE;
         }
@@ -333,6 +333,21 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         {
             return TRUE;
         }
+    }
+    
+    private function match($regex, $raw, $exceptionOnFail=false) {
+        $parsed = array();
+        $matched = preg_match($regex, $raw, $parsed);
+        if($matched === 0) {
+            if($exceptionOnFail) {
+                throw new \InvalidArgumentException('Cannot parse '.$raw);
+            }
+            return false;
+        }
+        if($matched === false) {
+            throw new \RuntimeException('Error while using preg_match try to increase your pcre.backtrack_limit', preg_last_error());
+        }
+        return $parsed;
     }
 
 }
