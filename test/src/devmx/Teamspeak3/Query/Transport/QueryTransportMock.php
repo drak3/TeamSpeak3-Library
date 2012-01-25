@@ -84,7 +84,7 @@ class QueryTransportMock implements \devmx\Teamspeak3\Query\Transport\TransportI
             throw new \LogicException('Cannot send command, not connected');
         }
         foreach($this->responses as $key=>$possibleResponse) {
-            if($possibleResponse->getCommand()->equalsTo($command)) {
+            if($possibleResponse->getCommand()->equals($command)) {
                 unset($this->responses[$key]);
                 return $possibleResponse;
             }

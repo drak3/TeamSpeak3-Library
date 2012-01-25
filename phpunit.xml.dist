@@ -6,7 +6,7 @@
 >
     <testsuites>
         <testsuite name="devmx TeamSpeak3-Framework testsuite">
-            <directory>./test/devmx/</directory>
+            <directory>./test/src/devmx/</directory>
         </testsuite>
     </testsuites>
 </phpunit>
