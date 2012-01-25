@@ -76,7 +76,7 @@ class QueryTransportTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers devmx\Teamspeak3\Query\QueryTransport::connect
      * @covers devmx\Teamspeak3\Query\QueryTransport::isConnected
-     * @todo Implement testConnect().
+     * @covers devmx\Teamspeak3\Query\QueryTransport::checkWelcomeMessage
      */
     public function testConnect()
     {
@@ -84,6 +84,20 @@ class QueryTransportTest extends \PHPUnit_Framework_TestCase
         $this->transport->connect();
         $this->assertEquals($this->transmission->getReceived(), $this->getWelcomeMessage());
         $this->assertTrue($this->transport->isConnected());
+    }
+    
+    /**
+     * @expectedException \RunTimeException
+     * @covers devmx\Teamspeak3\Query\QueryTransport::checkWelcomeMessage
+     * @covers devmx\Teamspeak3\Query\QueryTransport::connect
+     */
+    public function testConnect_invalidWelcome() {
+        $fakeWelcome = <<<'EOF'
+TS3
+This message is too short
+EOF;
+        $this->transmission->addToReceive($fakeWelcome);
+        $this->transport->connect();
     }
     
     /**
