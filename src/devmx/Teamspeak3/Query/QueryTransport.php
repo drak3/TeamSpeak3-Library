@@ -134,7 +134,7 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
     {
         if(!$dryRun) {
             if(!$this->isConnected()) {
-                return;
+                throw new \BadMethodCallException('Connection not established');
             }
             $response = $this->transmission->getAll();
             if ( $response )

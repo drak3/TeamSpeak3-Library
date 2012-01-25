@@ -128,7 +128,15 @@ EOF;
         $this->assertEquals(array(array("cfid"=>12, "ctid"=>23)), $event->getItems());
     }
     
-
+    public function testGetResponseInstance_RealLife() {
+        $raw = file_get_contents(__DIR__.'/reallife.response');
+        $cmd = new \devmx\Teamspeak3\Query\Command('foo');
+        $parsed = $this->handler->getResponseInstance($cmd, $raw);
+        $parsed = $parsed['response'];
+        $this->assertInstanceOF('\devmx\Teamspeak3\Query\CommandResponse', $parsed);
+        $this->assertEquals(0, $parsed->getErrorID());
+        $this->assertEquals('[spacer1]---', $parsed->getValue('channel_name', 2));
+ }
    
     public function testIsCompleteResponse()
     {

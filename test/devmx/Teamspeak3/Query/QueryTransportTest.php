@@ -197,6 +197,27 @@ EOF;
         $this->assertEquals('sdf', $events[0]->getValue('sdfg'));
         $this->assertEquals('notifyfoo', $events[0]->getReason());
     }
+    
+    /**
+     * @expectedException \BadMethodCallException
+     */
+    public function testExceptionWhenNotConnected_sendCommand() {
+        $this->transport->sendCommand(new Command('foo'));
+    }
+    
+    /**
+     * @expectedException \BadMethodCallException
+     */
+    public function testExceptionWhenNotConnected_waitForEvent() {
+        $this->transport->waitForEvent();
+    }
+    
+    /**
+     * @expectedException \BadMethodCallException
+     */
+    public function testExceptionWhenNotConnected_getAllEvents() {
+        $this->transport->getAllEvents();
+    }
 
     /**
      * @covers devmx\Teamspeak3\Query\QueryTransport::disconnect

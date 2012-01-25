@@ -28,9 +28,9 @@ class DebuggingDecorator extends AbstractQueryDecorator
     
     protected $openedConnections;
     protected $closedConnections;
-    protected $sentCommands;
-    protected $receivedResponses;
-    protected $receivedEvents;
+    protected $sentCommands = array();
+    protected $receivedResponses = array();
+    protected $receivedEvents = array();
     static protected $cloned = 0;
     
     public function getOpenedConnections()
