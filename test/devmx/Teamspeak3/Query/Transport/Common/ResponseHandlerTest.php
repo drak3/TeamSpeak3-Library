@@ -201,7 +201,7 @@ EOF;
     public function testSpecialValues() {
         $cmd = new \devmx\Teamspeak3\Query\Command('foo');
         
-        $toParse = "foo= bar=true asdf=false error id=0 msg=ok";
+        $toParse = "foo= bar=true asdf=false\nerror id=0 msg=ok";
         
         $response = $this->handler->getResponseInstance($cmd, $toParse);
         $response = $response['response'];

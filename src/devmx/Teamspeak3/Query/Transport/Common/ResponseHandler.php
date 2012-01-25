@@ -88,10 +88,9 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     );
 
     /**
-     * The regular expression for describing a response
-     * @var string 
+     * The regular expression to describe the error block of a response
+     * @var string
      */
-    protected $responseRegex = "/^(.*?[[:blank:]\r\n]?)(error (id=[0-9]* msg=[a-zA-Z\\\\]*.*))$/";
     protected $errorRegex = "/error id=[0-9]* msg=[a-zA-Z\\\\]*/";
 
     /**
@@ -129,17 +128,17 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
                 break;
             }
         }
-        $response['response'] = $this->parseResponse($cmd, $error);
+        $data = '';
         foreach($parsed as $part) {
             if(substr($part, 0, strlen($this->getEventPrefix())) === $this->getEventPrefix()) {
                 $response['events'][] = $this->parseEvent($part);
             }
             else {
-                $response['response'] = $this->parseResponse($cmd, $part.$error);
+                $data = $part;
             }
         }
         
-
+        $response['response'] = $this->parseResponse($cmd, $error, $data);
         return $response;
     }
     
@@ -154,18 +153,15 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @param string $response
      * @return \devmx\Teamspeak3\Query\Response 
      */
-    protected function parseResponse(\devmx\Teamspeak3\Query\Command $cmd, $response)
+    protected function parseResponse(\devmx\Teamspeak3\Query\Command $cmd, $error, $data='')
     {
-        $parsed = Array();
-
-        $parsed = $this->match($this->responseRegex, $response, true);
-        $error = $this->parseData($parsed[3]);
+        $error = $this->parseData($error);
         $errorID = $error[0]['id'];
         $errorMessage = $error[0]['msg'];
 
-        if ($parsed[1] !== '') // parsed[1] holds the data if it is a fetching command
+        if ($data !== '') // parsed[1] holds the data if it is a fetching command
         {
-            $items = $this->parseData($parsed[1]);
+            $items = $this->parseData($data);
         }
         else
         {
@@ -174,7 +170,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
 
 
         $responseClass = new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $error[0]);
-        $responseClass->setRawResponse($response);
+        $responseClass->setRawResponse($data.$error);
         return $responseClass;
     }
 

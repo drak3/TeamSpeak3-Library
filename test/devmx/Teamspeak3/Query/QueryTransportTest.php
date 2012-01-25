@@ -135,7 +135,7 @@ EOF;
     public function testSendCommand()
     {
         $this->connectTransport();
-        $raw = "foo=bar asdf=sdg|foo=bar2 asdf=sdg2 error id=0 msg=ok\n";
+        $raw = "foo=bar asdf=sdg|foo=bar2 asdf=sdg2\nerror id=0 msg=ok\n";
         $this->transmission->setToReceive($raw);
         $cmd = new Command('foo');
         $response = $this->transport->sendCommand($cmd);
@@ -153,7 +153,8 @@ EOF;
         $raw = <<<'EOF'
 notifysomething foo=bar asdf=jklö
 notifybar asdf=sdff fnord=asd
-foo=bar asdf=sdg|foo=bar2 asdf=sdg2 error id=0 msg=ok
+foo=bar asdf=sdg|foo=bar2 asdf=sdg2 
+error id=0 msg=ok
 notifybar asdf=sdfff fnord=asda
 
 EOF;
