@@ -345,7 +345,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
             return false;
         }
         if($matched === false) {
-            throw new \RuntimeException('Error while using preg_match try to increase your pcre.backtrack_limit', preg_last_error());
+            throw new \RuntimeException('Error while using preg_match try to increase your pcre.backtrack_limit '. "\n". $raw, preg_last_error());
         }
         return $parsed;
     }
