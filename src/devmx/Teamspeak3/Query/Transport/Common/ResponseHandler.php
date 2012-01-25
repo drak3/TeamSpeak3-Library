@@ -338,14 +338,14 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     private function match($regex, $raw, $exceptionOnFail=false) {
         $parsed = array();
         $matched = preg_match($regex, $raw, $parsed);
+        if(  preg_last_error() !== PREG_NO_ERROR) {
+            throw new \RuntimeException('Error while using preg_match try to increase your pcre.backtrack_limit '. "\n". $raw, preg_last_error());
+        }
         if($matched === 0) {
             if($exceptionOnFail) {
                 throw new \InvalidArgumentException('Cannot parse '.$raw);
             }
             return false;
-        }
-        if($matched === false) {
-            throw new \RuntimeException('Error while using preg_match try to increase your pcre.backtrack_limit '. "\n". $raw, preg_last_error());
         }
         return $parsed;
     }
