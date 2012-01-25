@@ -1,7 +1,7 @@
 <?php
 
 namespace devmx\Teamspeak3\Query;
-use devmx\Test\Transmission\TransmissionStub;
+use devmx\Transmission\TransmissionStub;
  
 class TestTranslator extends Transport\Common\CommandTranslator {
     

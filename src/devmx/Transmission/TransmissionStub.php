@@ -16,7 +16,7 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace devmx\Test\Transmission;
+namespace devmx\Transmission;
 
 /**
  *

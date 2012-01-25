@@ -16,13 +16,13 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace devmx\Test\Teamspeak3\Query\Transport;
+namespace devmx\Teamspeak3\Query\Transport;
 
 /**
  *
  * @author drak3
  */
-class QueryTransportMock implements \devmx\Teamspeak3\Query\Transport\TransportInterface
+class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportInterface
 {
     protected $isConnected = false;
     protected $events = array();

@@ -26,7 +26,7 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->transport = new \devmx\Test\Teamspeak3\Query\Transport\QueryTransportMock();
+        $this->transport = new \devmx\Teamspeak3\Query\Transport\QueryTransportStub();
         $this->debug = new DebuggingDecorator($this->transport);
     }
     

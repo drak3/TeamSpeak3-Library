@@ -1,7 +1,7 @@
 <?php
 
 namespace devmx\Teamspeak3\FileTransfer;
-use devmx\Test\Transmission\TransmissionStub;
+use devmx\Transmission\TransmissionStub;
  
 /**
  * Test class for Uploader.
