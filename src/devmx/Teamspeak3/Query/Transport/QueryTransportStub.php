@@ -25,7 +25,7 @@ namespace devmx\Teamspeak3\Query\Transport;
 class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportInterface
 {
     protected $isConnected = false;
-    protected $events = array();
+    protected $events = array(array());
     protected $responses = array();
     
     
@@ -36,9 +36,16 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
     }
     
     public function addEvent(\devmx\Teamspeak3\Query\Event $e, $times=1, $newCharge=false) {
-        $index = $newCharge ? count($this->events) : count($this->events) - 1;
+        $events = array();
         for($i=0; $i<$times; $i++) {
-            $this->events[$index][] = $e;
+            $events[] = $e;
+        }
+        if($newCharge) {
+            $this->events[] = $events;
+        }
+        else {
+            $index = count($this->events)-1;
+            $this->events[$index] = array_merge($this->events[$index], $events);
         }
     }
     
@@ -84,12 +91,13 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
             throw new \LogicException('Cannot send command, not connected');
         }
         foreach($this->responses as $key=>$possibleResponse) {
+            var_dump($possibleResponse);
             if($possibleResponse->getCommand()->equals($command)) {
                 unset($this->responses[$key]);
                 return $possibleResponse;
             }
         }
-        throw new \LogicException('No suitable response for command '.$command);
+        throw new \LogicException('No suitable response for command '.$command->getName());
     }
     
     /**
@@ -106,7 +114,11 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
      * @return array array of all occured events (e.g if two events occur together it is possible to get 2 events) 
      */
     public function waitForEvent() {
-        return $this->getAllEvents();
+        $events = $this->getAllEvents();
+        if($events === array())  {
+            throw new \LogicException('cannot wait for events');
+        }
+        return $events;
     }
 
     public function disconnect() {

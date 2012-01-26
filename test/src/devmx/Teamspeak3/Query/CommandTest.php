@@ -85,6 +85,12 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $cmd2 = new Command('foo', array('a'=>'b', 'c'=>'d'));
         $this->assertFalse($cmd1->equals($cmd2));
     }
+    
+    public function testEquals_optionOnly() {
+        $cmd1 = new Command('foo', array(), array('a', 'b'));
+        $cmd2 = new Command('foo', array(), array('a', 'b'));
+        $this->assertTrue($cmd1->equals($cmd2));
+    }
 }
 
 ?>

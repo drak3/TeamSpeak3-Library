@@ -78,36 +78,82 @@ class QueryTransportStubTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransportStub::getAllEvents
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransportStub::addEvent
+     */
+    public function testGetAllEvents_noEvents()
+    {
+        $this->stub->connect();
+        $this->assertEquals(array(), $this->stub->getAllEvents());
+    }
+    
+    
+    /**
      * @expectedException \LogicException
      * @covers devmx\Teamspeak3\Query\Transport\QueryTransportStub::getAllEvents
      */
     public function testGetAllEvents_notConnected() {
         $e = new Event('notifysomething', array());
         $this->stub->addEvent($e);
+        $this->stub->getAllEvents();
     }
      
 
     /**
      * @covers devmx\Teamspeak3\Query\Transport\QueryTransportStub::sendCommand
      * @covers devmx\Teamspeak3\Query\Transport\QueryTransportStub::addResponse
-     * @todo Implement testSendCommand().
      */
     public function testSendCommand_simple()
     {
         $cmd = new Command('foo');
         $response = new CommandResponse($cmd, array());
         $this->stub->connect();
+        $this->stub->addResponse($response);
         $this->assertEquals($response, $this->stub->sendCommand($cmd));
     }
+    
+    /**
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransportStub::sendCommand
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransportStub::addResponse
+     */
+    public function testSendCommand_multipleResponses() {
+        $cmd1 = new Command('foo', array(), array('a', 'b'));
+        $cmd2 = new Command('foo', array('a'=>'b'), array('a', 'b'));
+        $r1 = new CommandResponse($cmd1, array('foo'=>'bar'));
+        $r2 = new CommandResponse($cmd2, array('asdf'=>'sdf'));
+        $this->stub->addResponse($r1);
+        $this->stub->addResponse($r2);
+        $this->stub->connect();
+        $this->assertEquals($r2, $this->stub->sendCommand($cmd2));
+        $this->assertEquals($r1, $this->stub->sendCommand(new Command('foo', array(), array('a', 'b'))));
+    }
+    
+    /**
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransportStub::sendCommand
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransportStub::addResponse
+     */
+    public function testSendCommand_times() {
+        $cmd1 = new Command('foo', array(), array('a', 'b'));
+        $cmd2 = new Command('foo', array('a'=>'b'), array('a', 'b'));
+        $r1 = new CommandResponse($cmd1, array('foo'=>'bar'));
+        $r2 = new CommandResponse($cmd2, array('asdf'=>'sdf'));
+        $this->stub->addResponse($r1);
+        $this->stub->addResponse($r2,2);
+        $this->stub->connect();
+        $this->assertEquals($r2, $this->stub->sendCommand($cmd2));
+        $this->assertEquals($r2, $this->stub->sendCommand($cmd2));
+        $this->assertEquals($r1, $this->stub->sendCommand(new Command('foo', array(), array('a', 'b'))));
+    }
+
 
     /**
      * @covers devmx\Teamspeak3\Query\Transport\QueryTransportStub::query
      * @covers devmx\Teamspeak3\Query\Transport\QueryTransportStub::addResponse
-     * @todo Implement testQuery().
      */
     public function testQuery()
     {
         $response = new CommandResponse(new Command('bar', array('a'=>'b')), array('foo'=>'bar'));
+        $this->stub->addResponse($response);
         $this->stub->connect();
         $this->assertEquals($response, $this->stub->query('bar', array('a'=>'b')));
     }
@@ -122,6 +168,17 @@ class QueryTransportStubTest extends \PHPUnit_Framework_TestCase
         $this->stub->connect();
         $this->stub->addEvent($e);
         $this->assertEquals(array($e), $this->stub->waitForEvent());
+    }
+    
+    /**
+     * @expectedException \LogicException
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransportStub::waitForEvent
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransportStub::addEvent
+     */
+    public function testWaitForEvent_noEvents()
+    {
+        $this->stub->connect();
+        $this->stub->waitForEvent();
     }
 
     /**

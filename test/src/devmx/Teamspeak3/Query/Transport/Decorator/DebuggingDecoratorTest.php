@@ -145,7 +145,7 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
         $this->debug->sendCommand($cmd2);
         $this->debug->sendCommand($cmd);
         $this->assertEquals(array($cmd2, $cmd), $this->debug->getSentCommands());
-        $this->assertEquals(array($r2, $r1), $this->debug->getReceivedEvents());
+        $this->assertEquals(array($r2, $r1), $this->debug->getReceivedResponses());
     }
      /**
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getReceivedEvents
