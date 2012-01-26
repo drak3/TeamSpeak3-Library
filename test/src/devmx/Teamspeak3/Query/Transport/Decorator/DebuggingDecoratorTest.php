@@ -2,6 +2,8 @@
 
 namespace devmx\Teamspeak3\Query\Transport\Decorator;
 use devmx\Teamspeak3\Query\Command;
+use devmx\Teamspeak3\Query\CommandResponse;
+use devmx\Teamspeak3\Query\Event;
 require_once dirname( __FILE__ ) . '/../../../../../../../src/devmx/Teamspeak3/Query/Transport/Decorator/DebuggingDecorator.php';
 
 /**
@@ -16,7 +18,7 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     protected $debug;
     /**
-     * @var \devmx\Test\Teamspeak3\Query\Transport\QueryTransportMock 
+     * @var \devmx\Test\Teamspeak3\Query\Transport\QueryTransportStub
      */
     protected $transport;
 
@@ -43,8 +45,9 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->debug->isConnected());
     }
 
-     /**
+    /**
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getAllEvents
+     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getReceivedEvents
      */
     public function testGetAllEvents_simple()
     {
@@ -56,6 +59,10 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array($e, $e2), $this->debug->getAllEvents());
     }
     
+    /**
+     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getAllEvents
+     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getReceivedEvents
+     */
     public function testGetAllEvents_charge() {
         $e = new \devmx\Teamspeak3\Query\Event('somereason', array());
         $e2 = new \devmx\Teamspeak3\Query\Event('somereason', array());
@@ -66,42 +73,58 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getSentCommands
+     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getReceivedResponses
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::sendCommand
      * @todo Implement testSendCommand().
      */
     public function testSendCommand()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+        $cmd1 = new Command('foo');
+        $cmd2 = new Command('bar');
+        $r1 = new CommandResponse($cmd1, array('foo'=>'bar'));
+        $r2 = new CommandResponse($cmd2, array('foo'=>'bar2'));
+        $this->transport->addResponse($r1);
+        $this->transport->addResponse($r2);
+        
+        $this->debug->connect();
+        $this->assertEquals($r1, $this->debug->sendCommand($cmd1));
+        $this->assertEquals($r2, $this->debug->sendCommand($cmd2));
+        $this->assertEquals(array($r1, $r2), $this->debug->getReceivedResponses());
+        $this->assertEquals(array($cmd1, $cmd2), $this->debug->getSentCommands());
     }
 
     /**
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::query
-     * @todo Implement testQuery().
      */
     public function testQuery()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+        $cmd1 = new Command('foo', array('a'=>'b'));
+        $cmd2 = new Command('bar');
+        $r1 = new CommandResponse($cmd1, array('foo'=>'bar'));
+        $r2 = new CommandResponse($cmd2, array('foo'=>'bar2'));
+        $this->transport->addResponse($r1);
+        $this->transport->addResponse($r2);
+        
+        $this->debug->connect();
+        $this->assertEquals($r1, $this->debug->query('foo', array('a'=>'b')));
+        $this->assertEquals($r2, $this->debug->query('bar'));
+        $this->assertEquals(array($r1, $r2), $this->debug->getReceivedResponses());
+        $this->assertEquals(array($cmd1, $cmd2), $this->debug->getSentCommands());
     }
 
     /**
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::waitForEvent
+     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getReceivedEvents
      * @todo Implement testWaitForEvent().
      */
     public function testWaitForEvent()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+        $e = new Event('foo', array('a'=>'b'));
+        $this->transport->addEvent($e);
+        $this->debug->connect();
+        $this->assertEquals(array($e), $this->debug->waitForEvent());
+        $this->assertEquals(array($e), $this->debug->getReceivedEvents());
     }
     
 
@@ -147,48 +170,20 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array($cmd2, $cmd), $this->debug->getSentCommands());
         $this->assertEquals(array($r2, $r1), $this->debug->getReceivedResponses());
     }
-     /**
-     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getReceivedEvents
-     * @todo Implement testGetReceivedEvents().
-     */
-    public function testGetReceivedEvents()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
-    }
-
+     
     /**
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getCloned
+     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::__clone
      * @todo Implement testGetCloned().
      */
     public function testGetCloned()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+        $this->assertEquals(0, DebuggingDecorator::getCloned());
+        $cloned = clone $this->debug;
+        $this->assertEquals(1, DebuggingDecorator::getCloned());
     }
 
     
-    
-
-    /**
-     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::__clone
-     * @todo Implement test__clone().
-     */
-    public function test__clone()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
-    }
-
 }
 
 ?>

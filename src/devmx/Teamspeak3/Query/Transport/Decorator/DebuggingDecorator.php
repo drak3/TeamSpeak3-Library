@@ -18,6 +18,7 @@
  */
 namespace devmx\Teamspeak3\Query\Transport\Decorator;
 use devmx\Teamspeak3\Query\Transport\AbstractQueryDecorator;
+use devmx\Teamspeak3\Query\Command;
 
 /**
  *
@@ -112,6 +113,7 @@ class DebuggingDecorator extends AbstractQueryDecorator
     
     public function __clone() {
         $this->decorated = clone $this->decorated;
+        self::$cloned++;
     }
     
 }
