@@ -91,7 +91,6 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
             throw new \LogicException('Cannot send command, not connected');
         }
         foreach($this->responses as $key=>$possibleResponse) {
-            var_dump($possibleResponse);
             if($possibleResponse->getCommand()->equals($command)) {
                 unset($this->responses[$key]);
                 return $possibleResponse;
