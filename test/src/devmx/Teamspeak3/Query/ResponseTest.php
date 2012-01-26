@@ -25,7 +25,6 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
         $this->items = Array( Array("cid" => 1, "name"=>"foo") , Array("cid" => 2, "name" => "bar") ) ;
         $this->object->setItems($this->items);
     }
-
     
     /**
      * tests if items given in constructor are returned right

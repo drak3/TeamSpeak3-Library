@@ -9,8 +9,6 @@ use devmx\Transmission\TransmissionStub;
  */
 class UploaderTest extends \PHPUnit_Framework_TestCase
 {
-
-
    
     /**
      *Test whole transfer proccess 

@@ -1,7 +1,7 @@
 <?php
 
 namespace devmx\Teamspeak3\Query\Transport\Common;
-
+use devmx\Teamspeak3\Query\Command;
  
 /**
  * Test class for ResponseHandler.
@@ -24,10 +24,9 @@ class ResponseHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler = new ResponseHandler();
 
     }
-
     
     public function testExtraErrorMessages() {
-        $cmd = new \devmx\Teamspeak3\Query\Command('foo');
+        $cmd = new Command('foo');
         $raw = "foo=bar\nerror id=32 msg=failed extra_message=what\\sthe\\shell failed_permid=123\n";
         $response = $this->handler->getResponseInstance($cmd , $raw);
         $response = $response['response'];
@@ -59,7 +58,7 @@ class ResponseHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetResponseInstance_ErrorOnly()
     {
-        $cmd = new \devmx\Teamspeak3\Query\Command('foo');
+        $cmd = new Command('foo');
         $raw = "error id=0 msg=ok\n";
         $parsed = $this->handler->getResponseInstance($cmd , $raw);
         $this->assertTrue(isset($parsed['response']));
@@ -69,7 +68,7 @@ class ResponseHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(), $resp->getItems());
         $this->assertEquals($cmd, $resp->getCommand());
         
-        $cmd = new \devmx\Teamspeak3\Query\Command('foo');
+        $cmd = new Command('foo');
         $raw = "error id=12 msg=failed\\shard";
         $parsed = $this->handler->getResponseInstance($cmd , $raw);
         $this->assertTrue(isset($parsed['response']));
@@ -83,7 +82,7 @@ class ResponseHandlerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider itemProvider 
      */
     public function testGetResponseInstance_WithItems($raw, $expected) {
-        $cmd = new \devmx\Teamspeak3\Query\Command('foo');
+        $cmd = new Command('foo');
         $parsed = $this->handler->getResponseInstance($cmd , $raw);
         $parsed = $parsed['response'];
         $this->assertEquals($expected, $parsed->getItems());
@@ -115,7 +114,7 @@ EOF;
     
     
     public function testGetResponseInstance_WithEvents() {
-        $cmd = new \devmx\Teamspeak3\Query\Command('foo');
+        $cmd = new Command('foo');
         $raw = <<<'EOF'
 notifycliententerview cfid=12 ctid=23
 client=foo asdf=bar
@@ -130,7 +129,7 @@ EOF;
     
     public function testGetResponseInstance_RealLife() {
         $raw = file_get_contents(__DIR__.'/reallife.response');
-        $cmd = new \devmx\Teamspeak3\Query\Command('foo');
+        $cmd = new Command('foo');
         $parsed = $this->handler->getResponseInstance($cmd, $raw);
         $parsed = $parsed['response'];
         $this->assertInstanceOF('\devmx\Teamspeak3\Query\CommandResponse', $parsed);
@@ -143,7 +142,7 @@ EOF;
 id=asdf foo=bar asdf=a\sb
 error id=0 msg=ok extra_message=you\sfailed
 EOF;
-        $parsed = $this->handler->getResponseInstance(new \devmx\Teamspeak3\Query\Command('foo'), $raw);
+        $parsed = $this->handler->getResponseInstance(new Command('foo'), $raw);
         $this->assertEquals($raw, $parsed['response']->getRawResponse());
     }
    
@@ -180,7 +179,7 @@ error id=0 msg=ok
 notifybar asdf=sdff fnord=asd
 
 EOF;
-        $cmd = new \devmx\Teamspeak3\Query\Command('foo');
+        $cmd = new Command('foo');
         $parsed = $this->handler->getResponseInstance($cmd, $raw);
         $this->assertCount(2, $parsed);
         $this->assertTrue(isset($parsed['events']));
@@ -208,7 +207,7 @@ EOF;
     }
     
     public function testSpecialValues() {
-        $cmd = new \devmx\Teamspeak3\Query\Command('foo');
+        $cmd = new Command('foo');
         
         $toParse = "foo= bar=true asdf=false\nerror id=0 msg=ok";
         

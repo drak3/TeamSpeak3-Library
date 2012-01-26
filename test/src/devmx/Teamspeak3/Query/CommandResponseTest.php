@@ -21,7 +21,6 @@ class CommandResponseTest extends \PHPUnit_Framework_TestCase
     protected $command;
     
     /**
-     * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp()
@@ -29,7 +28,6 @@ class CommandResponseTest extends \PHPUnit_Framework_TestCase
         $this->command = new Command("asdf", Array("foo"=>"bar"), Array("fnord"));
         $this->response = new CommandResponse($this->command, Array(Array("foo"=>1, "bar"=>"asdf"), Array("foo"=>2, "bar"=>"fnord")),
                                             12, "error!!", array('extra_message'=>"you're dumb"));
-
     }
 
 
@@ -42,45 +40,30 @@ class CommandResponseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('sthelse', $response->getErrorValue('sdfsdfsdf', 'sthelse'));
     }
     
-    
-
-    /**
-
-     */
+        
     public function testGetCommand()
     {
        $this->assertEquals($this->command, $this->response->getCommand());
     }
 
-    /**
-
-     */
-    public function testGetErrorID()
+   public function testGetErrorID()
     {
         $this->assertEquals(12, $this->response->getErrorID());
     }
 
-    /**
-
-     */
+    
     public function testGetErrorMessage()
     {
        $this->assertEquals("error!!", $this->response->getErrorMessage());
-
     }
 
-    /**
-
-     */
+    
     public function testGetExtraMessage()
     {
         $this->assertEquals("you're dumb", $this->response->getExtraMessage());
-
     }
 
-    /**
-
-     */
+    
     public function testErrorOccured()
     {
         $this->assertTrue($this->response->errorOccured());

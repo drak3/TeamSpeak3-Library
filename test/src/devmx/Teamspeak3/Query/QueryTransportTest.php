@@ -2,6 +2,7 @@
 
 namespace devmx\Teamspeak3\Query;
 use devmx\Transmission\TransmissionStub;
+use devmx\Teamspeak3\Query\Transport\Common;
  
 class TestTranslator extends Transport\Common\CommandTranslator {
     
@@ -36,7 +37,7 @@ class QueryTransportTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->transmission = new TransmissionStub('foo', 1337);
-        $this->transport = new QueryTransport($this->transmission, new Transport\Common\CommandTranslator(), new Transport\Common\ResponseHandler());
+        $this->transport = new QueryTransport($this->transmission, new Common\CommandTranslator(), new Common\ResponseHandler());
     }
 
         
@@ -47,7 +48,6 @@ class QueryTransportTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetGetTranslator()
     {
-        $this->transport = new QueryTransport($this->transmission, new Transport\Common\CommandTranslator(), new Transport\Common\ResponseHandler());
         $this->transport->setTranslator(new TestTranslator());
         $this->assertInstanceOf('\devmx\Teamspeak3\Query\TestTranslator', $this->transport->getTranslator());
     }

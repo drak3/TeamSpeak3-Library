@@ -19,7 +19,6 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
     protected $translator;
 
     /**
-     * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp()
@@ -27,7 +26,6 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
         $this->translator = new CommandTranslator;
 
     }
-
     
     /**
      * tests if command with simple arguments is translated correctly

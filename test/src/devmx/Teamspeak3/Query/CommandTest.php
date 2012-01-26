@@ -10,44 +10,42 @@ namespace devmx\Teamspeak3\Query;
 class CommandTest extends \PHPUnit_Framework_TestCase
 {
 
-   public function testGetName() {
-       $cmd = new Command('foo');
-       $this->assertEquals('foo', $cmd->getName());
-   }
+    public function testGetName() {
+        $cmd = new Command('foo');
+        $this->assertEquals('foo', $cmd->getName());
+    }
    
-   public function testGetSingleParams() {
-       $cmd = new Command('foo', array('foo'=>'bar', 'asdf'=>123));
-       $this->assertEquals('bar', $cmd->getParameter('foo'));
-       $this->assertEquals(123, $cmd->getParameter('asdf'));
-   }
+    public function testGetSingleParams() {
+        $cmd = new Command('foo', array('foo'=>'bar', 'asdf'=>123));
+        $this->assertEquals('bar', $cmd->getParameter('foo'));
+        $this->assertEquals(123, $cmd->getParameter('asdf'));
+    }
    
-   public function testGetArrayParams() {
-       $cmd = new Command('foo', array('foo'=>array('bar',123), 'asdf'=>array(123,'foo')));
-       $this->assertEquals(array('bar',123), $cmd->getParameter('foo'));
-       $this->assertEquals(array(123,'foo'), $cmd->getParameter('asdf'));
-       $this->assertEquals(array('foo'=>array('bar',123), 'asdf'=>array(123,'foo')), $cmd->getParameters());
-   }
+    public function testGetArrayParams() {
+        $cmd = new Command('foo', array('foo'=>array('bar',123), 'asdf'=>array(123,'foo')));
+        $this->assertEquals(array('bar',123), $cmd->getParameter('foo'));
+        $this->assertEquals(array(123,'foo'), $cmd->getParameter('asdf'));
+        $this->assertEquals(array('foo'=>array('bar',123), 'asdf'=>array(123,'foo')), $cmd->getParameters());
+    }
    
-   public function testGetParamElse() {
-       $cmd = new Command('foo');
-       $this->assertEquals('sthelse', $cmd->getParameter('foo', 'sthelse'));
-   }
+    public function testGetParamElse() {
+        $cmd = new Command('foo');
+        $this->assertEquals('sthelse', $cmd->getParameter('foo', 'sthelse'));
+    }
    
-   public function testGetOption() {
-       $cmd = new Command('foo', array(), array('a','b','c'));
-       $this->assertTrue($cmd->optionIsSet('a'));
-       $this->assertTrue($cmd->optionIsSet('b'));
-       $this->assertEquals(array('a','b','c'), $cmd->getOptions());
-   }
+    public function testGetOption() {
+        $cmd = new Command('foo', array(), array('a','b','c'));
+        $this->assertTrue($cmd->optionIsSet('a'));
+        $this->assertTrue($cmd->optionIsSet('b'));
+        $this->assertEquals(array('a','b','c'), $cmd->getOptions());
+    }
    
-
-   public function testEquals_orderIndependence() {
+    public function testEquals_orderIndependence() {
         $cmd1 = new Command("foo", Array("foo" => "bar", "bar" => "foo"), Array("foo", "asdf") );
          
         $cmd2 = new Command("foo", Array("bar" => "foo", "foo" => "bar"), Array("asdf", "foo") );
         
         $this->assertTrue($cmd1->equals($cmd2));
-             
     }
     
     public function testEquals_otherOptionName() {
