@@ -35,6 +35,12 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
         }
     }
     
+    public function addResponses() {
+        foreach(func_get_args() as $response) {
+            $this->addResponse($response);
+        } 
+    }
+    
     public function addEvent(\devmx\Teamspeak3\Query\Event $e, $times=1, $newCharge=false) {
         $events = array();
         for($i=0; $i<$times; $i++) {

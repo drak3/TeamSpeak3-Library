@@ -200,6 +200,16 @@ class QueryTransportStubTest extends \PHPUnit_Framework_TestCase
         $this->stub->addResponse(new CommandResponse(new Command('foo')));
         $this->stub->assertAllResponsesReceived();
     }
+    
+    public function testAddResponses() {
+        $r1 = new CommandResponse(new Command('foo'));
+        $r2 = new CommandResponse(new Command('bar'));
+        $this->stub->addResponses($r1, $r2);
+        $this->stub->connect();
+        $this->assertEquals($r1, $this->stub->sendCommand(new Command('foo')));
+        $this->assertEquals($r2, $this->stub->sendCommand(new Command('bar')));
+        $this->stub->assertAllResponsesReceived();
+    }
 
 }
 
