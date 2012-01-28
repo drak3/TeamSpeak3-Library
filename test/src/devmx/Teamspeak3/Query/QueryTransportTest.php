@@ -241,6 +241,7 @@ EOF;
     public function testDisconnect()
     {
         $this->connectTransport();
+        $this->transmission->addToReceive("error id=0 msg=ok\n");
         $this->transport->disconnect();
         $this->assertFalse($this->transmission->isEstablished());
         $this->assertEquals("quit\n", $this->transmission->getSentData());
