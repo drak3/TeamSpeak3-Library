@@ -37,7 +37,7 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::disconnect
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::isConnected
      */
-    public function testConnectDisConnect()
+    public function testConnectDisconnect()
     {
         $this->debug->connect();
         $this->assertTrue($this->debug->isConnected());
