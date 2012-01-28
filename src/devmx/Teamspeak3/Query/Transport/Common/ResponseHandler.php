@@ -243,7 +243,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         }
         if ($val === '' || $val === NULL)
         {
-            return NULL;
+            return '';
         }
 
 

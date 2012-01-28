@@ -105,10 +105,15 @@ foo=bar\sf bar=foo\n\t asdf=jklö|foo=bar2 bar=foo\ps asdf=jklö2
 error id=0 msg=ok
 
 EOF;
+        $raw4 = <<<'EOF'
+a= b= foo=true bar=123 asdf foo=bar
+error id=0 msg=ok
+EOF;
         return array(
           array($raw1, array(array("foo"=>"bar", "bar"=>"foo", "asdf"=>"jklö"))),
           array($raw2, array(array("foo"=>"bar", "bar"=>"foo", "asdf"=>"jklö"), array("foo"=>"bar2", "bar"=>"foo", "asdf"=>"jklö2"))),
           array($raw3, array(array("foo"=>"bar f", "bar"=>"foo\n\t", "asdf"=>"jklö"), array("foo"=>"bar2", "bar"=>"foo|s", "asdf"=>"jklö2"))),
+          array($raw4, array(array('a'=>'', 'b'=>'', 'foo'=>true, 'bar'=>123, 'asdf'=>'', 'foo'=>'bar'))),            
         );
     }
     
