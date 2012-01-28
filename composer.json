@@ -3,7 +3,6 @@
     "type": "library",
     "description": "Library using TeamSpeak3-Featuers via PHP",
     "license": "LGPLv3",
-    "version": "0.3-alpha",
     "require": {
         "php": ">=5.3.2"
     },
