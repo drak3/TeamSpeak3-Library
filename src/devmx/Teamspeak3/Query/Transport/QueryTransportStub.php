@@ -135,6 +135,10 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
             throw new \LogicException('Assertion that all responses are received failed');
         }
     }
+    
+    public function __wakeup() {
+            $this->connect();
+    }
         
 }
 
