@@ -123,6 +123,12 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
     public function disconnect() {
         $this->isConnected = false;
     }
+    
+    public function assertAllResponsesReceived() {
+        if(!empty($this->responses)) {
+            throw new \LogicException('Assertion that all responses are received failed');
+        }
+    }
         
 }
 

@@ -191,6 +191,15 @@ class QueryTransportStubTest extends \PHPUnit_Framework_TestCase
        $this->stub->disconnect();
        $this->assertFalse($this->stub->isConnected());
     }
+    
+    /**
+     * @expectedException \LogicException 
+     */
+    public function testAssertAllResponsesReceived() {
+        $this->stub->connect();
+        $this->stub->addResponse(new CommandResponse(new Command('foo')));
+        $this->stub->assertAllResponsesReceived();
+    }
 
 }
 
