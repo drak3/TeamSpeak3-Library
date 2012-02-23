@@ -318,7 +318,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
      */
     public function testRegisterForEvent_cid()
     {
-        $cmd = new Command('servernotifyregister', array('event'=>'foobar', 'cid'=>123));
+        $cmd = new Command('servernotifyregister', array('event'=>'foobar', 'id'=>123));
         $r = new CommandResponse($cmd);
         $this->stub->addResponse($r);
         $this->query->connect();

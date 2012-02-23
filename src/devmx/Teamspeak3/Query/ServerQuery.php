@@ -359,8 +359,8 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
         }
         if($command->getName() == 'servernotifyregister') {
             if(isset($args['event'])) {
-                if(isset($args['cid'])) {
-                    return $this->registerForEvent($args['event'], $args['cid']);
+                if(isset($args['id'])) {
+                    return $this->registerForEvent($args['event'], $args['id']);
                 }
                 else {
                     return $this->registerForEvent($args['event']);
