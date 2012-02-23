@@ -155,6 +155,9 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     {
         $parsedError = $this->parseData($error);
         $errorID = $parsedError[0]['id'];
+        if($errorID === 3329) {
+            throw new \RuntimeException("You are banned");
+        }
         $errorMessage = $parsedError[0]['msg'];
 
         if ($data !== '') // parsed[1] holds the data if it is a fetching command

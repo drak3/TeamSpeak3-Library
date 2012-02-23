@@ -223,6 +223,15 @@ EOF;
         
         $this->assertEquals($parsed, $response->getItems());
     }
+    
+    /**
+     * @expectedException \RunTimeException 
+     */
+    public function testExceptionOnBan() {
+        $cmd = new Command('foo');
+        $toParse = 'error id=3329 msg=connection\sfailed,\syou\sare\sbanned extra_msg=you\smay\sretry\sin\s584\sseconds';
+        $this->handler->getResponseInstance($cmd , $toParse);
+    }
 
 }
 

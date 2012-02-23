@@ -32,6 +32,7 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
      * @param string $host the host of the Ts3-Server
      * @param int $port the Queryport of the Ts3-Server
      * @return QueryTransport 
+     * @deprecated
      */
     public static function getCommon($host, $port)  {
         $trans = new \devmx\Transmission\TCP($host, $port);
