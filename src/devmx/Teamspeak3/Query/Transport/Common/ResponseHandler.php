@@ -318,14 +318,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      */
     public function isWelcomeMessage($welcome)
     {
-        if (\strlen($welcome) !== self::WELCOME_LENGTH || !\strstr($welcome, self::WELCOME_IDENTIFY))
-        {
-            return FALSE;
-        }
-        else
-        {
-            return TRUE;
-        }
+        return (\strstr($welcome, self::WELCOME_IDENTIFY) && count(explode("\n", $welcome)) === 3 && $welcome[strlen($welcome)-1] === "\n");
     }
     
     private function match($regex, $raw, $exceptionOnFail=false) {
