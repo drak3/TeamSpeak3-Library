@@ -225,14 +225,14 @@ EOF;
     }
     
     /**
-     * @expectedException \RunTimeException 
+     * @expectedException \RuntimeException 
      */
-    public function testExceptionOnBan() {
+    public function testBanDetection() {
         $cmd = new Command('foo');
-        $toParse = 'error id=3329 msg=connection\sfailed,\syou\sare\sbanned extra_msg=you\smay\sretry\sin\s584\sseconds';
-        $this->handler->getResponseInstance($cmd , $toParse);
+        $toParse = "foo= bar=true asdf=false\nerror id=3223 msg=banned\nnotifysth foo=asdf";
+        $this->handler->isCompleteResponse($toParse);
     }
-
+    
 }
 
 ?>

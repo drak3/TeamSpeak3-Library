@@ -66,6 +66,11 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * The string between a key/value pair
      */
     const SEPERATOR_KEY_VAL = "=";
+    
+    /**
+     *@todo insert right value 
+     */
+    const BAN_ERROR = 3223;
 
     /**
      * The chars masked by the query and their replacements
@@ -155,9 +160,6 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     {
         $parsedError = $this->parseData($error);
         $errorID = $parsedError[0]['id'];
-        if($errorID === 3329) {
-            throw new \RuntimeException("You are banned");
-        }
         $errorMessage = $parsedError[0]['msg'];
 
         if ($data !== '') // parsed[1] holds the data if it is a fetching command
@@ -261,6 +263,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      */
     public function isCompleteEvent($raw)
     {
+        $this->checkForBan($raw);
         if ($raw !== '' && $raw[strlen($raw)-1] === self::SEPERATOR_RESPONSE)
         {
             return TRUE;
@@ -279,6 +282,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      */
     public function isCompleteResponse($raw)
     {
+        $this->checkForBan($raw);
         if ($this->match($this->errorRegex, $raw) && $raw[strlen($raw)-1] == "\n")
         {
             return TRUE;
@@ -338,6 +342,23 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         }
         return $parsed;
     }
+    
+    /**
+     * Checks if the raw response contains a Ban message and throws Exception
+     * @todo Add the ban time to the message
+     * @param string $raw
+     * @throws \RuntimeException 
+     */
+    private function checkForBan($raw) {
+        $parsed = $this->match($this->errorRegex, $raw);
+        if($parsed) {
+            $parsed = $this->parseData($parsed[0]);
+            var_dump($parsed);
+            if(isset($parsed[0]['id']) && $parsed[0]['id'] == self::BAN_ERROR) {
+                throw new \RuntimeException("You are banned");
+            }
+        }
+    } 
 
 }
 
