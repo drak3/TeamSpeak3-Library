@@ -199,7 +199,6 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @covers devmx\Teamspeak3\Query\ServerQuery::useByPort
-     * @todo Implement testUseByPort().
      */
     public function testUseByPort()
     {
@@ -215,7 +214,6 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers devmx\Teamspeak3\Query\ServerQuery::useByID
-     * @todo Implement testUseByID().
      */
     public function testUseByID()
     {
@@ -236,7 +234,6 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers devmx\Teamspeak3\Query\ServerQuery::deselect
-     * @todo Implement testDeselect().
      */
     public function testDeselect()
     {
@@ -258,7 +255,6 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers devmx\Teamspeak3\Query\ServerQuery::moveToChannel
-     * @todo Implement testMoveToChannel().
      */
     public function testMoveToChannel()
     {
@@ -342,7 +338,6 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers devmx\Teamspeak3\Query\ServerQuery::unregisterEvents
-     * @todo Implement testUnregisterEvents().
      */
     public function testUnregisterEvents()
     {
@@ -366,19 +361,6 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $this->query->connect();
         $this->query->quit();
         $this->assertFalse($this->query->isConnected());
-    }
-
-    /**
-     * @covers devmx\Teamspeak3\Query\ServerQuery::__clone
-     * @todo Implement test__clone().
-     */
-    public function test__clone()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
     }
 
     /**
@@ -412,28 +394,25 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @covers devmx\Teamspeak3\Query\ServerQuery::connect
-     * @todo Implement testConnect().
+     * @covers devmx\Teamspeak3\Query\ServerQuery::isConnected
      */
     public function testConnect()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+        $this->query->connect();
+        $this->assertTrue($this->query->isConnected());
+        $this->assertTrue($this->stub->isConnected());
     }
 
     /**
      * @covers devmx\Teamspeak3\Query\ServerQuery::disconnect
-     * @todo Implement testDisconnect().
+     * @covers devmx\Teamspeak3\Query\ServerQuery::isConnected
      */
     public function testDisconnect()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+        $this->query->connect();
+        $this->query->disConnect();
+        $this->assertFalse($this->query->isConnected());
+        $this->assertFalse($this->stub->isConnected());
     }
 
     /**
@@ -442,27 +421,26 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetAllEvents()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+        $e = new Event('notifyfoo', array());
+        $this->stub->addEvent($e);
+        $this->stub->addResponse(new CommandResponse(new Command('servernotifyregister', array('event' => 'foo'))));
+        $this->query->connect();
+        $this->query->registerForEvent('foo');
+        $this->assertEquals(array($e), $this->query->getAllEvents());
     }
-
-    /**
-     * @covers devmx\Teamspeak3\Query\ServerQuery::isConnected
-     * @todo Implement testIsConnected().
-     */
-    public function testIsConnected()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
-    }
-
     
+    /**
+     * @covers devmx\Teamspeak3\Query\ServerQuery::getAllEvents
+     * @expectedException \LogicException
+     */
+    public function testGetAllEvents_Exception()
+    {
+        $e = new Event('notifyfoo', array());
+        $this->stub->addEvent($e);
+        $this->query->getAllEvents();
+    }
+
+        
 
     /**
      * @covers devmx\Teamspeak3\Query\ServerQuery::waitForEvent
