@@ -353,7 +353,6 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         $parsed = $this->match($this->errorRegex, $raw);
         if($parsed) {
             $parsed = $this->parseData($parsed[0]);
-            var_dump($parsed);
             if(isset($parsed[0]['id']) && $parsed[0]['id'] == self::BAN_ERROR) {
                 throw new \RuntimeException("You are banned");
             }

@@ -76,7 +76,6 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getSentCommands
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getReceivedResponses
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::sendCommand
-     * @todo Implement testSendCommand().
      */
     public function testSendCommand()
     {
@@ -116,7 +115,6 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::waitForEvent
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getReceivedEvents
-     * @todo Implement testWaitForEvent().
      */
     public function testWaitForEvent()
     {
@@ -154,7 +152,6 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getSentCommands
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getReceivedResponses
-     * @todo Implement testGetSentCommands().
      */
     public function testGetSentCommandsAndReceivedResponses()
     {
@@ -174,7 +171,6 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getCloned
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::__clone
-     * @todo Implement testGetCloned().
      */
     public function testGetCloned()
     {

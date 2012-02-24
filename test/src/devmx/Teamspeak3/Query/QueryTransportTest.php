@@ -195,7 +195,6 @@ EOF;
 
     /**
      * @covers devmx\Teamspeak3\Query\QueryTransport::waitForEvent
-     * @todo Implement testWaitForEvent().
      */
     public function testWaitForEvent()
     {
@@ -236,7 +235,6 @@ EOF;
 
     /**
      * @covers devmx\Teamspeak3\Query\QueryTransport::disconnect
-     * @todo Implement testDisconnect().
      */
     public function testDisconnect()
     {
@@ -249,7 +247,6 @@ EOF;
 
     /**
      * @covers devmx\Teamspeak3\Query\QueryTransport::__clone
-     * @todo Implement test__clone().
      */
     public function test__clone()
     {
