@@ -228,7 +228,6 @@ EOF;
      * @expectedException \RuntimeException 
      */
     public function testBanDetection() {
-        $cmd = new Command('foo');
         $toParse = "\nerror id=3329 msg=banned";
         $this->handler->isCompleteResponse($toParse);
     }
@@ -237,7 +236,6 @@ EOF;
      * @expectedException \RuntimeException 
      */
     public function testBanDetection_FloodBan() {
-        $cmd = new Command('bar');
         $toParse = "foo= bar=true asdf=false\nerror id=3331 msg=banned\n";
         $this->handler->isCompleteResponse($toParse);
     }
