@@ -67,10 +67,10 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      */
     const SEPERATOR_KEY_VAL = "=";
     
-    /**
-     *@todo insert right value 
-     */
-    const BAN_ERROR = 3223;
+
+    const BAN_ERROR = 3329;
+    
+    const FLOOD_BAN_ERROR = 3331;
 
     /**
      * The chars masked by the query and their replacements
@@ -353,7 +353,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         $parsed = $this->match($this->errorRegex, $raw);
         if($parsed) {
             $parsed = $this->parseData($parsed[0]);
-            if(isset($parsed[0]['id']) && $parsed[0]['id'] == self::BAN_ERROR) {
+            if(isset($parsed[0]['id']) && ($parsed[0]['id'] == self::BAN_ERROR || $parsed[0]['id'] == self::FLOOD_BAN_ERROR)) {
                 throw new \RuntimeException("You are banned");
             }
         }
