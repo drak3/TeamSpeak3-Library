@@ -18,6 +18,7 @@
  */
 
 namespace devmx\Teamspeak3\Node;
+use devmx\Teamspeak3\Version;
 
 /**
  *
@@ -53,9 +54,9 @@ interface VirtualServerInterface
     public function getName();
     public function setName($name);
     public function getWelcomeMessage();
-    public function setWelcomeMessage();
+    public function setWelcomeMessage($welcome);
     public function getMaximumClients();
-    public function setMaximumClients();
+    public function setMaximumClients($maxClients);
     public function hasPassword();
     public function getPassword();
     public function setPassword($pass);
@@ -81,9 +82,9 @@ interface VirtualServerInterface
     public function getVersion();
     public function setVersion(\devmx\Teamspeak3\Version $version);
     public function getMaximumDownloadBandwidth();
-    public function setMaximumDownloadBandwidth();
+    public function setMaximumDownloadBandwidth($maxDownloadBandwidth);
     public function getMaximumUploadBandwidth();
-    public function setMaximumUploadBandwidth();
+    public function setMaximumUploadBandwidth($maxUploadBandwidth);
     public function getHostBannerURL();
     public function setHostBannerURL($url);
     public function getHostBannerGFXURL();
@@ -97,7 +98,7 @@ interface VirtualServerInterface
     public function getComplainRemoveTime();
     public function setComplainRemoveTime(\DateInterval $time);
     public function getNumberOfClientsInChannelBeforeForcedSilence();
-    public function setNumberOfClientsInChannelBeforeForcedSilence();
+    public function setNumberOfClientsInChannelBeforeForcedSilence($numberOfClients);
     public function getPrioritySpeakerDimmModificator();
     public function setPrioritySpeakerDimmModificatior($mod);
     public function getAntiFloodPointsReducedByTick();
@@ -121,14 +122,14 @@ interface VirtualServerInterface
     public function getDownloadQuota();
     public function setDownloadQuota($quota);
     public function getUploadQuota();
-    public function setUploadQuota();
+    public function setUploadQuota($quota);
     public function getBytesUploadedThisMonth();
     public function setBytesUploadedThisMonth($bytes);
     public function getBytesDownloadedThisMonth();
     public function setBytesDownloadedThisMonth($bytes);
     public function getBytesDownloaded();
     public function setBytesDownloaded($bytes);
-    public function getBytesUploaded($bytes);
+    public function getBytesUploaded();
     public function setBytesUploaded($bytes);
     public function getUniqueID();
     public function setUniqueID($id);
@@ -139,7 +140,7 @@ interface VirtualServerInterface
     public function getPort();
     public function setPort($port);
     public function isAutostarting();
-    public function setIsAutostarting();
+    public function setIsAutostarting($isAutostarting);
     public function getFileTransferBandwidthSent();
     public function setFileTransferBandwidthSent($bandwidth);
     public function getFileTransferBandwidthReceived();
@@ -163,13 +164,13 @@ interface VirtualServerInterface
     public function logsQueryEvents();
     public function setLogsQueryEvents($logs);
     public function logsChannelEvents();
-    public function setLogsChannelEvents();
+    public function setLogsChannelEvents($logs);
     public function logsPermissionEvents();
     public function setLogsPermissionEvents($logs);
     public function logsServerEvents();
     public function setLogsServerEvents($logs);
     public function logsFileTransferEvents();
-    public function setLogsFileTransferEvents();
+    public function setLogsFileTransferEvents($logs);
     public function getMinimalClientVersion();
     public function setMinimalClientVersion(Version $version);
     public function getNeededSecurityLevel();
@@ -177,7 +178,7 @@ interface VirtualServerInterface
     public function getPhoneticName();
     public function setPhoneticName($name);
     public function getIconID();
-    public function setIconID();
+    public function setIconID($id);
     public function getSpeechPacketLoss();
     public function setSpeechPacketLoss($loss);
     public function getKeepalivePacketLoss();
@@ -187,11 +188,11 @@ interface VirtualServerInterface
     public function getAverageClientPing();
     public function setAverageClientPing($ping);
     public function getIp();
-    public function setIp();
+    public function setIp($ip);
     public function hasWebListEnabled();
     public function setHasWebListEnabled($has);
     public function getCodecEncryptionMode();
-    public function setCodecEncryptionMode();
+    public function setCodecEncryptionMode($mode);
     public function getFileBase();
     public function setFileBase($base);
     

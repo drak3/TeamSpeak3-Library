@@ -15,10 +15,7 @@ namespace devmx\Teamspeak3;
 class Server implements \devmx\Teamspeak3\Node\ServerInterface, \ArrayAccess
 {
     
-    const LOG_LEVEL_ERROR = 1;
-    const LOG_LEVEL_WARNING = 2;
-    const LOG_LEVEL_DEBUG = 3;
-    const LOG_LEVEL_INFO = 4;
+    
     
     /**
      * @var array  
@@ -27,8 +24,9 @@ class Server implements \devmx\Teamspeak3\Node\ServerInterface, \ArrayAccess
     
     protected $virtualServers = Array();
     
+    private $isStopped;
+    
     /**
-     * @todo maybe rename to set($name, $value)
      * @param type $name
      * @param type $value 
      */
@@ -37,7 +35,6 @@ class Server implements \devmx\Teamspeak3\Node\ServerInterface, \ArrayAccess
     }
     
     /**
-     * @todo maybe rename to get($name)
      * @param type $name
      * @return type 
      */
@@ -65,24 +62,33 @@ class Server implements \devmx\Teamspeak3\Node\ServerInterface, \ArrayAccess
         unset($this->data[$offset]);
     }
     
+    public function setData($data) {
+        $this->data = $data;
+    }
+    
     public function getData() {
         return $this->data;
     } 
     
-    public function setData(array $data) {
-        $this->data = $data;
-    }
-
-    
+    /**
+     * Creates a VirtualServer on this server
+     * @param VirtualServerInterface $data
+     * @return \devmx\Teamspeak3\VirtualServerInterface 
+     */    
     public function createVirtualServer($data) {
        if($data instanceof Node\VirtualServerInterface && is_int($data->getID())) {
-           $this->virtualServers[$data->getID()] = $data;
+           $server = $data;
+           $this->virtualServers[$server->getID()] = $server;
        }
-       elseif(is_int($data['id'])) {
-           $server = new VirtualServer();
+       elseif(is_int($data['virtualserver_id'])) {
+           $server = new VirtualServer($data['virtualserver_id']);
            $server->setData($data);
+           $this->virtualServers[$data['virtualserver_id']] = $server;
        }
-       return $data;
+       else {
+           throw new \InvalidArgumentException("Cannot create Server from given data");
+       }
+       return $server;
     }
     
     public function deleteVirtualServer($identifyer) {
@@ -137,6 +143,10 @@ class Server implements \devmx\Teamspeak3\Node\ServerInterface, \ArrayAccess
             return $ret;
         }
         return $this->virtualServers;
+    }
+    
+    public function isStopped() {
+        return $this->stopped;
     }
 
     

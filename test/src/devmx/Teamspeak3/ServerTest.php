@@ -85,28 +85,38 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers devmx\Teamspeak3\Server::createVirtualServer
-     * @todo Implement testCreateVirtualServer().
      */
-    public function testCreateVirtualServer()
+    public function testCreateVirtualServerByID()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+        $vserver = $this->server->createVirtualServer(array('virtualserver_id' => 12));
+        $this->assertEquals(12, $vserver->getID());
+    }
+    
+    /**
+     * @covers devmx\Teamspeak3\Server::createVirtualServer
+     */
+    public function testCreateVirtualServerByObject() {
+        $vserver = $this->server->createVirtualServer(new VirtualServer(12));
+        $this->assertEquals(12, $vserver->getID());
+    }
+    
+    /**
+     * @covers devmx\Teamspeak3\Server::deleteVirtualServer
+     */
+    public function testDeleteVirtualServerByID() {
+        $vserver = $this->server->createVirtualServer(new VirtualServer(12));
+        $this->server->deleteVirtualServer(12);
+        $this->assertNull($this->server->getVirtualServerByID(12));
     }
 
     /**
      * @covers devmx\Teamspeak3\Server::deleteVirtualServer
-     * @todo Implement testDeleteVirtualServer().
      */
-    public function testDeleteVirtualServer()
+    public function testDeleteVirtualServerByObject()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+        $vserver = $this->server->createVirtualServer(new VirtualServer(12));
+        $this->server->deleteVirtualServer($vserver);
+        $this->assertNull($this->server->getVirtualServerByID(12));
     }
 
     /**
@@ -115,62 +125,61 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetVirtualServerByPort()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+        $vserver = $this->server->createVirtualServer(new VirtualServer(12));
+        $vserver->setPort(9987);
+        $this->assertEquals($vserver, $this->server->getVirtualServerByPort(9987));
     }
 
     /**
      * @covers devmx\Teamspeak3\Server::getVirtualServerByID
-     * @todo Implement testGetVirtualServerByID().
      */
     public function testGetVirtualServerByID()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+       $vserver = $this->server->createVirtualServer(new VirtualServer(12));
+       $this->assertEquals($vserver, $this->server->getVirtualServerByID(12));
     }
 
     /**
      * @covers devmx\Teamspeak3\Server::stop
-     * @todo Implement testStop().
      */
     public function testStop()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
-    }
-
-    /**
-     * @covers devmx\Teamspeak3\Server::findVirtualServer
-     * @todo Implement testFindVirtualServer().
-     */
-    public function testFindVirtualServer()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+        $this->server->stop();
+        $this->assertTrue($this->server->isStopped());
     }
 
     /**
      * @covers devmx\Teamspeak3\Server::getVirtualServers
-     * @todo Implement testGetVirtualServers().
      */
     public function testGetVirtualServers()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $vserver = $this->server->createVirtualServer(new VirtualServer(12));
+        $vserver->setName('foobar');
+        $vserver2 = $this->server->createVirtualServer(new VirtualServer(13));
+        $vserver2->setName('foo');
+        $vserver3 = $this->server->createVirtualServer(new VirtualServer(14));
+        $vserver3->setName('barfoo');
+        $this->assertEquals(array($vserver, $vserver2), $this->server->getVirtualServers(function($server) {
+            //this function checks if the servername starts with foo
+            return substr($server->getName(), 0, 3) === 'foo';
+        }));
+    }
+
+    /**
+     * @covers devmx\Teamspeak3\Server::findVirtualServer
+     */
+    public function testFindVirtualServer()
+    {
+        $vserver = $this->server->createVirtualServer(new VirtualServer(12));
+        $vserver->setName('foobar');
+        $vserver2 = $this->server->createVirtualServer(new VirtualServer(13));
+        $vserver2->setName('foo');
+        $vserver3 = $this->server->createVirtualServer(new VirtualServer(14));
+        $vserver3->setName('barfoo');
+        $this->assertEquals($vserver, $this->server->findVirtualServer(function($server) {
+            //this function checks if the servername starts with foo
+            return substr($server->getName(), 0, 3) === 'foo';
+        }));
 
     }
 }

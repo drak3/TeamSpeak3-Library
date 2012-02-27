@@ -12,8 +12,22 @@ namespace devmx\Teamspeak3;
  *
  * @author drak3
  */
-class VirtualServer implements \ArrayAccess//implements \devmx\Teamspeak3\Node\VirtualServerInterface
+class VirtualServer implements \ArrayAccess , \devmx\Teamspeak3\Node\VirtualServerInterface
 {
+    protected $data;
+    
+    public function __construct($id) {
+        $this->setID($id);
+    }
+    
+    public function setData($data) {
+        $this->data = $data;
+    }
+    
+    public function getData() {
+        return $this->data;
+    }
+    
     
     public function createChannel($channelData) {
         
@@ -104,11 +118,11 @@ class VirtualServer implements \ArrayAccess//implements \devmx\Teamspeak3\Node\V
     }
     
     public function getValue($name) {
-        
+        return $this->data[$name];
     }
     
-    public function setValue($name) {
-        
+    public function setValue($name, $value) {
+        $this->data[$name] = $value;
     }
 
 
@@ -1023,9 +1037,7 @@ class VirtualServer implements \ArrayAccess//implements \devmx\Teamspeak3\Node\V
         return $this;
     }
     
-    public function getData() {
-        return $this->data;
-    }
+    
 }
 
 ?>
