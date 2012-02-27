@@ -214,12 +214,12 @@ EOF;
     public function testSpecialValues() {
         $cmd = new Command('foo');
         
-        $toParse = "foo= bar=true asdf=false\nerror id=0 msg=ok";
+        $toParse = "foo= jkl bar=true asdf=false\nerror id=0 msg=ok";
         
         $response = $this->handler->getResponseInstance($cmd, $toParse);
         $response = $response['response'];
         
-        $parsed = array(array('foo'=>NULL, 'bar'=>true, 'asdf'=>false));
+        $parsed = array(array('foo'=>'', 'jkl'=>'' , 'bar'=>true, 'asdf'=>false));
         
         $this->assertEquals($parsed, $response->getItems());
     }
