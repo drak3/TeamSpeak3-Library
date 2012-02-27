@@ -417,7 +417,6 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers devmx\Teamspeak3\Query\ServerQuery::getAllEvents
-     * @todo Implement testGetAllEvents().
      */
     public function testGetAllEvents()
     {
