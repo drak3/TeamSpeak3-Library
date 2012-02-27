@@ -94,6 +94,10 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
         $cmd = new Command('foo', array('foo'=>true, 'bar'=>false));
         $this->assertEquals("foo foo=1 bar=0\n", $this->translator->translate($cmd));
     }
+    
+    public function testTranslateNameWithNumber() {
+        $this->assertTrue($this->translator->isValid( new Command("tokenadd", array("tokenid1" => 1))));
+    }
 
 }
 
