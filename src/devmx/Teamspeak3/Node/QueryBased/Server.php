@@ -1,7 +1,7 @@
 <?php
 
 
-namespace devmx\Teamspeak3\Query\Node;
+namespace devmx\Teamspeak3\Node\QueryBased;
 
 use devmx\Teamspeak3\Query;
 use devmx\Teamspeak3\Node;

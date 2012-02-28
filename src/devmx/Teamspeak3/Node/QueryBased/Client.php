@@ -15,7 +15,7 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace devmx\Teamspeak3\Query\Node;
+namespace devmx\Teamspeak3\Node\QueryBased;
 
 /**
  * 
