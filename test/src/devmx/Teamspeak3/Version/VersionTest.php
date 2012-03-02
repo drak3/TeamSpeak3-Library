@@ -1,6 +1,6 @@
 <?php
 
-namespace devmx\Teamspeak3;
+namespace devmx\Teamspeak3\Version;
 
 /**
  * Test class for Version.

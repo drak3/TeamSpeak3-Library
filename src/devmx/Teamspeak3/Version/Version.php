@@ -16,7 +16,7 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace devmx\Teamspeak3;
+namespace devmx\Teamspeak3\Version;
 
 /**
  * Gives an object oriented way to acces teamspeak3 client and server versions
