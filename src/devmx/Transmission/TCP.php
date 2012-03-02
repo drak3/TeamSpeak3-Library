@@ -51,9 +51,11 @@ class TCP implements TransmissionInterface
     protected $defaultTimeoutMicro = 0;
 
     /**
-     * @var resource 
+     * @var \devmx\Transmission\TCP\Stream
      */
     protected $stream;
+    
+    protected $rawStream;
     
     protected $isConnected = false;
     
@@ -75,6 +77,8 @@ class TCP implements TransmissionInterface
 
         $this->defaultTimeoutSec = (int) $timeoutSeconds;
         $this->defaultTimeoutMicro = (int) $timeoutMicroSeconds;
+        
+        $this->stream = new TCP\Stream();
     }
 
     /**
@@ -83,7 +87,7 @@ class TCP implements TransmissionInterface
      */
     public function close()
     {
-        fclose($this->stream);
+        $this->stream->close();
         $this->isConnected = FALSE;
     }
 
@@ -103,9 +107,9 @@ class TCP implements TransmissionInterface
             $timeout = $this->defaultTimeoutSec;
         }
 
-        $this->stream = fsockopen($this->host, $this->port, $errorNumber, $errorMessage, $timeout);
+        $this->rawStream = $this->stream->open($this->host, $this->port, $errorNumber, $errorMessage, $timeout);
 
-        if (!$this->stream || $errorNumber !== 0)
+        if (!$this->rawStream || $errorNumber !== 0)
         {
             $this->isConnected = FALSE;
             throw new \RuntimeException("Establishing failed with code " . $errorNumber . "and message " . $errorMessage);
@@ -138,7 +142,7 @@ class TCP implements TransmissionInterface
      */
     public function isEstablished()
     {
-        if ($this->stream === FALSE) return FALSE;
+        if ($this->rawStream == FALSE) return FALSE;
         return $this->isConnected;
     }
 
@@ -168,9 +172,9 @@ class TCP implements TransmissionInterface
             $timeoutSec = $this->defaultTimeoutSec;
         }
 
-        \stream_set_timeout($this->stream, $timeoutSec, $timeoutMicro);
+        $this->stream->setTimeOut($timeoutSec, $timeoutMicro);
 
-        $data = \fgets($this->stream, $length);
+        $data = $this->stream->getLine( $length );
 
         return $data;
     }
@@ -183,13 +187,13 @@ class TCP implements TransmissionInterface
     public function getAll()
     {
         if (!$this->isEstablished()) throw new \RuntimeException("Connection not Established");
-        \stream_set_blocking($this->stream, self::NONBLOCKING);
+        $this->stream->setBlocking( self::NONBLOCKING );
         $crnt = $data = '';
-        while ($crnt = \trim(\fgets($this->stream)))
+        while ($crnt = \trim($this->stream->getLine(8094)))
         {
             $data .= $crnt;
         }
-        \stream_set_blocking($this->stream, self::BLOCKING);
+        $this->stream->setBlocking( self::BLOCKING );
         return $data;
     }
     
@@ -218,7 +222,7 @@ class TCP implements TransmissionInterface
             if($this->maxTries > 0 && $tries > $this->maxTries) {
                 throw new \RuntimeException('Max tries exceeded');
             }
-            $data .= \fgets($this->stream, $length);
+            $data .= $this->stream->getLine($length);
         }
         return $data;
     }
@@ -246,7 +250,7 @@ class TCP implements TransmissionInterface
             $timeoutSec = $this->defaultTimeoutSec;
         }
         
-        \stream_set_timeout($this->stream, $timeoutSec, $timeoutMicro);
+        $this->stream->setTimeOut($timeoutSec, $timeoutMicro);
         
         $bytesToSend = strlen($data);
         
@@ -254,7 +258,7 @@ class TCP implements TransmissionInterface
         while ($bytesToSend > 0 && $tries < $maxTries)
         {
             $tries++;
-            $sentBytes = \fwrite($data);
+            $sentBytes = $this->stream->write($data);
             $bytesToSend -= $sentBytes;
             $data = substr($data, $sentBytes);
         }
@@ -305,6 +309,14 @@ class TCP implements TransmissionInterface
     
     public function getStream() {
         return $this->stream;
+    }
+    
+    public function setStream(TCP\Stream $stream) {
+        $this->stream = $stream;
+    } 
+    
+    public function getRawStream() {
+        return $this->rawStream;
     }
 
 }
