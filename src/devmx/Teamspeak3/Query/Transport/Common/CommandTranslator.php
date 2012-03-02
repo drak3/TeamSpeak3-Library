@@ -26,6 +26,15 @@ namespace devmx\Teamspeak3\Query\Transport\Common;
  */
 class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTranslatorInterface
 {
+    
+    const COMMANDNAME_SEPERATOR = ' ';
+    const OPTION_PREFIX = '-';
+    const OPTION_SEPERATOR = ' ';
+    const SECTION_SEPERATOR = '|';
+    const KEY_VALUE_SEPERATOR = '=';
+    const PARAMETER_SEPERATOR = ' ';
+    const COMMAND_SEPERATOR = "\n";
+    
 
     /**
      * Translates a command to its query-representation
@@ -43,31 +52,43 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
             throw new \InvalidArgumentException($msg);
         }
 
-        $queryRepresentation = $cmd->getName() . " ";
-
-        foreach ($cmd->getParameters() as $name => $value)
-        {
-            $name = $this->escape($name);
-            if (is_array($value))
-            {
-                foreach ($value as $param)
-                {
-                    $queryRepresentation .= $name . "=" . $this->escape($param) . "|";
-                }
-                $queryRepresentation = \rtrim($queryRepresentation, "|") . " ";
-            }
-            else
-            {
-                $queryRepresentation .= $name . "=" . $this->escape($value) . " ";
-            }
+        $queryRepresentation  = $this->translateName($cmd->getName());
+        $params = $this->translateParameters($cmd->getParameters());
+        if($params !== '') {
+            $queryRepresentation .= $params . self::PARAMETER_SEPERATOR;
         }
+        $queryRepresentation .= $this->translateOptions($cmd->getOptions());
 
-        foreach ($cmd->getOptions() as $name)
-        {
-            $queryRepresentation .= "-" . $this->escape($name) . " ";
-        }
+        
         $queryRepresentation = \rtrim($queryRepresentation);
-        $queryRepresentation .= "\n";
+        $queryRepresentation .= self::COMMAND_SEPERATOR;
+        return $queryRepresentation;
+    }
+    
+    protected function translateName($name) {
+        return $this->escape($name).self::COMMANDNAME_SEPERATOR;
+    }
+    
+    protected function translateParameters(array $params) {
+        $queryRepresentation = '';
+        foreach($params as $name => $value) {
+            if(is_array($value)) {
+                //thanks to isValid we can rely on the fact that value does not contain other arrays
+                $queryRepresentation .= $this->translateParameters($value) . self::SECTION_SEPERATOR;
+            }
+            else {
+                $queryRepresentation .= $this->escape($name) . self::KEY_VALUE_SEPERATOR . $this->escape($value) . self::PARAMETER_SEPERATOR;
+            }
+        }
+        return rtrim($queryRepresentation, self::SECTION_SEPERATOR . self::PARAMETER_SEPERATOR);
+    }
+    
+    protected function translateOptions(array $options) {
+        $queryRepresentation = '';
+        foreach ($options as $name)
+        {
+            $queryRepresentation .= self::OPTION_PREFIX . $this->escape($name) . self::OPTION_SEPERATOR;
+        }
         return $queryRepresentation;
     }
 
@@ -139,41 +160,41 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
 
     /**
      * Returns if the Parameterlist is valid
+     * Parameterlist may contain 
      * @param array $params
      * @return boolean
      */
     protected function areValidParams(array $params)
     {
-        foreach ($params as $name => $param)
-        {
-            if (!$this->isValidName($name))
-            {
-                return FALSE;
-            }
-            if(is_array($param)) {
-                if(!$this->checkParamValues( $param)) {
-                    return FALSE;
+        foreach($params as $name => $value) {
+            if(is_array($value)) {
+                foreach($value as $name2 => $value2) {
+                    if(!$this->isValidName( $name2 ) || !$this->isValidValue($value2)) {
+                        return false;
+                    }
                 }
             }
             else {
-                if(!is_string($param) && !is_bool($param) && !is_int($param)) {
-                    return FALSE;
+                if(!$this->isValidName( $name ) || !$this->isValidValue($value)) {
+                    return false;
                 }
             }
         }
-        return TRUE;
+        return true;
     }
     
     
-    protected function checkParamValues(array $paramvalues) {
-        foreach ($paramvalues as $val)
-        {
-            if (!is_string($val) && !is_bool( $val) && !is_int($val))
-            {
-                return FALSE;
-            }
+    protected function isValidValue($value) {
+        if(is_string($value) || is_bool( $value ) || is_int( $value) || is_float( $value )) {
+            return true;
         }
-        return TRUE;
+        try {
+            $value = (string) $value;
+            return true;
+        } catch(\Exception $e) {
+            return false;
+        }
+        return false;
     }
 
     /**

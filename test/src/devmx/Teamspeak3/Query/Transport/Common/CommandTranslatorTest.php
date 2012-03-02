@@ -40,8 +40,13 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
     }
     
     public function testTranslateMultipleArgumentValues() {
-        $cmd = new Command("banclient", array("clid"=>array(1,2,3)));
+        $cmd = new Command("banclient", array(array('clid' => 1), array('clid'=> 2), array('clid'=>3)));
         $this->assertEquals("banclient clid=1|clid=2|clid=3\n", $this->translator->translate( $cmd ));
+    }
+    
+    public function testTranslateMultipleArgumentValues_RenderNonArrayFirst() {
+        $cmd = new Command('foobar', array('foo'=>'bar', array('cid'=>1), array('cid'=>2)));
+        $this->assertEquals('foobar foo=bar cid=1|cid=2'."\n", $this->translator->translate($cmd));
     }
     
     public function testTranslateOptions() {
@@ -56,7 +61,7 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
     }
     
     public function testTranslateFullCommand() {
-        $cmd = new Command("test", Array("foo"=>"bar", "asdf"=>Array("  ", "asdf")), Array("fnord"));
+        $cmd = new Command("test", array("foo"=>"bar", array('asdf'=>'  '), array('asdf'=>'asdf')), array("fnord"));
         $this->assertEquals('test foo=bar asdf=\s\s|asdf=asdf -fnord'."\n", $this->translator->translate( $cmd ));
     }
     
