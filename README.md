@@ -3,6 +3,7 @@ README
 
 This Library is currently in alpha phase.
 At the moment it offers access to the Teamspeak3 Serverquery and the Filetransfer via an objectoriented interface
+High level abstraction for a Teamspeak3 instance is currently under development (take a look at devmx/Teamspeak3/Query/Node/)
 
 Dependencies
 ------------
