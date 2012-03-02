@@ -23,7 +23,7 @@ namespace devmx\Teamspeak3\FileTransfer;
  *
  * @author drak3
  */
-class Uploader extends AbstractTransferer
+class Uploader
 {
 
     /**
@@ -45,12 +45,11 @@ class Uploader extends AbstractTransferer
         $this->data = $data;
     }
 
-    public function transfer()
+    public function upload()
     {
-        $bytesToSend = strlen($this->data);
         $this->transmission->establish();
-        $this->sendFull($this->key, strlen($this->key));
-        $this->sendFull($this->data, $bytesToSend);
+        $this->transmission->send($this->key);
+        $this->transmission->send($this->data);
         $this->transmission->close();
     }
 

@@ -21,7 +21,7 @@ class UploaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('', $transmission->getReceived());
         $this->assertEquals('', $transmission->getSentData());
         $this->assertFalse($transmission->isEstablished());
-        $uploader->transfer();
+        $uploader->upload();
         $this->assertEquals('foobar'.$data,$transmission->getSentData());
     }
 

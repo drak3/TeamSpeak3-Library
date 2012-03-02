@@ -230,7 +230,7 @@ class TCP implements TransmissionInterface
      * @param int $timeoutMicro
      * @return int number of written bytes
      */
-    public function send($data, $timeoutSec = -1, $timeoutMicro = -1)
+    public function send($data, $maxTries=20, $timeoutSec = -1, $timeoutMicro = -1)
     {
         if (!$this->isEstablished()) throw new \RuntimeException("Connection not Established");
         $timeoutSec = (int) $timeoutSec;
@@ -245,9 +245,25 @@ class TCP implements TransmissionInterface
         {
             $timeoutSec = $this->defaultTimeoutSec;
         }
+        
         \stream_set_timeout($this->stream, $timeoutSec, $timeoutMicro);
-        return \fwrite($this->stream, $data);
+        
+        $bytesToSend = strlen($data);
+        
+        $tries = 0;
+        while ($bytesToSend > 0 && $tries < $maxTries)
+        {
+            $tries++;
+            $sentBytes = \fwrite($data);
+            $bytesToSend -= $sentBytes;
+            $data = substr($data, $sentBytes);
+        }
+        
+        if($tries == $maxTries) {
+            throw new \RuntimeException('Sending failed, max tries reached');
+        }
     }
+    
 
     public function __clone() {
         $this->establish();

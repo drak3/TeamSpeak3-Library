@@ -23,7 +23,7 @@ namespace devmx\Teamspeak3\FileTransfer;
  * A download action for the Teamspeak3 ft-Interface
  * @author drak3
  */
-class Downloader extends AbstractTransferer
+class Downloader
 {
 
     /**
@@ -53,10 +53,10 @@ class Downloader extends AbstractTransferer
      * Downloads the file specified by the $key
      * @return string the downloaded file 
      */
-    public function transfer()
+    public function download()
     {
         if (!$this->transmission->isEstablished()) $this->transmission->establish();
-        $this->sendFull($this->key, strlen($this->key));
+        $this->transmission->send($this->key);
         return $this->receiveFull($this->bytesToRead);
     }
 
