@@ -114,7 +114,7 @@ class TCP implements TransmissionInterface
         if (!$this->stream || $errorNumber !== 0)
         {
             $this->isConnected = FALSE;
-            throw new \RuntimeException("Establishing failed with code " . $errorNumber . " and message '" . $errorMessage."'");
+            throw new Exception\EstablishingFailedException($this->host, $this->port, $errorNumber, $errorMessage);
         }
 
         $this->isConnected = true;
@@ -159,7 +159,7 @@ class TCP implements TransmissionInterface
      */
     public function receiveLine($length = 4096, $timeoutSec = -1, $timeoutMicro = -1)
     {
-        if (!$this->isEstablished()) throw new \BadMethodCallException("Connection not Established");
+        if (!$this->isEstablished()) throw new Exception\NotEstablishedException();
 
         $this->checkTimeOut($timeoutSec, $timeoutMicro);
 
@@ -175,7 +175,7 @@ class TCP implements TransmissionInterface
      */
     public function getAll()
     {
-        if (!$this->isEstablished()) throw new \BadMethodCallException("Connection not Established");
+        if (!$this->isEstablished()) throw new Exception\NotEstablishedException();
         $this->setBlocking( self::NONBLOCKING );
         $crnt = $data = '';
         while ($crnt = $this->getLine(8094))
@@ -202,7 +202,7 @@ class TCP implements TransmissionInterface
      */
     public function receiveData($length, $timeoutSec=-1, $timeoutMicro=-1)
     {
-        if (!$this->isEstablished()) throw new \BadMethodCallException("Connection not Established");
+        if (!$this->isEstablished()) throw new Exception\NotEstablishedException;
         $data = '';
         $tries = 0;
         
@@ -212,7 +212,7 @@ class TCP implements TransmissionInterface
         {
             $tries++;
             if($this->getMaxTries() > 0 && $tries > $this->getMaxTries()) {
-                throw new \RuntimeException('Max tries exceeded');
+                throw new Exception\MaxTriesExceededException($this->getMaxTries(), $data);
             }
             $data .= $this->getLine($length);
         }
@@ -228,7 +228,7 @@ class TCP implements TransmissionInterface
      */
     public function send($data, $timeoutSec = -1, $timeoutMicro = -1)
     {
-        if (!$this->isEstablished()) throw new \BadMethodCallException("Connection not Established");
+        if (!$this->isEstablished()) throw new Exception\NotEstablishedException;
         
         $this->checkTimeOut($timeoutSec, $timeoutMicro);
         
@@ -244,7 +244,7 @@ class TCP implements TransmissionInterface
         }
         
         if($tries == $this->getMaxTries() && $this->getMaxTries() > 0) {
-            throw new \RuntimeException('Sending failed, max tries reached');
+            throw new Exception\MaxTriesExceededException($this->getMaxTries(), $bytesToSend);
         }
     }
     
@@ -261,15 +261,15 @@ class TCP implements TransmissionInterface
      */
     private function setHost($host)
     {
-        $host = \trim((string) $host);
-        if ($host === '')
+        $validatedHost = \trim((string) $host);
+        if ($validatedHost === '')
         {
-            throw new \InvalidArgumentException("Invalid Host " . $host);
+            throw new Exception\InvalidHostException($host);
         }
         else
         {
-            $this->originalHost = $host;
-            $this->host = "tcp://" . $host;
+            $this->originalHost = $validatedHost;
+            $this->host = "tcp://" . $validatedHost;
         }
     }
 
@@ -282,7 +282,7 @@ class TCP implements TransmissionInterface
         $port = (int) $port;
         if ($port <= 0 || $port > 65535)
         {
-            throw new \InvalidArgumentException("Invalid Port " . $port);
+            throw new Exception\InvalidPortException($port);
         }
         else
         {

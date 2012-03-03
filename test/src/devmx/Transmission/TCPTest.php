@@ -59,7 +59,8 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @covers devmx\Transmission\TCP::establish
-     * @expectedException \RunTimeException
+     * @expectedException \devmx\Transmission\Exception\EstablishingFailedException
+     * @expectedExceptionMessage Cannot establish connection to tcp://foo:9987: Error 123 with message "oops!"
      */
     public function testEstablish_Error() {
         $this->tcp->establishStatus(false, 123, 'oops!');
@@ -122,7 +123,8 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \devmx\Transmission\Exception\InvalidHostException
+     * @expectedExceptionMessage Invalid host "  ". Host must be non empty string
      * @covers devmx\Transmission\TCP::setHost
      */
     public function testSetHost_InvalidHost() {
@@ -139,12 +141,19 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException \InvalidArgumentException
      * @dataProvider invalidPortProvider
      * @covers devmx\Transmission\TCP::setPort 
      */
     public function testSetPort_InvalidPorts($port) {
-        new TCP('foo',$port);
+        try {
+           new TCP('foo',$port); 
+        }
+        catch(\Exception $e) {
+            $this->assertInstanceOf('\devmx\Transmission\Exception\InvalidPortException', $e);
+            $this->assertEquals(sprintf('Port %s is invalid, valid port must be between 0 and 65535', $port), $e->getMessage());
+            return;
+        }
+        $this->fail("No Exception thrown");
     }
     
     public function invalidPortProvider() {
@@ -159,7 +168,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @covers devmx\Transmission\TCP::receiveLine
-     * @expectedException \BadMethodCallException
+     * @expectedException \devmx\Transmission\Exception\NotEstablishedException
      */
     public function testReceiveLine_ExceptionWhenNotEstablished()
     {
@@ -218,7 +227,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException \BadMethodCallException 
+     * @expectedException \devmx\Transmission\Exception\NotEstablishedException
      */
     public function testReceiveData_ExceptionWhenNotEstablished() {
         $this->tcp->receiveData(123);
@@ -257,7 +266,8 @@ class TCPTest extends \PHPUnit_Framework_TestCase
      * @covers devmx\Transmission\TCP::getMaxTries
      * @covers devmx\Transmission\TCP::setMaxTries
      * @covers devmx\Transmission\TCP::receiveData
-     * @expectedException \RuntimeException
+     * @expectedException \devmx\Transmission\Exception\MaxTriesExceededException
+     * @expectedExceptionMessage Maximum of tries (2) exceeded, this could be because of to much data to transfer or a bad connection to the host
      */
     public function testReceiveData_MaxTries() {
         $this->establish();
@@ -272,7 +282,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers devmx\Transmission\TCP::send
-     * @expectedException \BadMethodCallException
+     * @expectedException \devmx\Transmission\Exception\NotEstablishedException
      */
     public function testSend_ExceptionWhenNotEstablished()
     {
@@ -292,6 +302,9 @@ class TCPTest extends \PHPUnit_Framework_TestCase
         $this->tcp->send('foobar');
     }
     
+    /**
+     * @covers devmx\Transmission\TCP::send
+     */
     public function testSend_MultipleAttemps() {
         $this->establish();
         $this->expectDefaultTimeout();
@@ -308,7 +321,8 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @covers devmx\Transmission\TCP::send
-     * @expectedException \RuntimeException
+     * @expectedException \devmx\Transmission\Exception\MaxTriesExceededException
+     * @expectedExceptionMessage Maximum of tries (1) exceeded, this could be because of to much data to transfer or a bad connection to the host
      */
     public function testSend_MaxTries() {
         $this->establish();
