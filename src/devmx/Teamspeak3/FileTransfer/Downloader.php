@@ -57,25 +57,7 @@ class Downloader
     {
         if (!$this->transmission->isEstablished()) $this->transmission->establish();
         $this->transmission->send($this->key);
-        return $this->receiveFull($this->bytesToRead);
-    }
-
-    /**
-     * Reads data from the stream until $toRead bytes are received
-     * blocks until ALL bytes are read
-     * @param int $toRead Number of bytes to read
-     * @return string the read data
-     */
-    private function receiveFull($toRead)
-    {
-        $result = $cur = '';
-        while ($toRead > 0)
-        {
-            $cur = $this->transmission->receiveData($toRead);
-            $toRead -= strlen($cur);
-            $result .= $cur;
-        }
-        return $result;
+        return $this->transmission->receiveData($this->bytesToRead);
     }
 
 }
