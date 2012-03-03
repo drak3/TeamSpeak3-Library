@@ -49,7 +49,7 @@ interface TransmissionInterface
     /**
      * waits until given datalength is sent and returns data
      */
-    public function receiveData($lenght = 4096);
+    public function receiveData($lenght);
 
     public function close();
 }

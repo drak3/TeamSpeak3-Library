@@ -95,8 +95,12 @@ class TCP implements TransmissionInterface
      * @return void
      * @throws \RuntimeException
      */
-    public function establish($timeout = -1)
+    public function establish($timeout = -1, $reEstablish=false)
     {
+        if($this->isEstablished() && !$reEstablish) {
+            return;
+        }
+        
         $errorNumber = 0;
         $errorMessage = '';
 
@@ -157,20 +161,7 @@ class TCP implements TransmissionInterface
     {
         if (!$this->isEstablished()) throw new \BadMethodCallException("Connection not Established");
 
-        $timeoutSec = (int) $timeoutSec;
-        $timeoutMicro = (int) $timeoutMicro;
-
-        if ($timeoutMicro < 0)
-        {
-            $timeoutMicro = $this->defaultTimeoutMicro;
-        }
-
-        if ($timeoutSec < 0)
-        {
-            $timeoutSec = $this->defaultTimeoutSec;
-        }
-
-        $this->setTimeOut($timeoutSec, $timeoutMicro);
+        $this->checkTimeOut($timeoutSec, $timeoutMicro);
 
         $data = $this->getLine( $length );
 
@@ -209,11 +200,14 @@ class TCP implements TransmissionInterface
      * @param int $lenght
      * @return string 
      */
-    public function receiveData($length = 4096, $timeoutSec=-1, $timeoutMicro=-1)
+    public function receiveData($length, $timeoutSec=-1, $timeoutMicro=-1)
     {
         if (!$this->isEstablished()) throw new \BadMethodCallException("Connection not Established");
         $data = '';
         $tries = 0;
+        
+        $this->checkTimeOut($timeoutSec, $timeoutMicro);
+        
         while (strlen($data) < $length)
         {
             $tries++;
@@ -232,28 +226,16 @@ class TCP implements TransmissionInterface
      * @param int $timeoutMicro
      * @return int number of written bytes
      */
-    public function send($data, $maxTries=20, $timeoutSec = -1, $timeoutMicro = -1)
+    public function send($data, $timeoutSec = -1, $timeoutMicro = -1)
     {
-        if (!$this->isEstablished()) throw new \RuntimeException("Connection not Established");
-        $timeoutSec = (int) $timeoutSec;
-        $timeoutMicro = (int) $timeoutMicro;
-
-        if ($timeoutMicro < 0)
-        {
-            $timeoutMicro = $this->defaultTimeoutMicro;
-        }
-
-        if ($timeoutSec < 0)
-        {
-            $timeoutSec = $this->defaultTimeoutSec;
-        }
+        if (!$this->isEstablished()) throw new \BadMethodCallException("Connection not Established");
         
-        $this->setTimeOut($timeoutSec, $timeoutMicro);
+        $this->checkTimeOut($timeoutSec, $timeoutMicro);
         
         $bytesToSend = strlen($data);
         
         $tries = 0;
-        while ($bytesToSend > 0 && $tries < $maxTries)
+        while ($bytesToSend > 0 && ($tries < $this->getMaxTries() || $this->getMaxTries() < 0))
         {
             $tries++;
             $sentBytes = $this->write($data);
@@ -261,14 +243,16 @@ class TCP implements TransmissionInterface
             $data = substr($data, $sentBytes);
         }
         
-        if($tries == $maxTries) {
+        if($tries == $this->getMaxTries() && $this->getMaxTries() > 0) {
             throw new \RuntimeException('Sending failed, max tries reached');
         }
     }
     
 
     public function __clone() {
-        $this->establish();
+        if($this->isConnected) {
+            $this->establish(-1, true);
+        }
     }
     
     /**
@@ -310,8 +294,24 @@ class TCP implements TransmissionInterface
         return $this->stream;
     }
     
+    protected function checkTimeOut($timeoutSeconds, $timeoutMicroseconds) {
+        $timeoutSeconds = (int) $timeoutSeconds;
+        $timeoutMicroseconds = (int) $timeoutMicroseconds;
+
+        if ($timeoutMicroseconds < 0)
+        {
+            $timeoutMicroseconds = $this->defaultTimeoutMicro;
+        }
+
+        if ($timeoutSeconds < 0)
+        {
+            $timeoutSeconds = $this->defaultTimeoutSec;
+        }
+        $this->setTimeOut($timeoutSeconds, $timeoutMicroseconds);
+    }
+    
     protected function open($host, $port, &$errno, &$errmsg, $timeout) {
-        $this->stream = fsockopen($hostname, $port, $errno, $errmsg, $timeout);
+        $this->stream = fsockopen($host, $port, $errno, $errmsg, $timeout);
     }
     
     protected function setTimeOut($seconds, $microseconds) {
