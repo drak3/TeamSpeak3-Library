@@ -34,6 +34,8 @@ class TCP implements TransmissionInterface
      * @var string 
      */
     protected $host;
+    
+    protected $originalHost;
 
     /**
      * @var int 
@@ -51,11 +53,9 @@ class TCP implements TransmissionInterface
     protected $defaultTimeoutMicro = 0;
 
     /**
-     * @var \devmx\Transmission\TCP\Stream
+     * @var Ressource
      */
     protected $stream;
-    
-    protected $rawStream;
     
     protected $isConnected = false;
     
@@ -77,8 +77,6 @@ class TCP implements TransmissionInterface
 
         $this->defaultTimeoutSec = (int) $timeoutSeconds;
         $this->defaultTimeoutMicro = (int) $timeoutMicroSeconds;
-        
-        $this->stream = new TCP\Stream();
     }
 
     /**
@@ -87,7 +85,7 @@ class TCP implements TransmissionInterface
      */
     public function close()
     {
-        $this->stream->close();
+        $this->closeStream();
         $this->isConnected = FALSE;
     }
 
@@ -107,12 +105,12 @@ class TCP implements TransmissionInterface
             $timeout = $this->defaultTimeoutSec;
         }
 
-        $this->rawStream = $this->stream->open($this->host, $this->port, $errorNumber, $errorMessage, $timeout);
+        $this->open($this->host, $this->port, $errorNumber, $errorMessage, $timeout);
 
-        if (!$this->rawStream || $errorNumber !== 0)
+        if (!$this->stream || $errorNumber !== 0)
         {
             $this->isConnected = FALSE;
-            throw new \RuntimeException("Establishing failed with code " . $errorNumber . "and message " . $errorMessage);
+            throw new \RuntimeException("Establishing failed with code " . $errorNumber . " and message '" . $errorMessage."'");
         }
 
         $this->isConnected = true;
@@ -124,7 +122,7 @@ class TCP implements TransmissionInterface
      */
     public function getHost()
     {
-        return $this->host;
+        return $this->originalHost;
     }
 
     /**
@@ -142,7 +140,7 @@ class TCP implements TransmissionInterface
      */
     public function isEstablished()
     {
-        if ($this->rawStream == FALSE) return FALSE;
+        if ($this->stream == FALSE) return FALSE;
         return $this->isConnected;
     }
 
@@ -157,7 +155,7 @@ class TCP implements TransmissionInterface
      */
     public function receiveLine($length = 4096, $timeoutSec = -1, $timeoutMicro = -1)
     {
-        if (!$this->isEstablished()) throw new \RuntimeException("Connection not Established");
+        if (!$this->isEstablished()) throw new \BadMethodCallException("Connection not Established");
 
         $timeoutSec = (int) $timeoutSec;
         $timeoutMicro = (int) $timeoutMicro;
@@ -172,9 +170,9 @@ class TCP implements TransmissionInterface
             $timeoutSec = $this->defaultTimeoutSec;
         }
 
-        $this->stream->setTimeOut($timeoutSec, $timeoutMicro);
+        $this->setTimeOut($timeoutSec, $timeoutMicro);
 
-        $data = $this->stream->getLine( $length );
+        $data = $this->getLine( $length );
 
         return $data;
     }
@@ -186,14 +184,14 @@ class TCP implements TransmissionInterface
      */
     public function getAll()
     {
-        if (!$this->isEstablished()) throw new \RuntimeException("Connection not Established");
-        $this->stream->setBlocking( self::NONBLOCKING );
+        if (!$this->isEstablished()) throw new \BadMethodCallException("Connection not Established");
+        $this->setBlocking( self::NONBLOCKING );
         $crnt = $data = '';
-        while ($crnt = \trim($this->stream->getLine(8094)))
+        while ($crnt = $this->getLine(8094))
         {
             $data .= $crnt;
         }
-        $this->stream->setBlocking( self::BLOCKING );
+        $this->setBlocking( self::BLOCKING );
         return $data;
     }
     
@@ -213,16 +211,16 @@ class TCP implements TransmissionInterface
      */
     public function receiveData($length = 4096, $timeoutSec=-1, $timeoutMicro=-1)
     {
-        if (!$this->isEstablished()) throw new \RuntimeException("Connection not Established");
+        if (!$this->isEstablished()) throw new \BadMethodCallException("Connection not Established");
         $data = '';
         $tries = 0;
         while (strlen($data) < $length)
         {
             $tries++;
-            if($this->maxTries > 0 && $tries > $this->maxTries) {
+            if($this->getMaxTries() > 0 && $tries > $this->getMaxTries()) {
                 throw new \RuntimeException('Max tries exceeded');
             }
-            $data .= $this->stream->getLine($length);
+            $data .= $this->getLine($length);
         }
         return $data;
     }
@@ -250,7 +248,7 @@ class TCP implements TransmissionInterface
             $timeoutSec = $this->defaultTimeoutSec;
         }
         
-        $this->stream->setTimeOut($timeoutSec, $timeoutMicro);
+        $this->setTimeOut($timeoutSec, $timeoutMicro);
         
         $bytesToSend = strlen($data);
         
@@ -258,7 +256,7 @@ class TCP implements TransmissionInterface
         while ($bytesToSend > 0 && $tries < $maxTries)
         {
             $tries++;
-            $sentBytes = $this->stream->write($data);
+            $sentBytes = $this->write($data);
             $bytesToSend -= $sentBytes;
             $data = substr($data, $sentBytes);
         }
@@ -286,6 +284,7 @@ class TCP implements TransmissionInterface
         }
         else
         {
+            $this->originalHost = $host;
             $this->host = "tcp://" . $host;
         }
     }
@@ -311,12 +310,28 @@ class TCP implements TransmissionInterface
         return $this->stream;
     }
     
-    public function setStream(TCP\Stream $stream) {
-        $this->stream = $stream;
-    } 
+    protected function open($host, $port, &$errno, &$errmsg, $timeout) {
+        $this->stream = fsockopen($hostname, $port, $errno, $errmsg, $timeout);
+    }
     
-    public function getRawStream() {
-        return $this->rawStream;
+    protected function setTimeOut($seconds, $microseconds) {
+        return \stream_set_timeout($this->stream , $seconds , $microseconds);
+    }
+    
+    protected function getLine($length) {
+        return \fgets($this->stream, $length);
+    }
+    
+    protected function setBlocking($mode) {
+        return \stream_set_blocking($this->stream, $mode);
+    }
+    
+    protected function write($data) {
+        return \frwite($this->stream, $data);
+    }
+    
+    protected function closeStream() {
+        return \fclose($this->stream);
     }
 
 }
