@@ -49,9 +49,29 @@ class InvalidCommandException extends InvalidArgumentException
     }
     
     protected function buildMessage(Command $command, $type, $value) {
-        return sprintf('Invalid command "%s" because '.$this->messages[$type].'is invalid', $command->getName(), $value);
+        $name = $this->convertToString($command->getName());
+        $value = $this->convertToString($value);
+        return sprintf('Invalid command "%s" because '.$this->messages[$type].' is invalid.', $name, $value);
     }
     
+    protected function convertToString($toString, $else='') {
+        $converted = $else;
+        if($toString === true) {
+            return '<boolean true>';
+        }
+        if($toString === false) {
+            return '<boolean false>';
+        }
+        try {
+            $converted = (string) $toString;
+            return $converted;
+        } catch (\Exception $e) {
+            if (is_object($toString)) {
+                return sprintf('<object of class "%s">', get_class($toString));
+            }
+        }
+    }
+        
     public function getInvalidCommand() {
         return $this->command;
     }
@@ -60,7 +80,7 @@ class InvalidCommandException extends InvalidArgumentException
         return $this->invalidityType;
     }
     
-    public function geInvalidValue() {
+    public function getInvalidValue() {
         return $this->invalidValue;
     }
 }

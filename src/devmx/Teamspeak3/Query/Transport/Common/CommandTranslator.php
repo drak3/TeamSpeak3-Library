@@ -18,6 +18,8 @@
  */
 
 namespace devmx\Teamspeak3\Query\Transport\Common;
+use devmx\Teamspeak3\Query\Command;
+use devmx\Teamspeak3\Query\Exception\InvalidCommandException;
 
 /**
  * 
@@ -41,16 +43,9 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      * @param \devmx\Teamspeak3\Query\Command $cmd
      * @return string the query representation 
      */
-    public function translate(\devmx\Teamspeak3\Query\Command $cmd)
-    {
-        if (!$this->isValid($cmd))
-        {
-            $msg = "Cannot translate invalid command";
-            if(is_string($cmd->getName())) {
-                $msg .= $cmd->getName();
-            }
-            throw new \InvalidArgumentException($msg);
-        }
+    public function translate(Command $cmd)
+ {
+        $this->checkCommand($cmd);
 
         $queryRepresentation  = $this->translateName($cmd->getName());
         $params = $this->translateParameters($cmd->getParameters());
@@ -99,23 +94,21 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      */
     public function isValid(\devmx\Teamspeak3\Query\Command $cmd)
     {
-
-        if (!$this->isValidName($cmd->getName()))
-        {
-            return FALSE;
+        try {
+            $this->checkCommand($cmd);
+        } catch(InvalidCommandException $e) {
+            return false;
         }
-
-        if (!$this->areValidOptions($cmd->getOptions()))
-        {
-            return FALSE;
-        }
-
-        if (!$this->areValidParams($cmd->getParameters()))
-        {
-            return FALSE;
-        }
-
-        return TRUE;
+        return true;
+    }
+    
+    /**
+     * @throws Exception\InvalidCommandException 
+     */
+    protected function checkCommand(Command $command) {
+        $this->checkName($command->getName(), $command);
+        $this->checkParameters($command->getParameters(), $command);
+        $this->checkOptions($command->getOptions(), $command);
     }
 
     /**
@@ -145,17 +138,21 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      * @param string $name
      * @return boolean
      */
-    protected function isValidName($name)
+    protected function checkName($name, Command $cmd)
     {
-        if (!is_string($name))
+        if (!$this->isValidName($name))
         {
-            return FALSE;
+            throw new InvalidCommandException($cmd, InvalidCommandException::INVALID_NAME, $name);
         }
-        if (preg_match("/^[0-9a-z_-]*$/iD", $name) == 0)
+        return true;
+    }
+    
+    protected function isValidName($name) {
+        if (!is_string($name) || preg_match("/^[0-9a-z_-]*$/iD", $name) == 0)
         {
-            return FALSE;
+            return false;
         }
-        return TRUE;
+        return true;
     }
 
     /**
@@ -164,19 +161,25 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      * @param array $params
      * @return boolean
      */
-    protected function areValidParams(array $params)
+    protected function checkParameters(array $params, Command $cmd)
     {
         foreach($params as $name => $value) {
             if(is_array($value)) {
                 foreach($value as $name2 => $value2) {
-                    if(!$this->isValidName( $name2 ) || !$this->isValidValue($value2)) {
-                        return false;
+                    if(!$this->isValidName($name2)) {
+                        throw new InvalidCommandException($cmd, InvalidCommandException::INVALID_PARAMETER_NAME, $name2);
+                    }
+                    if(!$this->isValidValue($value2)) {
+                        throw new InvalidCommandException($cmd, InvalidCommandException::INVALID_PARAMETER_VALUE, $value2);
                     }
                 }
             }
             else {
-                if(!$this->isValidName( $name ) || !$this->isValidValue($value)) {
-                    return false;
+                if(!$this->isValidName($name)) {
+                    throw new InvalidCommandException($cmd, InvalidCommandException::INVALID_PARAMETER_NAME, $name);
+                }
+                if(!$this->isValidValue($value)) {
+                    throw new InvalidCommandException($cmd, InvalidCommandException::INVALID_PARAMETER_VALUE, $value);
                 }
             }
         }
@@ -202,16 +205,16 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      * @param array $options
      * @return bool
      */
-    protected function areValidOptions(array $options)
+    protected function checkOptions(array $options, Command $cmd)
     {
         foreach ($options as $name)
         {
             if (!$this->isValidName($name))
             {
-                return FALSE;
+                throw new InvalidCommandException($cmd, InvalidCommandException::INVALID_OPTION, $name);
             }
         }
-        return TRUE;
+        return true;
     }
 
 }
