@@ -192,15 +192,8 @@ EOF;
         $this->assertEquals('ok', $parsed['response']->getErrorMessage());
     }
 
-    public function testIsWelcomeMessage()
-    {
-        $message = <<<'EOF'
-TS3
-Welcome to the TeamSpeak 3 ServerQuery interface, type "help" for a list of commands and "help <command>" for information on a specific command.
-EOF;
-        $message .= "\r\n";
-        $this->assertTrue($this->handler->isWelcomeMessage($message));
-        $this->assertFalse($this->handler->isWelcomeMessage("TS3\n"));
+    public function testIsValidQueryIdentifyer() {
+        $this->assertTrue($this->handler->isValidQueryIdentifyer("TS3\n"));
     }
     
     public function testIsCompleteEvent() {

@@ -87,7 +87,7 @@ class QueryTransportTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException \RunTimeException
+     * expectedException InvalidServerException
      * @covers devmx\Teamspeak3\Query\QueryTransport::checkWelcomeMessage
      * @covers devmx\Teamspeak3\Query\QueryTransport::connect
      */
@@ -97,7 +97,12 @@ TS3
 This message is too short
 EOF;
         $this->transmission->addToReceive($fakeWelcome);
-        $this->transport->connect();
+        try {
+             $this->transport->connect();
+        } catch(\Exception $e) {
+            echo $e->getMessage();
+        }
+       
     }
     
     /**

@@ -325,9 +325,9 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @param string $welcome
      * @return boolean
      */
-    public function isWelcomeMessage($welcome)
+    public function isValidQueryIdentifyer($ident)
     {
-        return (\strstr($welcome, self::WELCOME_IDENTIFY) && count(explode("\n", $welcome)) === 3 && $welcome[strlen($welcome)-1] === "\n");
+        return \rtrim($ident) == self::WELCOME_IDENTIFY;
     }
     
     private function match($regex, $raw) {

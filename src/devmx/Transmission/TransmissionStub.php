@@ -33,7 +33,7 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
     protected $errorOnDelay = false;
     protected static $cloned = 0;
     
-    public function construct($host, $port) {
+    public function __construct($host, $port) {
         $this->host = $host;
         $this->port = $port;
     }

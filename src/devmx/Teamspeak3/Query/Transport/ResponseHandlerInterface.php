@@ -58,7 +58,7 @@ interface ResponseHandlerInterface
      * @param string $welcome
      * @return boolean
      */
-    public function isWelcomeMessage($welcome);
+    public function isValidQueryIdentifyer($ident);
 
     /**
      * Builds event-objects from a query-response

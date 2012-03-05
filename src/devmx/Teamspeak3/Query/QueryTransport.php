@@ -110,8 +110,12 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
            $this->transmission->establish();
             $this->checkWelcomeMessage();
             $this->isConnected = TRUE; 
+        } catch(Exception\ExceptionInterface $e) {
+            throw $e;
+        } catch(\devmx\Transmission\Exception\ExceptionInterface $e) {
+            throw $e;
         } catch(\Exception $e) {
-            throw new \RuntimeException('Cannot connect: '.$e->getMessage());
+            throw new Exception\RuntimeException(sprintf("Cannot connect to server on %s:%d", $this->transmission->getHost(), $this->transmission->getPort()), 0, $e);
         }
         
     }
@@ -222,14 +226,13 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
      */
     protected function checkWelcomeMessage()
     {
-
-        $welcome = $this->transmission->receiveData( $this->responseHandler->getWelcomeMessageLength() );
-        if ( !$this->responseHandler->isWelcomeMessage( $welcome ) )
+        $ident = $this->transmission->receiveLine();
+        if ( !$this->responseHandler->isValidQueryIdentifyer( $ident ) )
         {
             $this->disconnect();
-            throw new \RuntimeException( "Server is not valid" );
+            throw new Exception\InvalidServerException( sprintf("Server is not valid. (Welcomemessage: %s)", $welcome) );
         }
-
+        $this->transmission->receiveData( $this->responseHandler->getWelcomeMessageLength() - strlen($ident));
     }
     
     public function __clone() {
