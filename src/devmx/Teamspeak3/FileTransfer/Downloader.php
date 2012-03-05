@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -16,11 +15,10 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace devmx\Teamspeak3\FileTransfer;
 
 /**
- * A download action for the Teamspeak3 ft-Interface
+ * A download action for the Teamspeak3 filetransfer-Interface
  * @author drak3
  */
 class Downloader
@@ -33,14 +31,15 @@ class Downloader
     protected $key;
 
     /**
-     * the excepted bytes of the data to read 
+     * The excepted bytes of the data to read
+     * @var int
      */
     protected $bytesToRead;
 
     /**
      * @param \devmx\Transmission\TransmissionInterface $transmission the transmission on which the download is performed
-     * @param string $key the key to identify the ft-Session (normally sent by the Ts3-Query
-     * @param int $bytesToRead 
+     * @param string $key the key to identify the filetransfer-Session (normally sent by the Ts3-Query when invoking ftinitdonwload command successfully)
+     * @param int $bytesToRead the length of the file to download
      */
     public function __construct(\devmx\Transmission\TransmissionInterface $transmission, $key, $bytesToRead)
     {

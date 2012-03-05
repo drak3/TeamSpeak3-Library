@@ -51,7 +51,7 @@ class CommandFailedException extends RuntimeException
     /**
      * Builds the Exceptionmessage, which does contain information about the commandname, the error id and message and, if present, the extra_message or failed_permid
      * @param CommandResponse $response
-     * @return type 
+     * @return string
      */
     private function buildMessage(CommandResponse $response) {
         $message = sprintf('Command "%s" caused error with message "%s" and id %d.', $response->getCommand()->getName(), $response->getErrorMessage(), $response->getErrorID());

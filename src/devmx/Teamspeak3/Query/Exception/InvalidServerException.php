@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -19,7 +18,7 @@
 namespace devmx\Teamspeak3\Query\Exception;
 
 /**
- *
+ * This exception is thrown when you try to connect to a server which is not a TeamSpeak3 server
  * @author drak3
  */
 class InvalidServerException extends \UnexpectedValueException implements ExceptionInterface

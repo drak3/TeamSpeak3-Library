@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -19,7 +18,7 @@
 namespace devmx\Teamspeak3\Query\Exception;
 
 /**
- *
+ * The basic LogicException for the Query component
  * @author drak3
  */
 class LogicException extends \LogicException implements ExceptionInterface

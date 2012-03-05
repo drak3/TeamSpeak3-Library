@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -19,7 +18,7 @@
 namespace devmx\Teamspeak3\Query\Exception;
 
 /**
- *
+ * This Exception is thrown whenever an unknown error occurs when connecting to a server
  * @author drak3
  */
 class ConnectionFailedException extends RuntimeException

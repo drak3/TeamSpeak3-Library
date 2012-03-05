@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -19,18 +18,31 @@
 namespace devmx\Teamspeak3\Query\Exception;
 
 /**
- *
+ * Exception is thrown when the query sends an ban error, you have to wait the specified retryTime until the query will execute commands again
+ * See the official TeamSpeak3 Query manual for information about black and whitelisting of ips
  * @author drak3
  */
 class BannedException extends RuntimeException
 {
+    /**
+     * the time to wait
+     * @var int
+     */
     private $retryTime;
     
+    /**
+     * @param int $retryTime the time which should be awaited before executing commands on the query again
+     */
     public function __construct($retryTime) {
         parent::__construct(sprintf('You got banned. Retry in %d seconds', $retryTime));
         $this->retryTime = $retryTime;
     }
     
+    /**
+     * Returns the time which should be awaited before executing commands on the query again
+     * See the official TeamSpeak3 Query manual for information about black and whitelisting of ips
+     * @return int the time after a retry makes sense
+     */
     public function getRetryTime() {
         return $this->retryTime;
     }

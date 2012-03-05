@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -19,12 +18,11 @@
 namespace devmx\Teamspeak3\Query\Exception;
 
 /**
- *
+ * The base interface of all Query Exceptions
  * @author drak3
  */
 interface ExceptionInterface
-{
-    
+{    
 }
 
 ?>

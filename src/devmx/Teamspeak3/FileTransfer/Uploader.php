@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -27,15 +26,26 @@ class Uploader
 {
 
     /**
-     *
+     * The transmission on which the transfer is executed
      * @var \devmx\Transmission\TransmissionInterface
      */
     protected $transmission;
-    protected $key;
-    protected $data;
+    
     /**
-     * @param \devmx\Transmission\TransmissionInterface $transmission 
-     * @param string $key the key which identifies the ressource
+     * the key identifying this upload 
+     * @var string
+     */
+    protected $key;
+    
+    /**
+     * the data to upload
+     * @var string
+     */
+    protected $data;
+    
+    /**
+     * @param \devmx\Transmission\TransmissionInterface $transmission the transmission on which the upload should be performed (default ft-port is 30033)
+     * @param string $key the key which identifies the ressource to upload (normally sent by the Ts3-Query when invoking ftinitupload command successfully)
      * @param string $data the data to load up
      */
     public function __construct(\devmx\Transmission\TransmissionInterface $transmission, $key, $data)
@@ -44,7 +54,10 @@ class Uploader
         $this->key = $key;
         $this->data = $data;
     }
-
+    
+    /**
+     * Uploads the specified data 
+     */
     public function upload()
     {
         $this->transmission->establish();

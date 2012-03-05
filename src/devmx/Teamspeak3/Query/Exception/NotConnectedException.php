@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -19,7 +18,7 @@
 namespace devmx\Teamspeak3\Query\Exception;
 
 /**
- *
+ * This exception is thrown when you try to interact with a not connected query
  * @author drak3
  */
 class NotConnectedException extends LogicException
