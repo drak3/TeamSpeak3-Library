@@ -17,6 +17,7 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace devmx\Teamspeak3\Query\Transport;
+use \devmx\Teamspeak3\Query\Exception;
 
 /**
  *
@@ -77,7 +78,7 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
      */
     public function getAllEvents() {
         if(!$this->isConnected()) {
-            throw new \LogicException('Cannot send command, not connected');
+            throw new Exception\LogicException('Cannot send command, not connected');
         }
         if(!isset($this->events[0])) {
             return array();
@@ -94,7 +95,7 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
      */
     public function sendCommand(\devmx\Teamspeak3\Query\Command $command) {
         if(!$this->isConnected()) {
-            throw new \LogicException('Cannot send command, not connected');
+            throw new Exception\LogicException('Cannot send command, not connected');
         }
         foreach($this->responses as $key=>$possibleResponse) {
             if($possibleResponse->getCommand()->equals($command)) {
@@ -102,7 +103,7 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
                 return $possibleResponse;
             }
         }
-        throw new \LogicException('No suitable response for command '.$command->getName());
+        throw new Exception\LogicException('No suitable response for command '.$command->getName());
     }
     
     /**
@@ -121,7 +122,7 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
     public function waitForEvent() {
         $events = $this->getAllEvents();
         if($events === array())  {
-            throw new \LogicException('cannot wait for events');
+            throw new Exception\LogicException('cannot wait for events');
         }
         return $events;
     }
@@ -132,7 +133,7 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
     
     public function assertAllResponsesReceived() {
         if(!empty($this->responses)) {
-            throw new \LogicException('Assertion that all responses are received failed');
+            throw new Exception\LogicException('Assertion that all responses are received failed');
         }
     }
     
