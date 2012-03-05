@@ -72,11 +72,17 @@ class CommandResponseTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException \devmx\Teamspeak3\Query\Exception\CommandFailedException
+     * @expectedExceptionMessage Command "asdf" caused error with message "error!!" and id 12. (Extra message: "you're dumb")
      */
     public function testToException()
     {
         $this->response->toException();
+    }
+    
+    public function testHasErrorValue() {
+        $this->assertTrue($this->response->hasErrorValue('extra_message'));
+        $this->assertFalse($this->response->hasErrorValue('foobar'));
     }
 
 }

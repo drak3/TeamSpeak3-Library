@@ -28,12 +28,20 @@ class CommandFailedException extends RuntimeException
     private $response;
     
     public function __construct(CommandResponse $response) {
-        parent::__construct(sprintf('Command %s caused error with id %d and message "%s"', $response->getCommand()->getName(), $response->getErrorID(), $response->getErrorMessage()), $response->getErrorID());
+        parent::__construct($this->buildMessage($response));
         $this->response = $response;
     }
     
     public function getRespose() {
         return $this->response;
+    }
+    
+    private function buildMessage(CommandResponse $response) {
+        $message = sprintf('Command "%s" caused error with message "%s" and id %d.', $response->getCommand()->getName(), $response->getErrorMessage(), $response->getErrorID());
+        if($response->hasErrorValue( 'extra_message')) {
+            $message .= sprintf(' (Extra message: "%s")', $response->getErrorValue('extra_message'));
+        }
+        return $message;
     }
 }
 

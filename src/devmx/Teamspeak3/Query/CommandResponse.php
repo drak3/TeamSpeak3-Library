@@ -86,10 +86,7 @@ class CommandResponse extends Response
     
     public function toException() {
         if($this->errorOccured()) {
-            throw new \RuntimeException(sprintf("Error with id %d and message %s occured while sending command %s", 
-                                                $this->errorID,
-                                                $this->errorMessage,
-                                                $this->command->getName()));
+            throw new Exception\CommandFailedException($this);
         }
     }
 
@@ -99,6 +96,10 @@ class CommandResponse extends Response
             return $this->errorValues[$name];
         }
         return $default;
+    }
+    
+    public function hasErrorValue($name) {
+        return isset($this->errorValues[$name]);
     }
     
     
