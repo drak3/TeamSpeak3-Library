@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -20,28 +19,58 @@ namespace devmx\Teamspeak3\Query\Transport;
 use \devmx\Teamspeak3\Query\Exception;
 
 /**
- *
+ * This class is a implementation of the TransportInterface that holds no real connections to the outside.
+ * It mainly provides methods for easy unittesting.
  * @author drak3
  */
 class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportInterface
 {
+    /**
+     * If the query is connected or not
+     * @var boolean
+     */
     protected $isConnected = false;
+    
+    /**
+     * Events that should be delivered
+     * @var array of array of \devmx\Teamspeak3\Query\Events 
+     */
     protected $events = array(array());
+    
+    /**
+     * Responses that should be received
+     * @var array of \devmx\Teamspeak3\Query\CommandResponse
+     */
     protected $responses = array();
     
-    
+    /**
+     * Adds a response for a specific command, so it could be received by sendCommand
+     * @param \devmx\Teamspeak3\Query\CommandResponse $r the response to be received
+     * @param int $times how often the response should be available
+     */
     public function addResponse(\devmx\Teamspeak3\Query\CommandResponse $r, $times=1 ) {
         for($i=0;$i<$times; $i++) {
             $this->responses[] = $r;
         }
     }
     
-    public function addResponses() {
-        foreach(func_get_args() as $response) {
+    /**
+     * Adds multiple responses at once
+     * @param array of \devmx\Teamspeak3\Query\CommandResponse $responses responses to add
+     */
+    public function addResponses(array $responses) {
+        foreach($responses as $response) {
             $this->addResponse($response);
         } 
     }
     
+    /**
+     * Adds a event to be received either by getAllEvents or waitForEvent
+     * The events are organized in charges, if you add a event to a new charge, it will be returned by call after that invocation which returned the previous charge
+     * @param \devmx\Teamspeak3\Query\Event $e the event to add
+     * @param int $times how often the event should be added
+     * @param boolean $newCharge if this is set to true, the event will be added to a new charge
+     */
     public function addEvent(\devmx\Teamspeak3\Query\Event $e, $times=1, $newCharge=false) {
         $events = array();
         for($i=0; $i<$times; $i++) {
@@ -57,7 +86,7 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
     }
     
     /**
-     * Connects to the Server
+     * {@inheritdoc} 
      */
     public function connect() {
         $this->isConnected = true;

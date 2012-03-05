@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -16,8 +15,6 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-
-
 namespace devmx\Teamspeak3\Query\Transport;
 
 /**
@@ -29,51 +26,78 @@ abstract class AbstractQueryDecorator implements TransportInterface
 {
 
     /**
+     * The decorated transport
      * @var \devmx\TeamSpeak3\Query\Transport\TransportInterface
      */
     protected $decorated;
-
+    
+    /**
+     * @param TransportInterface $toDecorate the transport to decorate
+     */
     public function __construct(TransportInterface $toDecorate)
     {
         $this->decorated = $toDecorate;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function connect()
     {
         return $this->decorated->connect();
     }
-
+    
+    /**
+     * {@inheritdoc}
+     */
     public function disconnect()
     {
         return $this->decorated->disconnect();
     }
-
+    
+    /**
+     * {@inheritdoc}
+     */
     public function getAllEvents()
     {
         return $this->decorated->getAllEvents();
     }
-
+    
+    /**
+     * {@inheritdoc}
+     */
     public function isConnected()
     {
         return $this->decorated->isConnected();
     }
-
+    
+    /**
+     * {@inheritdoc}
+     */
     public function sendCommand(\devmx\Teamspeak3\Query\Command $command)
     {
         return $this->decorated->sendCommand($command);
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function query($name, array $args=Array(),array $options=Array())
     {
         return $this->decorated->query($name, $args, $options);
     }
     
-
+    /**
+     * {@inheritdoc}
+     */
     public function waitForEvent()
     {
         return $this->decorated->waitForEvent();
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function __clone() {
         $this->decorated = clone $this->decorated;
     }

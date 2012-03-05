@@ -22,7 +22,9 @@ namespace devmx\Teamspeak3\Query\Transport;
 use devmx\Teamspeak3\Query\Command;
 
 /**
- *
+ * The base interface for all CommandTranslators
+ * A commandtranslator is responsible for everything that goes from client to the Query
+ * It mainly translates commands so the query understands them, therefore it also has to check the commands validity
  * @author drak3
  */
 interface CommandTranslatorInterface
@@ -32,12 +34,14 @@ interface CommandTranslatorInterface
      * Translates a command to its query-representation
      * @param \devmx\Teamspeak3\Query\Command $cmd
      * @return mixed the query representation
+     * @throws \devmx\Teamspeak3\Query\Exception\InvalidCommandExceptio
      */
     public function translate(Command $cmd);
 
     /**
      * Tests if a command could be translated to a query-understandable representation
      * @param \devmx\Teamspeak3\Query\Command $cmd
+     * @return boolean if the command is valid or not
      */
     public function isValid(Command $cmd);
 }

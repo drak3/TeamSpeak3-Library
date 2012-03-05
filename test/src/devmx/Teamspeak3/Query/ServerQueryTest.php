@@ -373,13 +373,13 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $r1 = new CommandResponse(new Command('use', array('sid'=>12), array('virtual')));
         $r2 = new CommandResponse(new Command('servernotifyregister', array('event'=>'foo')));
         $r3 = new CommandResponse(new Command('login', array('client_login_name'=>'foo', 'client_login_password'=>'bar')));
-        $this->stub->addResponses($r1, $r2, $r3);
+        $this->stub->addResponses(array($r1, $r2, $r3));
         $this->query->connect();
         $this->query->useByID(12);
         $this->query->registerForEvent('foo');
         $this->query->login('foo', 'bar');
         $this->stub->assertAllResponsesReceived();
-        $this->stub->addResponses($r1, $r2, $r3);
+        $this->stub->addResponses(array($r1, $r2, $r3));
         $serialized = serialize($this->query);
         $this->assertFalse($this->transport->isConnected());
         $unserialized = unserialize($serialized);

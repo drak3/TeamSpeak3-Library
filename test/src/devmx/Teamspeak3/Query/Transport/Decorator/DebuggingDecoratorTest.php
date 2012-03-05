@@ -169,14 +169,14 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
     }
      
     /**
-     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getCloned
+     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getNumberOfClones
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::__clone
      */
-    public function testGetCloned()
+    public function testGetTotalClones()
     {
-        $this->assertEquals(0, DebuggingDecorator::getCloned());
+        $this->assertEquals(0, DebuggingDecorator::getNumberOfClones());
         $cloned = clone $this->debug;
-        $this->assertEquals(1, DebuggingDecorator::getCloned());
+        $this->assertEquals(1, DebuggingDecorator::getNumberOfClones());
     }
 
     
