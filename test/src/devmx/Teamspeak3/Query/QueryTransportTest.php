@@ -87,30 +87,11 @@ class QueryTransportTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * expectedException InvalidServerException
-     * @covers devmx\Teamspeak3\Query\QueryTransport::checkWelcomeMessage
-     * @covers devmx\Teamspeak3\Query\QueryTransport::connect
-     */
-    public function testConnect_invalidWelcome() {
-        $fakeWelcome = <<<'EOF'
-TS3
-This message is too short
-EOF;
-        $this->transmission->addToReceive($fakeWelcome);
-        try {
-             $this->transport->connect();
-        } catch(\Exception $e) {
-            echo $e->getMessage();
-        }
-       
-    }
-    
-    /**
-     *@expectedException \RunTimeException
-     *@covers devmx\Teamspeak3\Query\QueryTransport::connect 
+     * @expectedException \devmx\Teamspeak3\Query\Exception\InvalidServerException
+     * @covers devmx\Teamspeak3\Query\QueryTransport::connect 
      */
     public function testFailedConnect() {
-        $this->transmission->addToReceive("TS3\n");
+        $this->transmission->addToReceive("TS2\n");
         $this->transport->connect();
     }
     
@@ -218,21 +199,21 @@ EOF;
     }
     
     /**
-     * @expectedException \BadMethodCallException
+     * @expectedException \devmx\Teamspeak3\Query\Exception\NotConnectedException
      */
     public function testExceptionWhenNotConnected_sendCommand() {
         $this->transport->sendCommand(new Command('foo'));
     }
     
     /**
-     * @expectedException \BadMethodCallException
+     * @expectedException \devmx\Teamspeak3\Query\Exception\NotConnectedException
      */
     public function testExceptionWhenNotConnected_waitForEvent() {
         $this->transport->waitForEvent();
     }
     
     /**
-     * @expectedException \BadMethodCallException
+     * @expectedException \devmx\Teamspeak3\Query\Exception\NotConnectedException
      */
     public function testExceptionWhenNotConnected_getAllEvents() {
         $this->transport->getAllEvents();

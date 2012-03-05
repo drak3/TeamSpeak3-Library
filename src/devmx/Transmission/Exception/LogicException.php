@@ -22,11 +22,9 @@ namespace devmx\Transmission\Exception;
  *
  * @author drak3
  */
-class NotEstablishedException extends \LogicException implements ExceptionInterface
+class LogicException extends \LogicException implements ExceptionInterface
 {
-    public function __construct() {
-        parent::__construct('Connection not established');
-    }
+    
 }
 
 ?>

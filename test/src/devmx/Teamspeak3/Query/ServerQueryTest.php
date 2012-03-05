@@ -283,7 +283,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException \BadMethodCallException
+     * @expectedException \devmx\Teamspeak3\Query\Exception\LogicException
      * @covers devmx\Teamspeak3\Query\ServerQuery::moveToChannel
      */
     public function testMoveToChannel_notOnVirtualServer()

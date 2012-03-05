@@ -119,7 +119,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     
     public function useByID($id,$virtual=TRUE) {
         if($id < 1) {
-            throw new \InvalidArgumentException("Invalid server ID, if you want to deselect the current server, please use deselect() instead");
+            throw new Exception\InvalidArgumentException("Invalid server ID, if you want to deselect the current server, please use deselect() instead");
         }
         $options = $virtual ? Array('virtual') : Array();
         $response = $this->transport->query("use", Array('sid'=>$id), $options);
@@ -149,7 +149,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     
     public function moveToChannel($cid) {
         if(!$this->isOnVirtualServer) {
-            throw new \BadMethodCallException("cannot move to channel when not on virtual server");
+            throw new Exception\LogicException("Cannot move to channel when not on virtual server.");
         }
         $response = $this->transport->query('clientmove', Array('clid'=>$this->getClientID(), 'cid'=>$cid));
         $response->toException();
@@ -163,23 +163,15 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
         }
         $command = new Command('servernotifyregister', $args);
         $response = $this->transport->sendCommand($command);
-        if($response->errorOccured()) {
-            throw new \RuntimeException("Cannot register for event $name");
-        }
-        else{
-            $this->registerCommands[] = $command;
-        }
+        $response->toException();
+        $this->registerCommands[] = $command;
         return $this;
     }
     
     public function unregisterEvents() {
         $response = $this->transport->query('servernotifyunregister');
-        if(!$response->errorOccured()) {
-            $this->registerCommands = Array();
-        }
-        else{
-            throw new \RuntimeException("cannot unregister from events");
-        }
+        $response->toException();
+        $this->registerCommands = Array();
         return $this;
     }
     
@@ -333,7 +325,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     public function getAllEvents()
     {
         if(!$this->hasRegisteredForEvents()) {
-            throw new \LogicException("Cannot check for events when not registered for");
+            throw new Exception\LogicException("Cannot check for events when not registered for");
         }
         return $this->transport->getAllEvents();
     }
@@ -380,7 +372,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     public function waitForEvent()
     {
          if(!$this->hasRegisteredForEvents()) {
-            throw new \LogicException("Cannot check for events when not registered for");
+            throw new Exception\LogicException("Cannot check for events when not registered for");
          }
          return $this->transport->waitForEvent();
     }

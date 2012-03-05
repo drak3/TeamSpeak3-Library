@@ -56,7 +56,7 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
 
     public function send($data) {
         if(!$this->isEstablished()) {
-            throw new \BadMethodCallException('Cannot send: Connection not established');
+            throw new Exception\NotEstablishedException;
         }
         $this->sentData .= $data;
         return strlen($data);
@@ -79,14 +79,14 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
      */
     public function receiveLine($length = 4096) {
         if(!$this->isEstablished()) {
-            throw new \BadMethodCallException('Cannot receive, Connection not established');
+            throw new Exception\NotEstablishedException();
         }
         if($this->errorOnDelay) {
-            throw new \LogicException('This function causes delay, not allowed');
+            throw new Exception\LogicException('This function causes delay, not allowed');
         }
         $lines = \explode("\n",$this->toReceive);
         if(!isset($lines[0])) {
-            throw new \LogicException('Cannot receive line, not enough data');
+            throw new Exception\LogicException('Cannot receive line, not enough data');
         }
         if(\strlen($lines[0]) < $length) {
             $ret = $lines[0]."\n";
@@ -97,7 +97,7 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
         $count = 0;
         $this->toReceive = \preg_replace('/'.\preg_quote($ret,'/').'/m','', $this->toReceive, 1, $count);
         if($count !== 1) {
-            throw new \LogicException('string is not found, BUG');
+            throw new Exception\LogicException('string is not found, BUG');
         }
         $this->received .= $ret;
         return $ret;
@@ -128,7 +128,7 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
      */
     public function getAll() {
         if(!$this->isEstablished()) {
-            throw new \BadMethodCallException('Cannot receive, Connection not established');
+            throw new Exception\NotEstablishedException();
         }
         $this->received .= $this->toReceive;
         $ret = $this->toReceive;
@@ -141,19 +141,19 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
      */
     public function receiveData($length) {
         if($this->errorOnDelay) {
-            throw new \LogicException('This function causes delay, not allowed');
+            throw new Exception\LogicException('This function causes delay, not allowed');
         }
         if(!$this->isEstablished()) {
-            throw new \BadMethodCallException('Cannot receive, Connection not established');
+            throw new Exception\NotEstablishedException;
         }
         if(strlen($this->toReceive) < $length) {
-            throw new \LogicException("Cannot receive $length bytes");
+            throw new Exception\NotEstablishedException("Cannot receive $length bytes");
         }
         $ret = substr($this->toReceive,0,$length);
         $this->toReceive = substr($this->toReceive, $length);
         $this->received .= $ret;
         if(strlen($ret) < $length) {
-            throw new \LogicException('BUG');
+            throw new Exception\LogicException('BUG');
         }
         return $ret;
     }

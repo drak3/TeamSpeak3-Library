@@ -136,10 +136,10 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
      * @return array Array of all events lying on the query  
      */
     public function getAllEvents($dryRun=FALSE)
-    {
+    {  
         if(!$dryRun) {
             if(!$this->isConnected()) {
-                throw new \BadMethodCallException('Connection not established');
+            throw new Exception\NotConnectedException("Cannot get events, not connected");
             }
             $response = $this->transmission->getAll();
             if ( $response )
@@ -170,9 +170,11 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
      */
     public function sendCommand( \devmx\Teamspeak3\Query\Command $command )
     {
-     
+        if(!$this->isConnected()) {
+            throw new Exception\NotConnectedException("Cannot send command, not connected");
+        }
+        
         $data = '';
-
 
         $this->transmission->send( $this->commandTranslator->translate( $command ) );
 
@@ -198,6 +200,9 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
      */
     public function waitForEvent()
     {
+        if(!$this->isConnected()) {
+            throw new Exception\NotConnectedException("Cannot wait for event: not connected");
+        }
         if($this->pendingEvents !== Array()) {
             $events =  $this->pendingEvents;
             $this->pendingEvents = Array();
@@ -230,7 +235,7 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
         if ( !$this->responseHandler->isValidQueryIdentifyer( $ident ) )
         {
             $this->disconnect();
-            throw new Exception\InvalidServerException( sprintf("Server is not valid. (Welcomemessage: %s)", $welcome) );
+            throw new Exception\InvalidServerException( sprintf("Server is not valid. (Identifyer: %s)", $ident) );
         }
         $this->transmission->receiveData( $this->responseHandler->getWelcomeMessageLength() - strlen($ident));
     }

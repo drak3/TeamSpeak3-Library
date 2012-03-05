@@ -16,17 +16,15 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace devmx\Transmission\Exception;
+namespace devmx\Teamspeak3\Query\Exception;
 
 /**
  *
  * @author drak3
  */
-class NotEstablishedException extends \LogicException implements ExceptionInterface
+class NotConnectedException extends LogicException
 {
-    public function __construct() {
-        parent::__construct('Connection not established');
-    }
+    
 }
 
 ?>
