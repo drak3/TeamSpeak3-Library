@@ -225,18 +225,20 @@ EOF;
     }
     
     /**
-     * @expectedException \RuntimeException 
+     * @expectedException \devmx\Teamspeak3\Query\Exception\BannedException
+     * @expectedExceptionMessage You got banned. Retry in 593 seconds 
      */
     public function testBanDetection() {
-        $toParse = "\nerror id=3329 msg=banned";
+        $toParse = "\n".'error id=3329 msg=banned extra_message=you\smay\sretry\sin\s593\sseconds\n\r';
         $this->handler->isCompleteResponse($toParse);
     }
     
     /**
-     * @expectedException \RuntimeException 
+     * @expectedException \devmx\Teamspeak3\Query\Exception\BannedException
+     * @expectedExceptionMessage You got banned. Retry in 593 seconds 
      */
     public function testBanDetection_FloodBan() {
-        $toParse = "foo= bar=true asdf=false\nerror id=3331 msg=banned\n";
+        $toParse = 'foo= bar=true asdf=false'."\n".'error id=3331 msg=banned extra_message=you\smay\sretry\sin\s593\sseconds\n\r'."\n";
         $this->handler->isCompleteResponse($toParse);
     }
     

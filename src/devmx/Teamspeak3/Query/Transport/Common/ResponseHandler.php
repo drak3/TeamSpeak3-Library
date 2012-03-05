@@ -18,6 +18,7 @@
  */
 
 namespace devmx\Teamspeak3\Query\Transport\Common;
+use devmx\Teamspeak3\Query\Exception;
 
 /**
  * 
@@ -95,7 +96,8 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @var string
      */
     protected $errorRegex = "/error id=[0-9]* msg=[a-zA-Z\\\\]*/";
-
+    
+    protected $floodBanRegex = "/you may retry in (\d*) seconds/i";
     /**
      * Replaces all masked characters with their regular replacements (e.g. \\ with \)
      * uses $unEscapeMap
@@ -328,16 +330,13 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         return (\strstr($welcome, self::WELCOME_IDENTIFY) && count(explode("\n", $welcome)) === 3 && $welcome[strlen($welcome)-1] === "\n");
     }
     
-    private function match($regex, $raw, $exceptionOnFail=false) {
+    private function match($regex, $raw) {
         $parsed = array();
         $matched = preg_match($regex, $raw, $parsed);
         if(  preg_last_error() !== PREG_NO_ERROR) {
-            throw new \RuntimeException('Error while using preg_match try to increase your pcre.backtrack_limit '. "\n". $raw, preg_last_error());
+            throw new Exception\RuntimeException('Error while using preg_match try to increase your pcre.backtrack_limit '. "\n". $raw, preg_last_error());
         }
         if($matched === 0) {
-            if($exceptionOnFail) {
-                throw new \InvalidArgumentException('Cannot parse '.$raw);
-            }
             return false;
         }
         return $parsed;
@@ -352,12 +351,22 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     private function checkForBan($raw) {
         $parsed = $this->match($this->errorRegex, $raw);
         if($parsed) {
-            $parsed = $this->parseData($parsed[0]);
+            $parsed = $this->parseData($raw);
             if(isset($parsed[0]['id']) && ($parsed[0]['id'] == self::BAN_ERROR || $parsed[0]['id'] == self::FLOOD_BAN_ERROR)) {
-                throw new \RuntimeException("You are banned");
+                throw new Exception\BannedException($this->getBanTime($parsed));
             }
         }
-    } 
+    }
+    
+    private function getBanTime($error) {
+        if(isset($error[0]['extra_message'])) {
+            $time = $this->match($this->floodBanRegex, $error[0]['extra_message']);
+            if($time !== false) {
+                return $time[1];
+            }
+        }
+        return "<could'nt extract ban time>";
+    }
 
 }
 

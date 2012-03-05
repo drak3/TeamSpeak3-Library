@@ -28,7 +28,7 @@ class BannedException extends RuntimeException
     
     public function __construct($retryTime) {
         parent::__construct(sprintf('You got banned. Retry in %d seconds', $retryTime));
-        $this->retryTime = $retryTime();
+        $this->retryTime = $retryTime;
     }
     
     public function getRetryTime() {
