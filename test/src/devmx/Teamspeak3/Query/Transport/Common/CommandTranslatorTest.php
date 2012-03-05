@@ -101,6 +101,7 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
             Array(new Command("foo", array("foo\\bar"=>"bar")), 'Invalid command "foo" because parameter name "foo\bar" is invalid.', InvalidCommandException::INVALID_PARAMETER_NAME, 'foo\bar'),
             Array(new Command("foo", array(), array("fo o")), 'Invalid command "foo" because option "fo o" is invalid.', InvalidCommandException::INVALID_OPTION, 'fo o'),
             Array(new Command('foo', array('foo'=>$time)), 'Invalid command "foo" because parameter value "<object of class "DateTime">" is invalid.', InvalidCommandException::INVALID_PARAMETER_VALUE, $time),
+            Array(new Command('foo', array(), array('-asdf')), 'Invalid command "foo" because option "-asdf" is invalid.', InvalidCommandException::INVALID_OPTION, '-asdf')
         );
     }
     
