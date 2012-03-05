@@ -73,7 +73,8 @@ class CommandResponseTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \devmx\Teamspeak3\Query\Exception\CommandFailedException
-     * @expectedExceptionMessage Command "asdf" caused error with message "error!!" and id 12. (Extra message: "you're dumb")
+     * @expectedExceptionMessage Command "asdf" caused error with message "error!!" and id 12.
+     * Extramessage: you're dumb
      */
     public function testToException()
     {
