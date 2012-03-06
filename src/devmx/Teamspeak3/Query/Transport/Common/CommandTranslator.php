@@ -77,13 +77,13 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
         $queryRepresentation  = $this->translateName($cmd->getName());
         $params = $this->translateParameters($cmd->getParameters());
         if($params !== '') {
-            $queryRepresentation .= $params . self::PARAMETER_SEPERATOR;
+            $queryRepresentation .= $params . static::PARAMETER_SEPERATOR;
         }
         $queryRepresentation .= $this->translateOptions($cmd->getOptions());
 
         
         $queryRepresentation = \rtrim($queryRepresentation);
-        $queryRepresentation .= self::COMMAND_DELIMITER;
+        $queryRepresentation .= static::COMMAND_DELIMITER;
         return $queryRepresentation;
     }
     
@@ -109,7 +109,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      * @return string 
      */
     protected function translateName($name) {
-        return $this->escape($name).self::COMMANDNAME_SEPERATOR;
+        return $this->escape($name).static::COMMANDNAME_SEPERATOR;
     }
     
     /**
@@ -122,13 +122,13 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
         foreach($params as $name => $value) {
             if(is_array($value)) {
                 //thanks to isValid we can rely on the fact that value does not contain other arrays
-                $queryRepresentation .= $this->translateParameters($value) . self::SECTION_SEPERATOR;
+                $queryRepresentation .= $this->translateParameters($value) . static::SECTION_SEPERATOR;
             }
             else {
-                $queryRepresentation .= $this->escape($name) . self::KEY_VALUE_SEPERATOR . $this->escape($value) . self::PARAMETER_SEPERATOR;
+                $queryRepresentation .= $this->escape($name) . static::KEY_VALUE_SEPERATOR . $this->escape($value) . static::PARAMETER_SEPERATOR;
             }
         }
-        return rtrim($queryRepresentation, self::SECTION_SEPERATOR . self::PARAMETER_SEPERATOR);
+        return rtrim($queryRepresentation, static::SECTION_SEPERATOR . static::PARAMETER_SEPERATOR);
     }
     
     /**
@@ -140,7 +140,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
         $queryRepresentation = '';
         foreach ($options as $name)
         {
-            $queryRepresentation .= self::OPTION_PREFIX . $this->escape($name) . self::OPTION_SEPERATOR;
+            $queryRepresentation .= static::OPTION_PREFIX . $this->escape($name) . static::OPTION_SEPERATOR;
         }
         return $queryRepresentation;
     }
@@ -170,6 +170,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
     
     /**
      * Checks a command for validity and throws an Exception including detailed information when the command is not valid
+     * @param \devmx\Teamspeak3\Query\Command $command the command to check
      * @throws \devmx\Teamspeak3\Query\Exception\InvalidCommandException 
      */
     protected function checkCommand(Command $command) {
@@ -181,6 +182,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
     /**
      * Checks if the Name is valid to send it to a CommonQuery
      * @param string $name
+     * @param \devmx\Teamspeak3\Query\Command $cmd the command to check
      * @throws \devmx\Teamspeak3\Query\Exception\InvalidCommandException 
      */
     protected function checkName($name, Command $cmd)
@@ -282,7 +284,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      */
     private function hasOptionPrefix($name) {
         if(isset($name[0])) {
-            if($name[0] === self::OPTION_PREFIX) {
+            if($name[0] === static::OPTION_PREFIX) {
                 return true;
             }
         }
