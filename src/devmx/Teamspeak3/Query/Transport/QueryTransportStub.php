@@ -86,7 +86,7 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
     }
     
     /**
-     * {@inheritdoc} 
+     * Connects the query
      */
     public function connect() {
         $this->isConnected = true;
@@ -155,17 +155,27 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
         }
         return $events;
     }
-
+    
+    /**
+     * Disconnects the query 
+     */
     public function disconnect() {
         $this->isConnected = false;
     }
     
+    /**
+     * This method checks if all responses were received, if not, it throws an LogicException
+     * @throws Exception\LogicException 
+     */
     public function assertAllResponsesReceived() {
         if(!empty($this->responses)) {
             throw new Exception\LogicException('Assertion that all responses are received failed');
         }
     }
     
+    /**
+     * Wakes the query up 
+     */
     public function __wakeup() {
             $this->connect();
     }

@@ -30,7 +30,7 @@ interface CachingInterface
      * @param string $key identifier of the data
      * @param mixed $data data to cache
      * @param int $ttl Time to live (cachetime) 
-     * @return mixed true if success else false
+     * @return boolean true if success else false
      */
     public function cache($key, $data, $ttl);
     

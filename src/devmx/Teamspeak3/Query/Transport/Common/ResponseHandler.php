@@ -128,7 +128,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * Event notifications occured before sending the command are parsed too
      * @param \devmx\Teamspeak3\Query\Command $cmd the command which caused this response
      * @param string $raw the raw query response
-     * @return Array in form Array('response' => $responseObject, 'events' => Array($eventobject1,$eventobject2));  
+     * @return \devmx\Teamspeak3\Query\Response[] in form Array('response' => $responseObject, 'events' => Array($eventobject1,$eventobject2));  
      */
     public function getResponseInstance(\devmx\Teamspeak3\Query\Command $cmd, $raw)
     {
@@ -163,7 +163,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     /**
      * Parses Events coming from the query
      * @param string $raw the raw response
-     * @return array array of \devmx\Teamspeak3\Query\Event
+     * @return \devmx\Teamspeak3\Query\Event[] all events found in the raw string
      */
     public function getEventInstances($raw)
     {
@@ -285,7 +285,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * then in data packages (or key value pairs) (sperated by ' ')
      * if the datapackage is a key value pair it split this at '='
      * @param string $data
-     * @return Array in form Array(0=>Array('key0'=>'val0','key1'=>'val1'), 1=>Array('key0'=>'val2','key1','val3'));
+     * @return array in form Array(0=>Array('key0'=>'val0','key1'=>'val1'), 1=>Array('key0'=>'val2','key1','val3'));
      */
     protected function parseData($data)
     {

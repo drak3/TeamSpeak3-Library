@@ -32,6 +32,7 @@ class CommandFailedException extends RuntimeException
     private $response;
     
     /**
+     * Constructor
      * @param CommandResponse $response the response caused by the failed command
      */
     public function __construct(CommandResponse $response) {

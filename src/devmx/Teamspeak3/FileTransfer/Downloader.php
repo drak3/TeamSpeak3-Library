@@ -37,6 +37,7 @@ class Downloader
     protected $bytesToRead;
 
     /**
+     * Constructor
      * @param \devmx\Transmission\TransmissionInterface $transmission the transmission on which the download is performed
      * @param string $key the key to identify the filetransfer-Session (normally sent by the Ts3-Query when invoking ftinitdonwload command successfully)
      * @param int $bytesToRead the length of the file to download

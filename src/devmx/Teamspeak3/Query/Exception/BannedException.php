@@ -31,6 +31,7 @@ class BannedException extends RuntimeException
     private $retryTime;
     
     /**
+     * Constructor
      * @param int $retryTime the time which should be awaited before executing commands on the query again
      */
     public function __construct($retryTime) {

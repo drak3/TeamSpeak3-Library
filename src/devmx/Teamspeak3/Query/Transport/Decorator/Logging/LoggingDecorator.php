@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -16,14 +15,16 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-
-
 namespace devmx\Teamspeak3\Query\Transport\Decorator\Logging;
-
 use devmx\Teamspeak3\Query\Transport\Decorator\Logging;
 use devmx\Teamspeak3\Query\Transport;
 
 /**
+ * This QueryDecorator Logs all interesting events happenening on the query
+ * Therefore it uses a LoggingInterface as backend and logs events with different loglevels:
+ * LOGGING_LEVEL_ERROR: Exceptions occuring (Exceptions are rethrown after logging)
+ * LOGGING_LEVEL_WARNING: Failed commands
+ * LOGGING_LEVEL_INFO: All successful operations like connecting, sending command,...
  * @author Maximilian Narr 
  */
 class LoggingQueryDecorator extends Transport\AbstractQueryDecorator

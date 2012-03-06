@@ -16,10 +16,11 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace devmx\Teamspeak3\FileTransfer;
+use devmx\Transmission\TransmissionInterface;
 
 /**
- * 
- *
+ * An upload task
+ * This class uploads data, identified by a key, to a Teamspeak3-Filetransfer service
  * @author drak3
  */
 class Uploader
@@ -44,11 +45,12 @@ class Uploader
     protected $data;
     
     /**
-     * @param \devmx\Transmission\TransmissionInterface $transmission the transmission on which the upload should be performed (default ft-port is 30033)
+     * Constructor
+     * @param TransmissionInterface $transmission the transmission on which the upload should be performed (default ft-port is 30033)
      * @param string $key the key which identifies the ressource to upload (normally sent by the Ts3-Query when invoking ftinitupload command successfully)
-     * @param string $data the data to load up
+     * @param string $data the data to load up  
      */
-    public function __construct(\devmx\Transmission\TransmissionInterface $transmission, $key, $data)
+    public function __construct( TransmissionInterface $transmission, $key, $data)
     {
         $this->transmission = $transmission;
         $this->key = $key;

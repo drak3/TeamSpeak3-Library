@@ -32,6 +32,7 @@ abstract class AbstractQueryDecorator implements TransportInterface
     protected $decorated;
     
     /**
+     * Constructor
      * @param TransportInterface $toDecorate the transport to decorate
      */
     public function __construct(TransportInterface $toDecorate)
@@ -40,7 +41,7 @@ abstract class AbstractQueryDecorator implements TransportInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Connects to the Server
      */
     public function connect()
     {
@@ -48,7 +49,7 @@ abstract class AbstractQueryDecorator implements TransportInterface
     }
     
     /**
-     * {@inheritdoc}
+     * Disconnects from the server 
      */
     public function disconnect()
     {
@@ -56,7 +57,9 @@ abstract class AbstractQueryDecorator implements TransportInterface
     }
     
     /**
-     * {@inheritdoc}
+     * Returns all events occured since last time checking the query
+     * This method is non-blocking, so it returns even if no event is on the query
+     * @return array Array of all events lying on the query  
      */
     public function getAllEvents()
     {
@@ -64,7 +67,8 @@ abstract class AbstractQueryDecorator implements TransportInterface
     }
     
     /**
-     * {@inheritdoc}
+     * Returns wether the transport is connected to a server or not
+     * @return boolean 
      */
     public function isConnected()
     {
@@ -72,7 +76,9 @@ abstract class AbstractQueryDecorator implements TransportInterface
     }
     
     /**
-     * {@inheritdoc}
+     * Sends a command to the query and returns the result plus all occured events
+     * @param \devmx\Teamspeak3\Query\Command $command
+     * @return \devmx\Teamspeak3\Query\CommandResponse
      */
     public function sendCommand(\devmx\Teamspeak3\Query\Command $command)
     {
@@ -80,7 +86,8 @@ abstract class AbstractQueryDecorator implements TransportInterface
     }
     
     /**
-     * {@inheritdoc}
+     * Wrapper for new Command and sendcommand
+     * @return \devmx\Teamspeak3\Query\CommandResponse
      */
     public function query($name, array $args=Array(),array $options=Array())
     {
@@ -88,7 +95,9 @@ abstract class AbstractQueryDecorator implements TransportInterface
     }
     
     /**
-     * {@inheritdoc}
+     * Waits until an event occurs
+     * This method is blocking, it returns only if a event occurs, so avoid calling this method if you aren't registered to any events
+     * @return array array of all occured events (e.g if two events occur together it is possible to get 2 events) 
      */
     public function waitForEvent()
     {
@@ -96,7 +105,7 @@ abstract class AbstractQueryDecorator implements TransportInterface
     }
     
     /**
-     * {@inheritdoc}
+     * Clones the decorator
      */
     public function __clone() {
         $this->decorated = clone $this->decorated;

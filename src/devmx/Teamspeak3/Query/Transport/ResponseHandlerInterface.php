@@ -20,7 +20,8 @@
 namespace devmx\Teamspeak3\Query\Transport;
 
 /**
- *
+ * Base Interface of all ResponseHandlers
+ * A responsehandler handles and parses all data coming from the query
  * @author drak3
  */
 interface ResponseHandlerInterface

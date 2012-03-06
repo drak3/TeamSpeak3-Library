@@ -117,7 +117,7 @@ class DebuggingDecorator extends AbstractQueryDecorator
     }
 
     /**
-     * {@inheritdoc}
+     * Connects to the Server
      */
     public function connect()
     {
@@ -135,7 +135,9 @@ class DebuggingDecorator extends AbstractQueryDecorator
     }
     
     /**
-     * {@inheritdoc}
+     * Returns all events occured since last time checking the query
+     * This method is non-blocking, so it returns even if no event is on the query
+     * @return array Array of all events lying on the query  
      */
     public function getAllEvents()
     {
@@ -145,7 +147,9 @@ class DebuggingDecorator extends AbstractQueryDecorator
     }
     
     /**
-     * {@inheritdoc}
+     * Sends a command to the query and returns the result plus all occured events
+     * @param \devmx\Teamspeak3\Query\Command $command
+     * @return \devmx\Teamspeak3\Query\CommandResponse
      */
     public function sendCommand(\devmx\Teamspeak3\Query\Command $command)
     {
@@ -156,7 +160,8 @@ class DebuggingDecorator extends AbstractQueryDecorator
     }
     
     /**
-     * {@inheritdoc}
+     * Wrapper for new Command and sendcommand
+     * @return \devmx\Teamspeak3\Query\CommandResponse
      */
     public function query($name, array $args=array(), array $options=array()) {
         $response = $this->decorated->query($name , $args , $options);
@@ -166,7 +171,9 @@ class DebuggingDecorator extends AbstractQueryDecorator
     }
     
     /**
-     * {@inheritdoc}
+     * Waits until an event occurs
+     * This method is blocking, it returns only if a event occurs, so avoid calling this method if you aren't registered to any events
+     * @return array array of all occured events (e.g if two events occur together it is possible to get 2 events) 
      */
     public function waitForEvent()
     {
@@ -176,7 +183,7 @@ class DebuggingDecorator extends AbstractQueryDecorator
     }
     
     /**
-     * {@inheritdoc}
+     * Clones the decorator
      */
     public function __clone() {
         $this->decorated = clone $this->decorated;

@@ -60,7 +60,7 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
     protected $pendingEvents = Array();
     
     /**
-     *
+     * Constructor
      * @param TransmissionInterface $transmission
      * @param \devmx\Teamspeak3\Query\Transport\CommandTranslatorInterface $translator
      * @param ResponseHandlerInterface $responseHandler 
@@ -102,8 +102,8 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
         return $this->transmission;
     }
     
-    /**
-     * Connects to the Server
+    /** 
+     * Connects the query
      */
     public function connect() {
         try {

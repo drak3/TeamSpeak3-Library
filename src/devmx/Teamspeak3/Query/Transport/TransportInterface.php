@@ -20,7 +20,7 @@
 namespace devmx\Teamspeak3\Query\Transport;
 
 /**
- *
+ * The transportinterface provides basic methods to interact whith a TeamSpeak3-Query
  * @author drak3
  */
 interface TransportInterface
@@ -63,7 +63,10 @@ interface TransportInterface
      * @return array array of all occured events (e.g if two events occur together it is possible to get 2 events) 
      */
     public function waitForEvent();
-
+    
+    /**
+     * Disconnects from the server 
+     */
     public function disconnect();
 }
 

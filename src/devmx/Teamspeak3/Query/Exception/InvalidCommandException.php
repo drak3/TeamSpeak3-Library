@@ -75,6 +75,7 @@ class InvalidCommandException extends InvalidArgumentException
     );
     
     /**
+     * Constructor
      * @param Command $command the invalid command
      * @param int $invalidityType the invalidity type. See the class constants for possible values
      * @param mixed $invalidValue the concrete invalid value
@@ -88,7 +89,7 @@ class InvalidCommandException extends InvalidArgumentException
     
     /**
      * Returns the invalid command
-     * @return Command
+     * @return \devmx\Teamspeak3\Query\Command
      */
     public function getInvalidCommand() {
         return $this->command;

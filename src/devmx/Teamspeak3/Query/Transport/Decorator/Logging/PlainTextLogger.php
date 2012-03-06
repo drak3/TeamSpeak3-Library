@@ -19,11 +19,27 @@
 
 namespace devmx\Teamspeak3\Query\Transport\Decorator\Logging;
 
+/**
+ * Loggerimplementation which logs to a file 
+ */
 class PlainTextLogger implements LoggingInterface
 {
-
+    /**
+     * The format used to format the current time
+     * @var string
+     */
     private $dateTimeFormat;
+    
+    /**
+     * The path of the logfile
+     * @var string
+     */
     private $logFile;
+    
+    /**
+     * The handle to the opened logfile
+     * @var type 
+     */
     private $handle;
 
     /**
@@ -45,7 +61,14 @@ class PlainTextLogger implements LoggingInterface
     {
         fclose($this->handle);
     }
-
+    
+    /**
+     * Adds a log message
+     * @param string $message Log message
+     * @param int $logLevel Log level
+     * @author Maximilian Narr
+     * @throws \RuntimeException
+     */
     public function addLog($message, $logLevel)
     {
         if ($this->handle == null)

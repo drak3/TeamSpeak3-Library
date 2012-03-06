@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -16,12 +15,10 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace devmx\Teamspeak3\Query;
 
 /**
- * 
- *
+ * This class represents a command which can be sent to a Teamspeak3-Query
  * @author drak3
  */
 class Command
@@ -54,13 +51,13 @@ class Command
 
     /**
      * The parameters of the command. Since a parameter could have
-     * @var array of (string => array(string))  or (string => string)
+     * @var array of (string=>string)  or (int => array)
      */
     protected $parameters = Array();
 
     /**
-     *
-     * @param type $name
+     * Constructor
+     * @param string $name
      * @param array $parameters
      * @param array $options the options in form Array("foo", "bar") 
      */
@@ -72,7 +69,7 @@ class Command
     }
 
     /**
-     * returns the name of the Command
+     * Returns the name of the Command
      * @return string name 
      */
     public function getName()
@@ -91,7 +88,7 @@ class Command
 
     /**
      * Returns the parameters of the command
-     * @return array of (String => array of string) 
+     * @return array of (String => string) or (int => array of (String => String)) 
      */
     public function getParameters()
     {
@@ -109,13 +106,12 @@ class Command
     }
 
     /**
-     *
+     * Returns the parameter value for the given name
      * @param type $name the name of the parameter
      * @param misc $else the value returned if the parameter is not set
-     * @param int  $index the index of the parameter value
      * @return array of string 
      */
-    public function getParameter($name, $else = NULL, $index = 0)
+    public function getParameter($name, $else = NULL)
     {
         if(isset($this->parameters[$name])) {
             return $this->parameters[$name];
@@ -128,6 +124,7 @@ class Command
     /**
      * Test for equality of two commands
      * order of parameter does not matter for this test
+     * @todo add unittests to cover new command structure
      * @param Command $c
      * @return boolean 
      */

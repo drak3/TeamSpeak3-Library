@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -16,15 +15,31 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace devmx\Teamspeak3\Query\Transport\Decorator\Caching;
 
+/**
+ * Implementation of the CachingInterface using files as store
+ * @author Maximilian Narr
+ */
 class FileCache implements CachingInterface
 {
-
+    /**
+     * The directory where the cache files are stored
+     * @var string
+     */
     protected $cacheDirectory;
+    
+    /**
+     * The time to live of cached values in seconds
+     * @var int
+     */
     protected $cacheTime;
-
+    
+    /**
+     * Constructor
+     * @param string $cacheDirectory the directory where the cache files are stored
+     * @param int $cacheTime the default cachetime in seconds
+     */
     function __construct($cacheDirectory, $cacheTime = 180)
     {
         if (substr($cacheDirectory, -1) !== "/") $cacheDirectory.="/";
@@ -32,7 +47,14 @@ class FileCache implements CachingInterface
         $this->cacheDirectory = $cacheDirectory;
         $this->cacheTime = $cacheTime;
     }
-
+    
+    /**
+     * Caches a data which can be accessed with key in the cache. 
+     * @param string $key identifier of the data
+     * @param mixed $data data to cache
+     * @param int $ttl Time to live (cachetime) 
+     * @return boolean true if success else false
+     */
     public function cache($key, $data, $ttl)
     {
         if ($ttl == NULL) $ttl = $this->cacheTime;
@@ -41,6 +63,11 @@ class FileCache implements CachingInterface
         return file_put_contents($this->cacheDirectory . $key, serialize($data));
     }
 
+    /**
+     * Deletes a key from the cache
+     * @param string $key key to delete from cache 
+     * @return bool true if success else false
+     */
     public function flush($key)
     {
         if (file_exists($this->cacheDirectory . $key . ".time")) unlink($this->cacheDirectory . $key . ".time");
@@ -48,6 +75,10 @@ class FileCache implements CachingInterface
         return true;
     }
 
+    /**
+     * Flushes the whole cache 
+     * @return bool true if success else false
+     */
     public function flushCache()
     {
         $handler = opendir($this->cacheDirectory);
@@ -58,7 +89,12 @@ class FileCache implements CachingInterface
         }
         return true;
     }
-
+    
+    /**
+     * Returns the cached object
+     * @param string $key identifier of the data
+     * @return mixed data on success else false 
+     */
     public function getCache($key)
     {
         if (file_exists($this->cacheDirectory . $key . ".time"))
@@ -74,7 +110,11 @@ class FileCache implements CachingInterface
         }
         return false;
     }
-
+    
+    /**
+     * If a specific key is cached
+     * @return bool true if cached else false 
+     */
     public function isCached($key)
     {
         if (file_exists($this->cacheDirectory . $key . ".time"))
