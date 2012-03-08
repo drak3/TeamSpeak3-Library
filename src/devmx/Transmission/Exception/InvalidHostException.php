@@ -19,18 +19,30 @@
 namespace devmx\Transmission\Exception;
 
 /**
- *
+ * Thrown if the hist given to a transmission is invalid
  * @author drak3
  */
 class InvalidHostException extends \InvalidArgumentException implements ExceptionInterface
 {
+    /**
+     * The invalid host
+     * @var string
+     */
     private $host;
     
+    /**
+     * Constructor
+     * @param string $host the invalid host 
+     */
     public function __construct($host) {
         parent::__construct(sprintf('Invalid host "%s". Host must be non empty string', $host));
         $this->host = $host;
     }
     
+    /**
+     * Returns the invalid host
+     * @return string 
+     */
     public function getHost() {
         return $this->host;
     }

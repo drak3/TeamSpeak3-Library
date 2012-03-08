@@ -15,10 +15,9 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace devmx\Teamspeak3\Query;
 use devmx\Transmission\TransmissionInterface;
-use devmx\Teamspeak3\Transport\CommandTranslatorInterface;
+use devmx\Teamspeak3\Query\Transport\CommandTranslatorInterface;
 use devmx\Teamspeak3\Query\Transport\ResponseHandlerInterface;
 
 /**
@@ -40,34 +39,42 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
     }
     
     /**
-     *
+     * The Transmission between us and the query
      * @var TransmissionInterface 
      */
     protected $transmission;
+    
     /**
-     *
+     * The CommandTranslator implementation
      * @var CommandTranslatorInterface 
      */
     protected $commandTranslator;
+    
     /**
-     *
+     * The ResponseHandler implementation
      * @var ResponseHandlerInterface 
      */
     protected $responseHandler;
     
+    /**
+     * If we received a valid ts3 ident
+     * @var type 
+     */
     protected $isConnected = FALSE;
     
+    /**
+     * Events that got received while sending a command and where not yet returned by one of the *Event methods
+     * @var type 
+     */
     protected $pendingEvents = Array();
     
     /**
      * Constructor
      * @param TransmissionInterface $transmission
-     * @param \devmx\Teamspeak3\Query\Transport\CommandTranslatorInterface $translator
+     * @param CommandTranslatorInterface $translator
      * @param ResponseHandlerInterface $responseHandler 
      */
-    public function __construct(TransmissionInterface $transmission,
-                                \devmx\Teamspeak3\Query\Transport\CommandTranslatorInterface $translator,
-                                ResponseHandlerInterface $responseHandler) {
+    public function __construct(TransmissionInterface $transmission, CommandTranslatorInterface $translator, ResponseHandlerInterface $responseHandler) {
         $this->transmission = $transmission;
         $this->commandTranslator = $translator;
         $this->responseHandler = $responseHandler;
@@ -76,12 +83,16 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
     
     /**
      * Sets a new CommandTranslator
-     * @param Transport\CommandTranslatorInterface $translator 
+     * @param CommandTranslatorInterface $translator 
      */
-    public function setTranslator(Transport\CommandTranslatorInterface $translator) {
+    public function setTranslator(CommandTranslatorInterface $translator) {
         $this->commandTranslator = $translator;
     }
     
+    /**
+     * Returns the used translator
+     * @return CommandTranslatorInterface
+     */
     public function getTranslator() {
         return $this->commandTranslator;
     }
@@ -94,10 +105,18 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
         $this->responseHandler = $handler;
     }
     
+    /**
+     * Returns the used ResponseHandler
+     * @return ResponseHandlerInterface
+     */
     public function getHandler() {
         return $this->responseHandler;
     }
     
+    /**
+     * Returns the transmission between us and the query
+     * @return TransmissionInterface
+     */
     public function getTransmission() {
         return $this->transmission;
     }
@@ -165,10 +184,10 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
     /**
      * Sends a command to the query and returns the result
      * All occured events are stored internaly, and can be get via getAllEvents
-     * @param \devmx\Teamspeak3\Query\Command $command
+     * @param Command $command
      * @return CommandResponse
      */
-    public function sendCommand( \devmx\Teamspeak3\Query\Command $command )
+    public function sendCommand( Command $command )
     {
         if(!$this->isConnected()) {
             throw new Exception\NotConnectedException("Cannot send command, not connected");
@@ -189,6 +208,13 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
         return $responses['response'];
     }
     
+    /**
+     * Wrapper for new Command and sendcommand
+     * @param string $cmdname the name of the command
+     * @param array $params the arguments of the command
+     * @param array $options the options of the command
+     * @return \devmx\Teamspeak3\Query\CommandResponse
+     */
     public function query($cmdname, array $params=Array(),array $options=Array()) {
         return $this->sendCommand(new Command($cmdname , $params , $options));
     }
@@ -218,6 +244,9 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
         return $events;
     }
     
+    /**
+     * Disconnects from a server 
+     */
     public function disconnect() {
         // because disconnect could be also called on invalid servers, we just send the quit message and don't wait for any response
         $this->transmission->send("quit\n");
@@ -240,6 +269,9 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
         $this->transmission->receiveData( $this->responseHandler->getWelcomeMessageLength() - strlen($ident));
     }
     
+    /**
+     * Clones the transport 
+     */
     public function __clone() {
         $this->transmission = clone $this->transmission;
     }

@@ -18,6 +18,8 @@
 namespace devmx\Teamspeak3\Query\Transport\Decorator\Logging;
 use devmx\Teamspeak3\Query\Transport\Decorator\Logging;
 use devmx\Teamspeak3\Query\Transport;
+use devmx\Teamspeak3\Query\Transport\TransportInterface;
+use devmx\Teamspeak3\Query\Command;
 
 /**
  * This QueryDecorator Logs all interesting events happenening on the query
@@ -29,15 +31,27 @@ use devmx\Teamspeak3\Query\Transport;
  */
 class LoggingQueryDecorator extends Transport\AbstractQueryDecorator
 {
-
+    
+    /**
+     * The concrete logging implementations
+     * @var LoggingInterface 
+     */
     protected $logger;
-
-    public function __construct($toDecorate, LoggingInterface $logger)
+    
+    /**
+     * Constructor
+     * @param TransportInterface $toDecorate
+     * @param LoggingInterface $logger 
+     */
+    public function __construct(TransportInterface $toDecorate, LoggingInterface $logger)
     {
         parent::__construct($toDecorate);
         $this->logger = $logger;
     }
-
+    
+    /**
+     * Cpmmects tp the server
+     */
     public function connect()
     {
 
@@ -55,6 +69,9 @@ class LoggingQueryDecorator extends Transport\AbstractQueryDecorator
         return $ret;
     }
 
+    /**
+     * Disconnects from the server
+     */
     public function disconnect()
     {
         try
@@ -70,7 +87,12 @@ class LoggingQueryDecorator extends Transport\AbstractQueryDecorator
         $this->logger->addLog("Successfully disconnected from ServerQuery", LoggingInterface::LOGGING_LEVEL_INFO);
         return $ret;
     }
-
+    
+    /**
+     * Returns all events occured since last time checking the query
+     * This method is non-blocking, so it returns even if no event is on the query
+     * @return array Array of all events lying on the query  
+     */
     public function getAllEvents()
     {
         try
@@ -86,7 +108,11 @@ class LoggingQueryDecorator extends Transport\AbstractQueryDecorator
         $this->logger->addLog("Received all occured events from server", LoggingInterface::LOGGING_LEVEL_INFO);
         return $ret;
     }
-
+    
+    /**
+     * Returns wether the transport is connected to a server or not
+     * @return boolean 
+     */
     public function isConnected()
     {
         $connected = $this->decorated->isConnected();
@@ -102,8 +128,13 @@ class LoggingQueryDecorator extends Transport\AbstractQueryDecorator
             return true;
         }
     }
-
-    public function sendCommand(\devmx\Teamspeak3\Query\Command $command)
+    
+    /**
+     * Sends a command to the query and returns the result plus all occured events
+     * @param Command $command
+     * @return \devmx\Teamspeak3\Query\CommandResponse
+     */
+    public function sendCommand(Command $command)
     {
         try
         {
@@ -123,7 +154,12 @@ class LoggingQueryDecorator extends Transport\AbstractQueryDecorator
         $this->logger->addLog(sprintf("Successfully executed command: %s"), LoggingInterface::LOGGING_LEVEL_INFO);
         return $ret;
     }
-
+    
+    /**
+     * Waits until an event occurs
+     * This method is blocking, it returns only if a event occurs, so avoid calling this method if you aren't registered to any events
+     * @return array array of all occured events (e.g if two events occur together it is possible to get 2 events) 
+     */
     public function waitForEvent()
     {
         try
@@ -142,7 +178,7 @@ class LoggingQueryDecorator extends Transport\AbstractQueryDecorator
 
     /**
      * Returns a string containing the exception message, file and line
-     * @param \Exception $ex
+     * @param Exception $ex
      * @return string Exception ready for log
      */
     protected function getExceptionDetails(\Exception $ex)

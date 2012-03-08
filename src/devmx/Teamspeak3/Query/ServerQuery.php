@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -19,20 +18,41 @@
 namespace devmx\Teamspeak3\Query;
 
 /**
- *
+ * A wrapper for a TransportInterface that abstracts all commands which have directly to do with the query
+ * it also adds lots of convience methods, like support for serializing with reconnect when unserialize and automaited state recovery
  * @author drak3
  */
 class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterface
 {
     
     /**
-     * @varTransport\TransportInterface $transport 
+     * The transport to wrap
+     * @var Transport\TransportInterface $transport 
      */
     protected $transport;
     
+    /**
+     * Indicates if we are logged in
+     * @var boolean
+     */
     protected $isLoggedIn = false;
+    
+    /**
+     * The name we used to login
+     * @var string
+     */
     protected $loginName = '';
+    
+    /**
+     * The pass we used to login
+     * @var string 
+     */
     protected $loginPass = '';
+    
+    /**
+     * Indicates if we are on a vServer (= successfully executed a use command)
+     * @var boolean 
+     */
     protected $isOnVirtualServer = false;
     protected $virtualServerIdentifyer = Array();
     protected $registerCommands = Array();
@@ -45,7 +65,11 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     protected $databaseID = 0;
     protected $uniqueVirtualServerID = '';
     protected $clientID = 0;
-
+    
+    /**
+     * Constructor
+     * @param Transport\TransportInterface $transport the transport to wrap
+     */
     public function __construct(Transport\TransportInterface $transport) {
         $this->transport = $transport;
     }

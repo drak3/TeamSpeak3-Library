@@ -16,6 +16,7 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace devmx\Teamspeak3\FileTransfer;
+use devmx\Transmission\TransmissionInterface;
 
 /**
  * A download action for the Teamspeak3 filetransfer-Interface
@@ -38,11 +39,11 @@ class Downloader
 
     /**
      * Constructor
-     * @param \devmx\Transmission\TransmissionInterface $transmission the transmission on which the download is performed
+     * @param TransmissionInterface $transmission the transmission on which the download is performed
      * @param string $key the key to identify the filetransfer-Session (normally sent by the Ts3-Query when invoking ftinitdonwload command successfully)
      * @param int $bytesToRead the length of the file to download
      */
-    public function __construct(\devmx\Transmission\TransmissionInterface $transmission, $key, $bytesToRead)
+    public function __construct(TransmissionInterface $transmission, $key, $bytesToRead)
     {
         $this->transmission = $transmission;
         $this->key = $key;

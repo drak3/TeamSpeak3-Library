@@ -43,6 +43,7 @@ interface CachingInterface
    
     /**
      * If a specific key is cached
+     * @param string $key the key to lookup
      * @return bool true if cached else false 
      */
     public function isCached($key);

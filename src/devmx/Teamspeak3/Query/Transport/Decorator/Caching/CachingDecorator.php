@@ -18,6 +18,8 @@
 namespace devmx\Teamspeak3\Query\Transport\Decorator\Caching;
 use devmx\Teamspeak3\Query\Transport\Decorator\Caching;
 use devmx\Teamspeak3\Query\Transport;
+use devmx\Teamspeak3\Query\Transport\TransportInterface;
+use devmx\Teamspeak3\Query\Command;
 
 /**
  * This decorator caches command and their responses, to avoid the network overhead
@@ -32,11 +34,11 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
     protected $cache;
     
     /**
-     *
-     * @param \devmx\Teamspeak3\Query\Transport\TransportInterface $toDecorate
-     * @param \devmx\Teamspeak3\Query\Decorator\Caching\CachingInterface $cache 
+     * Constructor
+     * @param TransportInterface $toDecorate
+     * @param CachingInterface $cache 
      */
-    public function __construct(Transport\TransportInterface $toDecorate, CachingInterface $cache)
+    public function __construct(TransportInterface $toDecorate, CachingInterface $cache)
     {
         parent::__construct($toDecorate);
         $this->cache = $cache;
@@ -68,10 +70,10 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
     /**
      * Sends a command to the query and returns the result plus all occured events
      * If the command is cached, no query to the server will be made and the cached response is returned
-     * @param \devmx\Teamspeak3\Query\Command $command
+     * @param Command $command
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
-    public function sendCommand(\devmx\Teamspeak3\Query\Command $command)
+    public function sendCommand(Command $command)
     {
         $key = md5(serialize($command));
 
@@ -105,7 +107,12 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
         
         return $this->decorated->getAllEvents();
     }
- 
+    
+    /**
+     * Waits for a event on the query
+     * this mehtod is blocking
+     * @return array 
+     */
     public function waitForEvent()
     {
         if(!$this->decorated->isConnected())

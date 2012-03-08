@@ -19,19 +19,30 @@
 namespace devmx\Transmission\Exception;
 
 /**
- *
+ * This class is thrown, when an invalid port is given to the transmission
  * @author drak3
  */
 class InvalidPortException extends \InvalidArgumentException implements ExceptionInterface
 {
-    
+    /**
+     * The invalid port
+     * @var mixed
+     */
     private $port;
     
+    /**
+     * Constructor
+     * @param mixed $port 
+     */
     public function __construct($port) {
         parent::__construct(sprintf('Port %s is invalid, valid port must be between 0 and 65535', $port));
         $this->port = $port;
     }
     
+    /**
+     * Returns the invalid port
+     * @return int
+     */
     public function getPort() {
         return $this->port;
     }

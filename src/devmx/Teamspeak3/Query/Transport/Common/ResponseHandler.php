@@ -17,6 +17,7 @@
  */
 namespace devmx\Teamspeak3\Query\Transport\Common;
 use devmx\Teamspeak3\Query\Exception;
+use devmx\Teamspeak3\Query\Command;
 
 /**
  * The Responsehandler handles all output given by the Query.
@@ -126,11 +127,11 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     /**
      * Parses a response coming from the query for a given command
      * Event notifications occured before sending the command are parsed too
-     * @param \devmx\Teamspeak3\Query\Command $cmd the command which caused this response
+     * @param Command $cmd the command which caused this response
      * @param string $raw the raw query response
      * @return \devmx\Teamspeak3\Query\Response[] in form Array('response' => $responseObject, 'events' => Array($eventobject1,$eventobject2));  
      */
-    public function getResponseInstance(\devmx\Teamspeak3\Query\Command $cmd, $raw)
+    public function getResponseInstance(Command $cmd, $raw)
     {
         $response = Array('response' => NULL, 'events' => Array());
         $parsed = Array();
@@ -236,12 +237,12 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     /**
      * Parses a response (no events in it) for a given command
      * Builds up a response object
-     * @param \devmx\Teamspeak3\Query\Command $cmd the command which caused this response
+     * @param Command $cmd the command which caused this response
      * @param string $error the error message
      * @param string $data the response data
      * @return \devmx\Teamspeak3\Query\Response 
      */
-    protected function parseResponse(\devmx\Teamspeak3\Query\Command $cmd, $error, $data='')
+    protected function parseResponse(Command $cmd, $error, $data='')
     {
         $parsedError = $this->parseData($error);
         $errorID = $parsedError[0]['id'];

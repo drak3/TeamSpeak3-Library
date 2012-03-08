@@ -66,7 +66,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      * e.g Command('channelcreate', array('name'=>'new channel'), array('force')) becomes "channelcreate name=>new\schannel -force<newline>
      * the command parameters may include key=>value pairs and arrays with key=>value pairs, arrays are translated to sections
      * e.g Command('clientkick', array( array('cid'=>1, 'reason' => 'haha'), array('cid'=>2, 'reason'=>'oops!')) becomes clientkick cid=1 reason=haha|cid=2 reason=oops!<newline>
-     * @param \devmx\Teamspeak3\Query\Command $cmd
+     * @param Command $cmd
      * @throws \devmx\Teamspeak3\Query\InvalidCommandException if the command is not valid
      * @return string the query representation 
      */
@@ -90,7 +90,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
     
     /**
      * Checks if the given command is valid
-     * @param \devmx\Teamspea3\Query\Command $cmd
+     * @param Command $cmd
      * @return boolean
      */
     public function isValid(\devmx\Teamspeak3\Query\Command $cmd)
@@ -170,7 +170,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
     
     /**
      * Checks a command for validity and throws an Exception including detailed information when the command is not valid
-     * @param \devmx\Teamspeak3\Query\Command $command the command to check
+     * @param Command $command the command to check
      * @throws \devmx\Teamspeak3\Query\Exception\InvalidCommandException 
      */
     protected function checkCommand(Command $command) {
@@ -182,7 +182,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
     /**
      * Checks if the Name is valid to send it to a CommonQuery
      * @param string $name
-     * @param \devmx\Teamspeak3\Query\Command $cmd the command to check
+     * @param Command $cmd the command to check
      * @throws \devmx\Teamspeak3\Query\Exception\InvalidCommandException 
      */
     protected function checkName($name, Command $cmd)
@@ -211,6 +211,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      * Parameters may contain key=>value pairs, where the value must not be an array and must be an boolean or a type that can be converted to a string
      * Parameters may contain arrays which contain key=>value pairs which must follow the rules above
      * @param array $params
+     * @param Command $cmd
      * @throws \devmx\Teamspeak3\Query\Exception\InvalidCommandException 
      */
     protected function checkParameters(array $params, Command $cmd)
@@ -263,6 +264,7 @@ class CommandTranslator implements \devmx\Teamspeak3\Query\Transport\CommandTran
      * Optionnames have to be valid names and must not include other chars than a-z,- and 0-9
      * an option must not start with a '-'
      * @param array $options
+     * @param Command $cmd
      * @return bool
      */
     protected function checkOptions(array $options, Command $cmd)

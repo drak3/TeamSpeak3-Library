@@ -19,11 +19,14 @@
 namespace devmx\Transmission\Exception;
 
 /**
- *
+ * Exception is thrown, when there is action on a not connected transmission
  * @author drak3
  */
 class NotEstablishedException extends \LogicException implements ExceptionInterface
 {
+    /**
+     * Constructor 
+     */
     public function __construct() {
         parent::__construct('Connection not established');
     }

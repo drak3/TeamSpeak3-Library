@@ -19,7 +19,7 @@
 namespace devmx\Transmission\Exception;
 
 /**
- *
+ * Base LogicException for Transmission component
  * @author drak3
  */
 class LogicException extends \LogicException implements ExceptionInterface

@@ -29,7 +29,7 @@ interface CommandTranslatorInterface
 
     /**
      * Translates a command to its query-representation
-     * @param \devmx\Teamspeak3\Query\Command $cmd
+     * @param Command $cmd
      * @return mixed the query representation
      * @throws \devmx\Teamspeak3\Query\Exception\InvalidCommandExceptio
      */
@@ -37,7 +37,7 @@ interface CommandTranslatorInterface
 
     /**
      * Tests if a command could be translated to a query-understandable representation
-     * @param \devmx\Teamspeak3\Query\Command $cmd
+     * @param Command $cmd
      * @return boolean if the command is valid or not
      */
     public function isValid(Command $cmd);

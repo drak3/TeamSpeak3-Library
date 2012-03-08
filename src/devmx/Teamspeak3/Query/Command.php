@@ -27,9 +27,9 @@ class Command
     /**
      * A simple builder which drops support for multiple values of params
      * @deprecated currently its just a alias for new Command();
-     * @param string $name
-     * @param array $options
-     * @param array $params 
+     * @param string $cmdname
+     * @param array $params
+     * @param array $options 
      * @return Command
      */
     public static function simpleCommand($cmdname, array $params = Array(), array $options = Array())
@@ -107,8 +107,8 @@ class Command
 
     /**
      * Returns the parameter value for the given name
-     * @param type $name the name of the parameter
-     * @param misc $else the value returned if the parameter is not set
+     * @param string $name the name of the parameter
+     * @param mixed $else the value returned if the parameter is not set
      * @return array of string 
      */
     public function getParameter($name, $else = NULL)

@@ -54,8 +54,8 @@ class TickingDecorator extends \devmx\Teamspeak3\Query\Transport\AbstractQueryDe
     }
     
     /**
-     * Sends a command to the query and returns the result plus all occured events
-     * @param \devmx\Teamspeak3\Query\Command $command
+     * Sends a command to the query and returns the results
+     * @param Command $cmd
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
     public function sendCommand(Command $cmd) {

@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -16,57 +15,79 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace devmx\Transmission;
 
 /**
- * 
- *
+ * Implements the TrannsmissionInterface using TCP as protocol to comunicate with the server
  * @author drak3
  */
 class TCP implements TransmissionInterface
 {
-
+    
+    /**
+     * Parameter for \stream_set_blocking to set the stream to blocking mode 
+     */
     const BLOCKING = 1;
+    
+    /**
+     * Parameter for \stream_set_blocking to set the stream to nonblocking mode 
+     */
     const NONBLOCKING = 0;
 
     /**
+     * The host to connect to
      * @var string 
      */
-    protected $host;
+    private $host;
     
-    protected $originalHost;
+    /**
+     * The original host given in the constructor (without "tcp://" at the beginning)
+     * @var string 
+     */
+    private $originalHost;
 
     /**
+     * The port to connect to
      * @var int 
      */
-    protected $port;
+    private $port;
 
     /**
+     * The default timeout in seconds
      * @var int 
      */
     protected $defaultTimeoutSec = 5;
 
     /**
+     * The default timeout microseconds
      * @var int
      */
     protected $defaultTimeoutMicro = 0;
 
     /**
-     * @var Ressource
+     * The underlying ressource
+     * @var ressource
      */
     protected $stream;
     
+    /**
+     * Indicates if the transmission is connected or not
+     * @var type 
+     */
     protected $isConnected = false;
     
+    /**
+     * Max tries we have to send/receive data (-1 means endless)
+     * @var int
+     */
     protected $maxTries = -1;
 
     /**
-     *
+     * Constructor
      * @param string $host the host to connect to
      * @param int $port the port to connect to
      * @param int $timeoutSeconds the seconds to wait at each establish/send/receive action
-     * @param int $timeoutMicroSeconds  the seconds to wait at each establish/send/receive action
+     * @param int $timeoutMicroSeconds  the microseconds to wait additionaly to the seconds at each establish/send/receive action
      */
     public function __construct($host, $port, $timeoutSeconds = 5, $timeoutMicroSeconds = 0)
     {
@@ -80,8 +101,7 @@ class TCP implements TransmissionInterface
     }
 
     /**
-     * closes the transmission
-     * @return void
+     * Closes the transmission
      */
     public function close()
     {
@@ -92,8 +112,8 @@ class TCP implements TransmissionInterface
     /**
      * Establishes a connection to the setted host/port combination
      * @param int $timeout
-     * @return void
-     * @throws \RuntimeException
+     * @param boolean $reEstablish set to true to force a reestablishing of the transmission
+     * @throws Exception\EstablishingFailedException
      */
     public function establish($timeout = -1, $reEstablish=false)
     {
@@ -121,7 +141,7 @@ class TCP implements TransmissionInterface
     }
 
     /**
-     * Returns the current host (needn't to be the port currently connected to, just the port where next establish() call will connect to
+     * Returns the current host (needn't to be the host currently connected to, just the host where next establish() call will connect to)
      * @return string
      */
     public function getHost()
@@ -186,10 +206,20 @@ class TCP implements TransmissionInterface
         return $data;
     }
     
+    /**
+     * Sets the max tries a method may take to send or receive the wanted data
+     * -1 means endless tries
+     * @param int $tries 
+     */
     public function setMaxTries($tries) {
         $this->maxTries = $tries;
     }
     
+    /**
+     * Gets the max tries a method may take to send or receive the wanted data
+     * -1 means endless tries
+     * @return int
+     */
     public function getMaxTries() {
         return $this->maxTries;
     }
@@ -197,7 +227,9 @@ class TCP implements TransmissionInterface
     /**
      * Receives data with the given length
      * This method is blocking
-     * @param int $lenght
+     * @param int $length
+     * @param int $timeoutSec
+     * @param int $timeoutMicro
      * @return string 
      */
     public function receiveData($length, $timeoutSec=-1, $timeoutMicro=-1)
@@ -248,7 +280,10 @@ class TCP implements TransmissionInterface
         }
     }
     
-
+    
+    /**
+     * Clones the transmission 
+     */
     public function __clone() {
         if($this->isConnected) {
             $this->establish(-1, true);
@@ -290,10 +325,19 @@ class TCP implements TransmissionInterface
         }
     }
     
+    /**
+     * Returns the underlying stream
+     * @return type 
+     */
     public function getStream() {
         return $this->stream;
     }
     
+    /**
+     * 
+     * @param type $timeoutSeconds
+     * @param type $timeoutMicroseconds 
+     */
     protected function checkTimeOut($timeoutSeconds, $timeoutMicroseconds) {
         $timeoutSeconds = (int) $timeoutSeconds;
         $timeoutMicroseconds = (int) $timeoutMicroseconds;

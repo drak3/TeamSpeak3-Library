@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -16,8 +15,8 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace devmx\Teamspeak3\Query\Transport;
+use devmx\Teamspeak3\Query\Command;
 
 /**
  * The transportinterface provides basic methods to interact whith a TeamSpeak3-Query
@@ -46,13 +45,16 @@ interface TransportInterface
 
     /**
      * Sends a command to the query and returns the result plus all occured events
-     * @param \devmx\Teamspeak3\Query\Command $command
+     * @param Command $command
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
-    public function sendCommand(\devmx\Teamspeak3\Query\Command $command);
+    public function sendCommand(Command $command);
     
     /**
      * Wrapper for new Command and sendcommand
+     * @param string $name the name of the command
+     * @param array $args the arguments of the command
+     * @param array $options the options of the command
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
     public function query($name, array $args=Array(),array $options=Array());

@@ -73,7 +73,7 @@ class DebuggingDecorator extends AbstractQueryDecorator
     
     /**
      * Returns the number of connections closed
-     * @return type 
+     * @return int
      */
     public function getClosedConnections()
     {
@@ -148,10 +148,10 @@ class DebuggingDecorator extends AbstractQueryDecorator
     
     /**
      * Sends a command to the query and returns the result plus all occured events
-     * @param \devmx\Teamspeak3\Query\Command $command
+     * @param Command $command
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
-    public function sendCommand(\devmx\Teamspeak3\Query\Command $command)
+    public function sendCommand(Command $command)
     {
         $response = $this->decorated->sendCommand($command);
         $this->sentCommands[] = $command;
@@ -161,6 +161,9 @@ class DebuggingDecorator extends AbstractQueryDecorator
     
     /**
      * Wrapper for new Command and sendcommand
+     * @param string $name the name of the command
+     * @param array $args the arguments of the command
+     * @param array $options the options of the command
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
     public function query($name, array $args=array(), array $options=array()) {

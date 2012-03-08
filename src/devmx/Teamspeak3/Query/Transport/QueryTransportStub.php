@@ -17,6 +17,9 @@
  */
 namespace devmx\Teamspeak3\Query\Transport;
 use \devmx\Teamspeak3\Query\Exception;
+use \devmx\Teamspeak3\Query\CommandResponse;
+use \devmx\Teamspeak3\Query\Event;
+use \devmx\Teamspeak3\Query\Command;
 
 /**
  * This class is a implementation of the TransportInterface that holds no real connections to the outside.
@@ -45,10 +48,10 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
     
     /**
      * Adds a response for a specific command, so it could be received by sendCommand
-     * @param \devmx\Teamspeak3\Query\CommandResponse $r the response to be received
+     * @param CommandResponse $r the response to be received
      * @param int $times how often the response should be available
      */
-    public function addResponse(\devmx\Teamspeak3\Query\CommandResponse $r, $times=1 ) {
+    public function addResponse(CommandResponse $r, $times=1 ) {
         for($i=0;$i<$times; $i++) {
             $this->responses[] = $r;
         }
@@ -67,11 +70,11 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
     /**
      * Adds a event to be received either by getAllEvents or waitForEvent
      * The events are organized in charges, if you add a event to a new charge, it will be returned by call after that invocation which returned the previous charge
-     * @param \devmx\Teamspeak3\Query\Event $e the event to add
+     * @param Event $e the event to add
      * @param int $times how often the event should be added
      * @param boolean $newCharge if this is set to true, the event will be added to a new charge
      */
-    public function addEvent(\devmx\Teamspeak3\Query\Event $e, $times=1, $newCharge=false) {
+    public function addEvent(Event $e, $times=1, $newCharge=false) {
         $events = array();
         for($i=0; $i<$times; $i++) {
             $events[] = $e;
@@ -119,10 +122,10 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
 
     /**
      * Sends a command to the query and returns the result plus all occured events
-     * @param \devmx\Teamspeak3\Query\Command $command
+     * @param Command $command
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
-    public function sendCommand(\devmx\Teamspeak3\Query\Command $command) {
+    public function sendCommand(Command $command) {
         if(!$this->isConnected()) {
             throw new Exception\LogicException('Cannot send command, not connected');
         }
@@ -137,6 +140,9 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
     
     /**
      * Wrapper for new Command and sendcommand
+     * @param string $name the name of the command
+     * @param array $args the arguments of the command
+     * @param array $options the options of the command
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
     public function query($name, array $args=Array(),array $options=Array()) {

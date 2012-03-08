@@ -16,6 +16,7 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace devmx\Teamspeak3\Query\Transport;
+use devmx\Teamspeak3\Query\Command;
 
 /**
  * Base class for an QueryTransport decorator
@@ -77,16 +78,20 @@ abstract class AbstractQueryDecorator implements TransportInterface
     
     /**
      * Sends a command to the query and returns the result plus all occured events
-     * @param \devmx\Teamspeak3\Query\Command $command
+     * @param Command $command
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
-    public function sendCommand(\devmx\Teamspeak3\Query\Command $command)
+    public function sendCommand(Command $command)
     {
         return $this->decorated->sendCommand($command);
     }
     
     /**
      * Wrapper for new Command and sendcommand
+     * @param string $name the name of the command
+     * @param array $args the arguments of the command
+     * @param array $options the options of the command
+     * @todo change this to act as a real wrapper and do not delegate this
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
     public function query($name, array $args=Array(),array $options=Array())

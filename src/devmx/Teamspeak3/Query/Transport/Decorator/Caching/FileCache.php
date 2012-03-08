@@ -113,6 +113,7 @@ class FileCache implements CachingInterface
     
     /**
      * If a specific key is cached
+     * @param string the identifyer of the value to check
      * @return bool true if cached else false 
      */
     public function isCached($key)
