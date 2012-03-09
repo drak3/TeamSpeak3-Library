@@ -3,3 +3,7 @@
 /doc/
 /bin/
 /test/testShell.php
+/vendor/.composer/
+/vendor/
+composer.phar
+composer.lock
