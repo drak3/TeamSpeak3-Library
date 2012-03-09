@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -19,17 +18,11 @@
 namespace devmx\Transmission\Exception;
 
 /**
- * Exception is thrown, when there is action on a not connected transmission
+ * The basic RuntimeException for the Transmission component
  * @author drak3
  */
-class NotEstablishedException extends \LogicException implements ExceptionInterface
-{
-    /**
-     * Constructor 
-     */
-    public function __construct() {
-        parent::__construct('Connection not established');
-    }
+class RuntimeException extends \RuntimeException implements ExceptionInterface
+{    
 }
 
 ?>

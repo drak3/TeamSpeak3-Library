@@ -65,10 +65,10 @@ class TCP implements TransmissionInterface
     protected $stream;
     
     /**
-     * Indicates if the transmission is connected or not
-     * @var type 
+     * Indicates if the transmission was established or not, doesn't say anything about the current state
+     * @var boolean
      */
-    protected $isConnected = false;
+    protected $wasEstablished = false;
     
 
     /**
@@ -90,7 +90,7 @@ class TCP implements TransmissionInterface
     public function close()
     {
         $this->closeStream();
-        $this->isConnected = false;
+        $this->wasEstablished = false;
     }
 
     /**
@@ -113,10 +113,10 @@ class TCP implements TransmissionInterface
 
         if (!$this->stream || $errorNumber !== 0)
         {
-            $this->isConnected = false;
+            $this->wasEstablished = false;
             throw new Exception\EstablishingFailedException($this->host, $this->port, $errorNumber, $errorMessage);
         }
-        $this->isConnected = true;
+        $this->wasEstablished = true;
     }
 
     /**
@@ -144,7 +144,7 @@ class TCP implements TransmissionInterface
     public function isEstablished()
     {
         if ($this->stream == FALSE) return FALSE;
-        return $this->isConnected;
+        return $this->wasEstablished;
     }
 
     /**
@@ -157,7 +157,7 @@ class TCP implements TransmissionInterface
      */
     public function receiveLine($timeout=-1)
     {
-        if (!$this->isEstablished()) throw new Exception\NotEstablishedException();
+        $this->checkConnection();
         $this->requiresTimeout($timeout);
         $data = '';
         $current = '';
@@ -179,7 +179,7 @@ class TCP implements TransmissionInterface
      */
     public function checkForData()
     {
-        if (!$this->isEstablished()) throw new Exception\NotEstablishedException();
+        $this->checkConnection();
         $this->setBlocking( self::NONBLOCKING );
         $crnt = $data = '';
         while ($crnt = $this->getLine(8094))
@@ -200,7 +200,7 @@ class TCP implements TransmissionInterface
      */
     public function receiveData($length, $timeout=-1)
     {
-        if (!$this->isEstablished()) throw new Exception\NotEstablishedException;
+        $this->checkConnection();
         $this->requiresTimeout($timeout);
         $data = '';
         $current = '';
@@ -227,7 +227,7 @@ class TCP implements TransmissionInterface
      */
     public function send($data, $timeout=-1)
     {
-        if (!$this->isEstablished()) throw new Exception\NotEstablishedException;
+        $this->checkConnection();
         $this->requiresTimeout($timeout);
         $bytesToSend = strlen($data);
         
@@ -247,7 +247,7 @@ class TCP implements TransmissionInterface
      * Clones the transmission 
      */
     public function __clone() {
-        if($this->isConnected) {
+        if($this->wasEstablished) {
             $this->establish(-1, true);
         }
     }
@@ -330,6 +330,15 @@ class TCP implements TransmissionInterface
     protected function requiresTimeout($timeout) {
         $timeout = $this->getTimeout($timeout);
         $this->setTimeout($timeout['seconds'], $timeout['microseconds']);
+    }
+    
+    protected function checkConnection() {
+        if (!$this->wasEstablished) {
+            throw new Exception\LogicException('Transmission has to be established before any action could be taken on it');
+        }
+        if(!$this->isEstablished()) {
+            throw new Exception\RuntimeException(sprintf('Transmission to %s:%s was closed by the remote host.', $this->getHost(), $this->getPort()));
+        }
     }
     
     protected function open($host, $port, &$errno, &$errmsg, $timeout) {

@@ -164,7 +164,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @covers devmx\Transmission\TCP::receiveLine
-     * @expectedException \devmx\Transmission\Exception\NotEstablishedException
+     * @expectedException \devmx\Transmission\Exception\LogicException
      */
     public function testReceiveLine_ExceptionWhenNotEstablished()
     {
@@ -242,7 +242,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException \devmx\Transmission\Exception\NotEstablishedException
+     * @expectedException \devmx\Transmission\Exception\LogicException
      */
     public function testReceiveData_ExceptionWhenNotEstablished() {
         $this->tcp->receiveData(123);
@@ -308,7 +308,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @covers devmx\Transmission\TCP::send
-     * @expectedException \devmx\Transmission\Exception\NotEstablishedException
+     * @expectedException \devmx\Transmission\Exception\LogicException
      */
     public function testSend_ExceptionWhenNotEstablished()
     {
