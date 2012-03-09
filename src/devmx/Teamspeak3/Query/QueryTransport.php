@@ -158,9 +158,9 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
     {  
         if(!$dryRun) {
             if(!$this->isConnected()) {
-            throw new Exception\NotConnectedException("Cannot get events, not connected");
+                throw new Exception\NotConnectedException("Cannot get events, not connected");
             }
-            $response = $this->transmission->getAll();
+            $response = $this->transmission->checkForData();
             if ( $response )
             {
                 while ( !$this->responseHandler->isCompleteEvent( $response ) )

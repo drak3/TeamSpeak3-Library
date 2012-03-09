@@ -54,15 +54,9 @@ class TCP implements TransmissionInterface
 
     /**
      * The default timeout in seconds
-     * @var int 
+     * @var float
      */
-    protected $defaultTimeoutSec = 5;
-
-    /**
-     * The default timeout microseconds
-     * @var int
-     */
-    protected $defaultTimeoutMicro = 0;
+    protected $defaultTimeout;
 
     /**
      * The underlying ressource
@@ -76,28 +70,18 @@ class TCP implements TransmissionInterface
      */
     protected $isConnected = false;
     
-    /**
-     * Max tries we have to send/receive data (-1 means endless)
-     * @var int
-     */
-    protected $maxTries = -1;
 
     /**
      * Constructor
      * @param string $host the host to connect to
      * @param int $port the port to connect to
-     * @param int $timeoutSeconds the seconds to wait at each establish/send/receive action
-     * @param int $timeoutMicroSeconds  the microseconds to wait additionaly to the seconds at each establish/send/receive action
+     * @param float $timeout the default timeout in seconds
      */
-    public function __construct($host, $port, $timeoutSeconds = 5, $timeoutMicroSeconds = 0)
+    public function __construct($host, $port, $timeout=1)
     {
-
         $this->setHost($host);
         $this->setPort($port);
-
-
-        $this->defaultTimeoutSec = (int) $timeoutSeconds;
-        $this->defaultTimeoutMicro = (int) $timeoutMicroSeconds;
+        $this->defaultTimeout = $timeout;
     }
 
     /**
@@ -106,12 +90,12 @@ class TCP implements TransmissionInterface
     public function close()
     {
         $this->closeStream();
-        $this->isConnected = FALSE;
+        $this->isConnected = false;
     }
 
     /**
      * Establishes a connection to the setted host/port combination
-     * @param int $timeout
+     * @param int $timeout the timeout is rounded up to an int, if -1 is given as $timeout, the default is used
      * @param boolean $reEstablish set to true to force a reestablishing of the transmission
      * @throws Exception\EstablishingFailedException
      */
@@ -120,23 +104,18 @@ class TCP implements TransmissionInterface
         if($this->isEstablished() && !$reEstablish) {
             return;
         }
-        
         $errorNumber = 0;
         $errorMessage = '';
 
-        if ($timeout === -1)
-        {
-            $timeout = $this->defaultTimeoutSec;
-        }
+        $timeout = $this->getTimeout($timeout, false);
 
-        $this->open($this->host, $this->port, $errorNumber, $errorMessage, $timeout);
+        $this->open($this->host, $this->port, $errorNumber, $errorMessage, $timeout['seconds']);
 
         if (!$this->stream || $errorNumber !== 0)
         {
-            $this->isConnected = FALSE;
+            $this->isConnected = false;
             throw new Exception\EstablishingFailedException($this->host, $this->port, $errorNumber, $errorMessage);
         }
-
         $this->isConnected = true;
     }
 
@@ -169,22 +148,27 @@ class TCP implements TransmissionInterface
     }
 
     /**
-     * Reads $lenght of data from the transmission
-     * note that it stops if new data is on the stream or after a line (see stream_get_line())
-     * return is trimmed
-     * @param int $length
-     * @param int $timeoutSec
-     * @param int $timeoutMicro
-     * @return byte the received data
+     * Waits until a line end is received and returns the data (blocking)
+     * Caution: even if the timeout parameter is set to a value greater 0, 
+     *   the time this method takes could be indefinite long, because it doesn't return until a lineend is reached, or there is a gap of at least $timeout in the transmission
+     * @param float $timeout the time in seconds after which the receiving action is stopped when no new data was received if $timeout is set to -1 the default timeout is used
+     * @return string the received data
+     * @throws \devmx\Transmission\Exception\TimeoutException
      */
-    public function receiveLine($length = 4096, $timeoutSec = -1, $timeoutMicro = -1)
+    public function receiveLine($timeout=-1)
     {
         if (!$this->isEstablished()) throw new Exception\NotEstablishedException();
-
-        $this->checkTimeOut($timeoutSec, $timeoutMicro);
-
-        $data = $this->getLine( $length );
-
+        $this->requiresTimeout($timeout);
+        $data = '';
+        $current = '';
+        
+        while(!isset($data[strlen($data)-1]) || $data[strlen($data)-1] !== "\n") {
+            $current = $this->getLine(8192);
+            if(!$current) {
+                throw new Exception\TimeoutException('receiveLine timed out.', $this->getDefaultTimeout(), $data);
+            }
+            $data .= $current;
+        }
         return $data;
     }
 
@@ -193,7 +177,7 @@ class TCP implements TransmissionInterface
      * This method is non-blocking 
      * @return string 
      */
-    public function getAll()
+    public function checkForData()
     {
         if (!$this->isEstablished()) throw new Exception\NotEstablishedException();
         $this->setBlocking( self::NONBLOCKING );
@@ -207,76 +191,54 @@ class TCP implements TransmissionInterface
     }
     
     /**
-     * Sets the max tries a method may take to send or receive the wanted data
-     * -1 means endless tries
-     * @param int $tries 
+     * Waits until given datalength is sent and returns it (blocking)
+     * Caution: the time this method takes could be longer than
+     * @param int $length the length of the data to wait for
+     * @param float $timeout the time in seconds after which the receiving action is stopped when no new data was received if $timeout is set to -1 it means that the default timeout is used
+     *        the timeout is rounded up to two decimal digets
+     * @return string
      */
-    public function setMaxTries($tries) {
-        $this->maxTries = $tries;
-    }
-    
-    /**
-     * Gets the max tries a method may take to send or receive the wanted data
-     * -1 means endless tries
-     * @return int
-     */
-    public function getMaxTries() {
-        return $this->maxTries;
-    }
-
-    /**
-     * Receives data with the given length
-     * This method is blocking
-     * @param int $length
-     * @param int $timeoutSec
-     * @param int $timeoutMicro
-     * @return string 
-     */
-    public function receiveData($length, $timeoutSec=-1, $timeoutMicro=-1)
+    public function receiveData($length, $timeout=-1)
     {
         if (!$this->isEstablished()) throw new Exception\NotEstablishedException;
+        $this->requiresTimeout($timeout);
         $data = '';
-        $tries = 0;
-        
-        $this->checkTimeOut($timeoutSec, $timeoutMicro);
+        $current = '';
+        $toReceive = $length;
         
         while (strlen($data) < $length)
         {
-            $tries++;
-            if($this->getMaxTries() > 0 && $tries > $this->getMaxTries()) {
-                throw new Exception\MaxTriesExceededException($this->getMaxTries(), $data);
+            $current = $this->getLine($toReceive);
+            if(!$current) {
+                throw new Exception\TimeoutException('receiveData timed out.', $this->getDefaultTimeout(), $data);
             }
-            $data .= $this->getLine($length);
+            $data .= $current;
+            $toReceive -= strlen($current);
         }
         return $data;
     }
 
     /**
-     * Writes data to the transmission
-     * @param byte $data
-     * @param int $timeoutSec
-     * @param int $timeoutMicro
-     * @return int number of written bytes
+     * Sends the given data to the host
+     * @param string $data the data to send
+     * @param float $timeout the time in seconds after which the sending action is considered as broken if $timeout is set to -1 the default timeout is used 
+     *   the timeout is rounded up to 2 decimal digits
+     * @throws \devmx\Transmission\Exception\TimeoutException
      */
-    public function send($data, $timeoutSec = -1, $timeoutMicro = -1)
+    public function send($data, $timeout=-1)
     {
         if (!$this->isEstablished()) throw new Exception\NotEstablishedException;
-        
-        $this->checkTimeOut($timeoutSec, $timeoutMicro);
-        
+        $this->requiresTimeout($timeout);
         $bytesToSend = strlen($data);
         
-        $tries = 0;
-        while ($bytesToSend > 0 && ($tries < $this->getMaxTries() || $this->getMaxTries() < 0))
+        while ($bytesToSend > 0)
         {
-            $tries++;
             $sentBytes = $this->write($data);
+            if($sentBytes === 0) {
+                throw new Exception\TimeoutException('send timed out.', $this->getDefaultTimeout(), $data);
+            }
             $bytesToSend -= $sentBytes;
             $data = substr($data, $sentBytes);
-        }
-        
-        if($tries == $this->getMaxTries() && $this->getMaxTries() > 0) {
-            throw new Exception\MaxTriesExceededException($this->getMaxTries(), $bytesToSend);
         }
     }
     
@@ -334,31 +296,47 @@ class TCP implements TransmissionInterface
     }
     
     /**
-     * 
-     * @param type $timeoutSeconds
-     * @param type $timeoutMicroseconds 
+     * Returns the default timeout, used when -1 is supplied as timeout argument
+     * @return float
      */
-    protected function checkTimeOut($timeoutSeconds, $timeoutMicroseconds) {
-        $timeoutSeconds = (int) $timeoutSeconds;
-        $timeoutMicroseconds = (int) $timeoutMicroseconds;
-
-        if ($timeoutMicroseconds < 0)
-        {
-            $timeoutMicroseconds = $this->defaultTimeoutMicro;
+    public function getDefaultTimeout() {
+        return $this->defaultTimeout;
+    }
+    
+    /**
+     * Sets the default timeout which is used when -1 is supplied as timeout argument
+     * @param float $timeout 
+     */
+    public function setDefaultTimeout($timeout) {
+        $this->defaultTimeout = $timeout;
+    }
+    
+    
+    protected function getTimeout($timeout, $microseconds=true) {
+        if($timeout === -1) {
+            $timeout = $this->defaultTimeout;
         }
-
-        if ($timeoutSeconds < 0)
-        {
-            $timeoutSeconds = $this->defaultTimeoutSec;
+        $ret = array();
+        if($microseconds) {
+            $timeout = round($timeout, 2);
+            $ret['seconds'] = intval($timeout);
+            $ret['microseconds'] = intval(strval(($timeout-$ret['seconds'])*100)); //nasty hack with strval, see http://de3.php.net/manual/en/function.intval.php#86590
+        } else {
+            $ret['seconds'] = ceil($timeout);
         }
-        $this->setTimeOut($timeoutSeconds, $timeoutMicroseconds);
+        return $ret;
+    }
+    
+    protected function requiresTimeout($timeout) {
+        $timeout = $this->getTimeout($timeout);
+        $this->setTimeout($timeout['seconds'], $timeout['microseconds']);
     }
     
     protected function open($host, $port, &$errno, &$errmsg, $timeout) {
         $this->stream = fsockopen($host, $port, $errno, $errmsg, $timeout);
     }
     
-    protected function setTimeOut($seconds, $microseconds) {
+    protected function setTimeout($seconds, $microseconds) {
         return \stream_set_timeout($this->stream , $seconds , $microseconds);
     }
     

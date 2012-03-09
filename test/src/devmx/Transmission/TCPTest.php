@@ -1,7 +1,5 @@
 <?php
-
 namespace devmx\Transmission;
-
 require_once dirname( __FILE__ ) . '/../../../../src/devmx/Transmission/TCP.php';
 
 class MockedTcp extends TCP {
@@ -40,9 +38,9 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->tcp = $this->getMockBuilder('\devmx\Transmission\MockedTcp')
-                            ->setConstructorArgs( array('foo', 9987, 19, 21))
-                            ->setMethods( array('setTimeOut', 'getLine', 'setBlocking', 'write', 'closeStream') )
-                            ->getMock();
+                          ->setMethods(array('closeStream', 'setTimeout', 'getLine', 'setBlocking','write'))
+                          ->setConstructorArgs( array('foo', 9987, 19.21))
+                          ->getMock();
     }
 
     
@@ -104,9 +102,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     public function testClose()
     {
         $this->establish();
-        $this->tcp->expects($this->once())
-                   ->method('closeStream')
-                   ->will($this->returnValue(true));
+        $this->tcp->expects($this->once())->method('closeStream')->will($this->returnValue(true));
         $this->tcp->close();
         $this->assertFalse($this->tcp->isEstablished());
     }
@@ -177,7 +173,8 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @covers devmx\Transmission\TCP::receiveLine
-     * @covers devmx\Transmission\TCP::checkTimeOut
+     * @covers devmx\Transmission\TCP::requiresTimeout
+     * @covers devmx\Transmission\TCP::getTimeout
      */
     public function testReceiveLine()
     {
@@ -185,30 +182,48 @@ class TCPTest extends \PHPUnit_Framework_TestCase
         $this->expectDefaultTimeout();
         $this->tcp->expects($this->once())
                     ->method('getLine')
-                    ->with($this->equalTo(4096))
                     ->will($this->returnValue("foobar\n"));
         $this->assertEquals("foobar\n", $this->tcp->receiveLine());
     }
     
     /**
      * @covers devmx\Transmission\TCP::receiveLine
-     * @covers devmx\Transmission\TCP::checkTimeOut 
+     * @covers devmx\Transmission\TCP::requiresTimeout
+     * @covers devmx\Transmission\TCP::getTimeout
      */
     public function testReceiveLine_CustomParams() {
         $this->establish();
         $this->expectTimeout(22, 23);
         $this->tcp->expects($this->once())
                     ->method('getLine')
-                    ->with($this->equalTo(4097))
                     ->will($this->returnValue("foobar\n"));
-        $this->assertEquals("foobar\n", $this->tcp->receiveLine(4097, 22, 23));
+        $this->assertEquals("foobar\n", $this->tcp->receiveLine(22.23));
+    }
+    
+    /**
+     * @covers \devmx\Transmission\TCP::receiveLine
+     */
+    public function testReceiveLine_Timeout() {
+        $this->establish();
+        $this->expectDefaultTimeout();
+        $this->tcp->expects($this->exactly(2))
+                  ->method('getLine')
+                  ->will($this->onConsecutiveCalls('asdf', ''));
+        try {
+           $this->tcp->receiveLine(); 
+        } catch (\devmx\Transmission\Exception\TimeoutException $e) {
+            $this->assertEquals(19.21, $e->getTimeout());
+            $this->assertEquals('asdf', $e->getData());
+            return;
+        }
+        $this->fail('No TimeoutException thrown');
+        
     }
 
     /**
-     * @covers devmx\Transmission\TCP::getAll
-     * @todo Implement testGetAll().
+     * @covers devmx\Transmission\TCP::checkForData
      */
-    public function testGetAll()
+    public function testCheckForData()
     {
        $this->establish();
        $this->tcp->expects($this->exactly(2))
@@ -223,7 +238,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
        $this->tcp->expects($this->at(4))
                   ->method('setBlocking')
                   ->with($this->equalTo(1));
-       $this->assertEquals("foobar\n", $this->tcp->getAll());
+       $this->assertEquals("foobar\n", $this->tcp->checkForData());
     }
     
     /**
@@ -235,51 +250,62 @@ class TCPTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers devmx\Transmission\TCP::receiveData
-     * @covers devmx\Transmission\TCP::checkTimeOut
+     * @covers devmx\Transmission\TCP::requiresTimeout
+     * @covers devmx\Transmission\TCP::getTimeout
      */
     public function testReceiveData()
     {
         $this->establish();
         $this->expectDefaultTimeout();
-        $this->tcp->expects($this->exactly(2))
+        $this->tcp->expects($this->at(1))
                   ->method('getLine')
                   ->with($this->equalTo(4))
-                  ->will($this->onConsecutiveCalls('aa', 'bb'));
+                  ->will($this->returnValue('aa'));
+        $this->tcp->expects($this->at(2))
+                  ->method('getLine')
+                  ->with($this->equalTo(2))
+                  ->will($this->returnValue('bb'));
         $this->assertEquals('aabb', $this->tcp->receiveData(4));
     }
     
     /**
      * @covers devmx\Transmission\TCP::receiveData
-     * @covers devmx\Transmission\TCP::checkTimeOut
+     * @covers devmx\Transmission\TCP::requiresTimeout
+     * @covers devmx\Transmission\TCP::getTimeout
      */
     public function testReceiveData_CustomTimeout() {
         $this->establish();
         $this->expectTimeout(34, 23);
-        $this->tcp->expects($this->exactly(2))
+        $this->tcp->expects($this->at(1))
                   ->method('getLine')
                   ->with($this->equalTo(4))
-                  ->will($this->onConsecutiveCalls('aa', 'bb'));
-        $this->assertEquals('aabb', $this->tcp->receiveData(4, 34, 23));
+                  ->will($this->returnValue('aa'));
+        $this->tcp->expects($this->at(2))
+                  ->method('getLine')
+                  ->with($this->equalTo(2))
+                  ->will($this->returnValue('bb'));
+        $this->assertEquals('aabb', $this->tcp->receiveData(4, 34.23));
     }
     
     /**
-     * @covers devmx\Transmission\TCP::getMaxTries
-     * @covers devmx\Transmission\TCP::setMaxTries
      * @covers devmx\Transmission\TCP::receiveData
-     * @expectedException \devmx\Transmission\Exception\MaxTriesExceededException
-     * @expectedExceptionMessage Maximum of tries (2) exceeded, this could be because of to much data to transfer or a bad connection to the host
      */
-    public function testReceiveData_MaxTries() {
+    public function testReceiveData_Timeout() {
         $this->establish();
-        $this->tcp->setMaxTries(2);
         $this->expectDefaultTimeout();
         $this->tcp->expects($this->exactly(2))
                   ->method('getLine')
-                  ->with($this->equalTo(5))
-                  ->will($this->onConsecutiveCalls('aa', 'bb'));
-        $this->tcp->receiveData(5);
+                  ->will($this->onConsecutiveCalls('a', ''));
+        try {
+            $this->tcp->receiveData(2);
+        } catch(\devmx\Transmission\Exception\TimeoutException $e) {
+            $this->assertEquals(19.21, $e->getTimeout());
+            $this->assertEquals('a', $e->getData());
+            return;
+        }
+        $this->fail('No TimeOutException thrown');
     }
-
+    
     /**
      * @covers devmx\Transmission\TCP::send
      * @expectedException \devmx\Transmission\Exception\NotEstablishedException
@@ -318,23 +344,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
                   ->will($this->returnValue(3));
         $this->tcp->send('foobar');
     }
-    
-    /**
-     * @covers devmx\Transmission\TCP::send
-     * @expectedException \devmx\Transmission\Exception\MaxTriesExceededException
-     * @expectedExceptionMessage Maximum of tries (1) exceeded, this could be because of to much data to transfer or a bad connection to the host
-     */
-    public function testSend_MaxTries() {
-        $this->establish();
-        $this->expectDefaultTimeout();
-        $this->tcp->setMaxTries(1);
-        $this->tcp->expects($this->at(1))
-                  ->method('write')
-                  ->with($this->equalTo('foobar'))
-                  ->will($this->returnValue(3));
-        $this->tcp->send('foobar');
-    }
-    
+            
     /**
      * @covers devmx\Transmission\TCP::send 
      */
@@ -345,7 +355,23 @@ class TCPTest extends \PHPUnit_Framework_TestCase
                   ->method('write')
                   ->with($this->equalTo('foobar'))
                   ->will($this->returnValue(6));
-        $this->tcp->send('foobar', 23, 42);
+        $this->tcp->send('foobar', 23.42);
+    }
+    
+    public function testSend_Timeout() {
+        $this->establish();
+        $this->expectDefaultTimeout();
+        $this->tcp->expects($this->exactly(2))
+                  ->method('write')
+                  ->will($this->onConsecutiveCalls(3, 0));
+        try {
+            $this->tcp->send('asdfg');
+        } catch (\ devmx\Transmission\Exception\TimeoutException $e) {
+            $this->assertEquals(19.21, $e->getTimeout());
+            $this->assertEquals('fg', $e->getData());
+            return;
+        }
+        $this->fail('No TimeoutException was thrown');
     }
 
     /**

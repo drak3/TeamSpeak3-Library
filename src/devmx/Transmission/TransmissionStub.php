@@ -19,7 +19,7 @@
 namespace devmx\Transmission;
 
 /**
- *
+ * 
  * @author drak3
  */
 class TransmissionStub implements \devmx\Transmission\TransmissionInterface
@@ -38,7 +38,7 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
         $this->port = $port;
     }
        
-    public function establish() {
+    public function establish($timeout=-1) {
         $this->isEstablished = true;
     }
 
@@ -54,7 +54,7 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
         return $this->isEstablished;
     }
 
-    public function send($data) {
+    public function send($data, $timeout=-1) {
         if(!$this->isEstablished()) {
             throw new Exception\NotEstablishedException;
         }
@@ -77,7 +77,7 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
     /**
      * waits until a line end and returns the data (blocking)
      */
-    public function receiveLine($length = 4096) {
+    public function receiveLine($timeout=-1) {
         if(!$this->isEstablished()) {
             throw new Exception\NotEstablishedException();
         }
@@ -88,12 +88,7 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
         if(!isset($lines[0])) {
             throw new Exception\LogicException('Cannot receive line, not enough data');
         }
-        if(\strlen($lines[0]) < $length) {
-            $ret = $lines[0]."\n";
-        }
-        else {
-            $ret = \substr($lines[0],0, $length-1);
-        }
+        $ret = $lines[0]."\n";
         $count = 0;
         $this->toReceive = \preg_replace('/'.\preg_quote($ret,'/').'/m','', $this->toReceive, 1, $count);
         if($count !== 1) {
@@ -126,7 +121,7 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
     /**
      * Returns all data currently on the stream (nonblocking)
      */
-    public function getAll() {
+    public function checkForData() {
         if(!$this->isEstablished()) {
             throw new Exception\NotEstablishedException();
         }
@@ -139,7 +134,7 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
     /**
      * waits until given datalength is sent and returns data
      */
-    public function receiveData($length) {
+    public function receiveData($length, $timeout=-1) {
         if($this->errorOnDelay) {
             throw new Exception\LogicException('This function causes delay, not allowed');
         }
