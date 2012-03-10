@@ -1,7 +1,11 @@
 README
 ======
 
-This Library is currently in alpha phase.
+This Library is currently in alpha phase. Do not use in production
+
+This is the developement-repository of the TeamSpeak3-Library. 
+There are currently no bundeled releases, so at the moment you have to use this repo if you want to test this library
+
 At the moment it offers access to the Teamspeak3 Serverquery and the Filetransfer via an objectoriented interface
 
 Dependencies
