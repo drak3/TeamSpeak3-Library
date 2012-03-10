@@ -20,7 +20,6 @@ namespace devmx\Teamspeak3\Query;
 /**
  * The base class for all responses sent by the Query
  * A response acts like an array, so you can acces all items directly via the response object
- * @todo remove the raw response
  * @author drak3
  */
 class Response implements \ArrayAccess, \Iterator, \Countable
@@ -32,11 +31,7 @@ class Response implements \ArrayAccess, \Iterator, \Countable
      */
     protected $items;
     
-    /**
-     * The raw response
-     * @var string 
-     */
-    protected $raw;
+    
 
     /**
      * Returns all holded items
@@ -121,23 +116,7 @@ class Response implements \ArrayAccess, \Iterator, \Countable
         return $assoc;
     }
     
-    /**
-     * Sets the raw response
-     * @deprecated
-     * @param string $raw 
-     */
-    public function setRawResponse($raw) {
-        $this->raw = $raw;
-    }
     
-    /**
-     * Gets the raw response
-     * @deprecated
-     * @return string
-     */
-    public function getRawResponse() {
-        return $this->raw;
-    }
 
     //implementing \ArrayAccess, \Iterator and \Countable
     

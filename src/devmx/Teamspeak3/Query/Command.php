@@ -24,19 +24,7 @@ namespace devmx\Teamspeak3\Query;
 class Command
 {
 
-    /**
-     * A simple builder which drops support for multiple values of params
-     * @deprecated currently its just a alias for new Command();
-     * @param string $cmdname
-     * @param array $params
-     * @param array $options 
-     * @return Command
-     */
-    public static function simpleCommand($cmdname, array $params = Array(), array $options = Array())
-    {
-        return new Command($cmdname, $params, $options);
-    }
-
+    
     /**
      * The name of the command
      * @var string 

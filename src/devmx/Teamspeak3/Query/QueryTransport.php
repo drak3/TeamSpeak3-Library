@@ -26,18 +26,7 @@ use devmx\Teamspeak3\Query\Transport\ResponseHandlerInterface;
  */
 class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInterface
 {
-    /**
-     * Constructs a common Query which should fit to the official query
-     * @param string $host the host of the Ts3-Server
-     * @param int $port the Queryport of the Ts3-Server
-     * @return QueryTransport 
-     * @deprecated
-     */
-    public static function getCommon($host, $port)  {
-        $trans = new \devmx\Transmission\TCP($host, $port);
-        return new QueryTransport($trans, new Transport\Common\CommandTranslator(), new Transport\Common\ResponseHandler());
-    }
-    
+        
     /**
      * The Transmission between us and the query
      * @var TransmissionInterface 

@@ -89,10 +89,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1,$this->object['cid']);
     }
     
-    public function testRawResponse() {
-        $this->object->setRawResponse('foo bar baz');
-        $this->assertEquals('foo bar baz', $this->object->getRawResponse());
-    }
+    
 
     
 }

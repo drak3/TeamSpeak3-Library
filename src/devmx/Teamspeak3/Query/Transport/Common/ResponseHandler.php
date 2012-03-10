@@ -257,9 +257,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
             $items = Array();
         }
 
-        $responseClass = new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $parsedError[0]);
-        $responseClass->setRawResponse($data."\n".$error);
-        return $responseClass;
+        return new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $parsedError[0]);
     }
 
     /**
@@ -275,9 +273,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         $event = $event[1];
         $data = $this->parseData($event); //the rest is a single block of data
 
-        $eventClass = new \devmx\Teamspeak3\Query\Event($reason, $data);
-        $eventClass->setRawResponse($event);
-        return $eventClass;
+        return new \devmx\Teamspeak3\Query\Event($reason, $data);
     }
 
     /**
@@ -360,7 +356,6 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     
     /**
      * Checks if the raw response contains a Ban message and throws Exception
-     * @todo Add the ban time to the message
      * @param string $raw
      * @throws \RuntimeException 
      */
