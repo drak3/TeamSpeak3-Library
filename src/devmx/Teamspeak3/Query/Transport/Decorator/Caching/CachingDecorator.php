@@ -111,14 +111,16 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
     /**
      * Waits for a event on the query
      * this mehtod is blocking
+     * @param float the timeout in second how long to wait for an event. If there is no event after the given timeout, an empty array is returned
+     *   -1 means that the method may wait forever
      * @return array 
      */
-    public function waitForEvent()
+    public function waitForEvent($timeout=-1)
     {
         if(!$this->decorated->isConnected())
             $this->decorated->connect ();
         
-        return $this->decorated->waitForEvent();
+        return $this->decorated->waitForEvent($timeout);
     }
 }
 

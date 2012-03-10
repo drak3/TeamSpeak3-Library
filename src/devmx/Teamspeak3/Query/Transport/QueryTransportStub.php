@@ -152,9 +152,11 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
     /**
      * Waits until an event occurs
      * This method is blocking, it returns only if a event occurs, so avoid calling this method if you aren't registered to any events
+     * @param float the timeout in second how long to wait for an event. If there is no event after the given timeout, an empty array is returned
+     *   -1 means that the method may wait forever
      * @return array array of all occured events (e.g if two events occur together it is possible to get 2 events) 
      */
-    public function waitForEvent() {
+    public function waitForEvent($timeout=-1) {
         $events = $this->getAllEvents();
         if($events === array())  {
             throw new Exception\LogicException('cannot wait for events');

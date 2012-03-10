@@ -224,7 +224,7 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
      * This method is blocking, it returns only if a event occurs, so avoid calling this method if you aren't registered to any events
      * @return array array of all occured events (e.g if two events occur together it is possible to get 2 events) 
      */
-    public function waitForEvent()
+    public function waitForEvent($timeout=-1)
     {
         if(!$this->isConnected()) {
             throw new Exception\NotConnectedException("Cannot wait for event: not connected");
@@ -236,10 +236,17 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
         }
         
         $response = '';
-        while ( !$this->responseHandler->isCompleteEvent( $response ))
-        {
-            $response .= $this->transmission->receiveLine();
+        try {
+            while ( !$this->responseHandler->isCompleteEvent( $response )) {   
+                $response .= $this->transmission->receiveLine($timeout);
+            }
+        } catch( \devmx\Transmission\Exception\TimeoutException $e) {
+             if($response === '' && $e->getData() == '') {
+                 return array();
+             }
+             throw $e;
         }
+        
         $events = $this->responseHandler->getEventInstances( $response );
         return $events;
     }

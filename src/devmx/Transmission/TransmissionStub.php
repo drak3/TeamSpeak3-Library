@@ -32,6 +32,7 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
     protected $received = '';
     protected $errorOnDelay = false;
     protected static $cloned = 0;
+    protected $isTimedOut = false;
     
     public function __construct($host, $port) {
         $this->host = $host;
@@ -73,11 +74,18 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
     public function errorOnDelay($error) {
         $this->errorOnDelay = $error;
     }
+    
+    public function timeout($timeout=true) {
+        $this->isTimedOut = $timeout;
+    }
 
     /**
      * waits until a line end and returns the data (blocking)
      */
     public function receiveLine($timeout=-1) {
+        if($this->isTimedOut) {
+            throw new Exception\TimeoutException('receiveLine timed out', $timeout, '');
+        }
         if(!$this->isEstablished()) {
             throw new Exception\NotEstablishedException();
         }
@@ -135,6 +143,9 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
      * waits until given datalength is sent and returns data
      */
     public function receiveData($length, $timeout=-1) {
+        if($this->isTimedOut) {
+            throw new Exception\TimeoutException('receiveLine timed out', $timeout, '');
+        }
         if($this->errorOnDelay) {
             throw new Exception\LogicException('This function causes delay, not allowed');
         }

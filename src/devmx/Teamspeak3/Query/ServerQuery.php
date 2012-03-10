@@ -393,12 +393,12 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     }
 
 
-    public function waitForEvent()
+    public function waitForEvent($timeout=-1)
     {
          if(!$this->hasRegisteredForEvents()) {
             throw new Exception\LogicException("Cannot check for events when not registered for");
          }
-         return $this->transport->waitForEvent();
+         return $this->transport->waitForEvent($timeout);
     }
     
     public function getTransport() {

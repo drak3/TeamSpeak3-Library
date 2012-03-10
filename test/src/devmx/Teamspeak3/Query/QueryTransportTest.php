@@ -198,6 +198,12 @@ EOF;
         $this->assertEquals('notifyfoo', $events[0]->getReason());
     }
     
+    public function testWaitForEvent_Timeout() {
+        $this->connectTransport();
+        $this->transmission->timeout();
+        $this->assertEquals(array(), $this->transport->waitForEvent());
+    }
+    
     /**
      * @expectedException \devmx\Teamspeak3\Query\Exception\NotConnectedException
      */
