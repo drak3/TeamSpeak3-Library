@@ -86,7 +86,7 @@ interface TransmissionInterface
      * @return string the received data
      * @throws \devmx\Transmsission\Exception\TimeoutException
      */
-    public function receiveData($lenght, $timeout=-1);
+    public function receiveData($length, $timeout=-1);
 
     /**
      * Closes the transmission 
