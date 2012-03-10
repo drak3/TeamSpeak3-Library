@@ -143,8 +143,14 @@ class TCP implements TransmissionInterface
      */
     public function isEstablished()
     {
-        if ($this->stream == FALSE) return FALSE;
-        return $this->wasEstablished;
+        if(!$this->wasEstablished || !$this->stream) {
+            return false;
+        }
+        if($this->hasEof()) {
+            // an "End of File" on the stream indicates that the connection was closed by the remote host/was lost
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -165,7 +171,7 @@ class TCP implements TransmissionInterface
         while(!isset($data[strlen($data)-1]) || $data[strlen($data)-1] !== "\n") {
             $current = $this->getLine(8192);
             if(!$current) {
-                throw new Exception\TimeoutException('receiveLine timed out.', $this->getDefaultTimeout(), $data);
+                $this->handleTimeout($timeout, $data);
             }
             $data .= $current;
         }
@@ -210,7 +216,7 @@ class TCP implements TransmissionInterface
         {
             $current = $this->getLine($toReceive);
             if(!$current) {
-                throw new Exception\TimeoutException('receiveData timed out.', $this->getDefaultTimeout(), $data);
+                $this->handleTimeout($timeout, $data);
             }
             $data .= $current;
             $toReceive -= strlen($current);
@@ -235,7 +241,7 @@ class TCP implements TransmissionInterface
         {
             $sentBytes = $this->write($data);
             if($sentBytes === 0) {
-                throw new Exception\TimeoutException('send timed out.', $this->getDefaultTimeout(), $data);
+                $this->handleTimeout($timeout, $data);
             }
             $bytesToSend -= $sentBytes;
             $data = substr($data, $sentBytes);
@@ -341,6 +347,19 @@ class TCP implements TransmissionInterface
         }
     }
     
+    protected function handleTimeout($timeout, $data) {
+        if(!$this->isEstablished()) {
+            throw new Exception\RuntimeException(sprintf("Connection to %s:%s was closed by foreign host.", $this->getHost(), $this->getPort()));
+        }
+        else {
+            if($timeout === -1) {
+                $timeout = $this->getDefaultTimeout();
+            }
+            $msg = sprintf("Connection to %s:%s timed out after %s seconds.", $this->getHost(), $this->getPort(), $timeout);
+            throw new Exception\TimeoutException($msg, $timeout, $data);
+        }
+    }
+    
     protected function open($host, $port, &$errno, &$errmsg, $timeout) {
         $this->stream = fsockopen($host, $port, $errno, $errmsg, $timeout);
     }
@@ -363,6 +382,10 @@ class TCP implements TransmissionInterface
     
     protected function closeStream() {
         return \fclose($this->stream);
+    }
+    
+    protected function hasEof() {
+        return \feof($this->stream);
     }
 
 }

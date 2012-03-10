@@ -38,7 +38,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->tcp = $this->getMockBuilder('\devmx\Transmission\MockedTcp')
-                          ->setMethods(array('closeStream', 'setTimeout', 'getLine', 'setBlocking','write'))
+                          ->setMethods(array('closeStream', 'setTimeout', 'getLine', 'setBlocking','write', 'hasEof'))
                           ->setConstructorArgs( array('foo', 9987, 19.21))
                           ->getMock();
     }
@@ -205,14 +205,14 @@ class TCPTest extends \PHPUnit_Framework_TestCase
      */
     public function testReceiveLine_Timeout() {
         $this->establish();
-        $this->expectDefaultTimeout();
+        $this->expectTimeout(23, 23);
         $this->tcp->expects($this->exactly(2))
                   ->method('getLine')
                   ->will($this->onConsecutiveCalls('asdf', ''));
         try {
-           $this->tcp->receiveLine(); 
+           $this->tcp->receiveLine(23.23); 
         } catch (\devmx\Transmission\Exception\TimeoutException $e) {
-            $this->assertEquals(19.21, $e->getTimeout());
+            $this->assertEquals(23.23, $e->getTimeout());
             $this->assertEquals('asdf', $e->getData());
             return;
         }
@@ -228,14 +228,15 @@ class TCPTest extends \PHPUnit_Framework_TestCase
        $this->establish();
        $this->tcp->expects($this->exactly(2))
                   ->method('setBlocking');
-       $this->tcp->expects($this->at(0))
-                   ->method('setBlocking')
-                  ->with($this->equalTo(0));
+       $this->tcp->expects($this->at(1))
+                  ->method('setBlocking')
+                  ->with($this->equalTo(0))
+                  ->will($this->returnValue(true));
        $this->tcp->expects($this->exactly(3))
                   ->method('getLine')
                   ->with($this->equalTo(8094))
                   ->will($this->onConsecutiveCalls('foo', "bar\n", ''));
-       $this->tcp->expects($this->at(4))
+       $this->tcp->expects($this->at(5))
                   ->method('setBlocking')
                   ->with($this->equalTo(1));
        $this->assertEquals("foobar\n", $this->tcp->checkForData());
@@ -257,15 +258,16 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     {
         $this->establish();
         $this->expectDefaultTimeout();
-        $this->tcp->expects($this->at(1))
+        $this->tcp->expects($this->at(2))
                   ->method('getLine')
                   ->with($this->equalTo(4))
                   ->will($this->returnValue('aa'));
-        $this->tcp->expects($this->at(2))
+        $this->tcp->expects($this->at(3))
                   ->method('getLine')
                   ->with($this->equalTo(2))
                   ->will($this->returnValue('bb'));
         $this->assertEquals('aabb', $this->tcp->receiveData(4));
+        
     }
     
     /**
@@ -276,11 +278,11 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     public function testReceiveData_CustomTimeout() {
         $this->establish();
         $this->expectTimeout(34, 23);
-        $this->tcp->expects($this->at(1))
+        $this->tcp->expects($this->at(2))
                   ->method('getLine')
                   ->with($this->equalTo(4))
                   ->will($this->returnValue('aa'));
-        $this->tcp->expects($this->at(2))
+        $this->tcp->expects($this->at(3))
                   ->method('getLine')
                   ->with($this->equalTo(2))
                   ->will($this->returnValue('bb'));
@@ -292,14 +294,14 @@ class TCPTest extends \PHPUnit_Framework_TestCase
      */
     public function testReceiveData_Timeout() {
         $this->establish();
-        $this->expectDefaultTimeout();
+        $this->expectTimeout(34, 23);
         $this->tcp->expects($this->exactly(2))
                   ->method('getLine')
                   ->will($this->onConsecutiveCalls('a', ''));
         try {
-            $this->tcp->receiveData(2);
+            $this->tcp->receiveData(2, 34.23);
         } catch(\devmx\Transmission\Exception\TimeoutException $e) {
-            $this->assertEquals(19.21, $e->getTimeout());
+            $this->assertEquals(34.23, $e->getTimeout());
             $this->assertEquals('a', $e->getData());
             return;
         }
@@ -334,11 +336,11 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     public function testSend_MultipleAttemps() {
         $this->establish();
         $this->expectDefaultTimeout();
-        $this->tcp->expects($this->at(1))
+        $this->tcp->expects($this->at(2))
                   ->method('write')
                   ->with($this->equalTo('foobar'))
                   ->will($this->returnValue(3));
-        $this->tcp->expects($this->at(2))
+        $this->tcp->expects($this->at(3))
                   ->method('write')
                   ->with($this->equalTo('bar'))
                   ->will($this->returnValue(3));
@@ -360,14 +362,14 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     
     public function testSend_Timeout() {
         $this->establish();
-        $this->expectDefaultTimeout();
+        $this->expectTimeout(1,20);
         $this->tcp->expects($this->exactly(2))
                   ->method('write')
                   ->will($this->onConsecutiveCalls(3, 0));
         try {
-            $this->tcp->send('asdfg');
+            $this->tcp->send('asdfg',1.2);
         } catch (\ devmx\Transmission\Exception\TimeoutException $e) {
-            $this->assertEquals(19.21, $e->getTimeout());
+            $this->assertEquals(1.2, $e->getTimeout());
             $this->assertEquals('fg', $e->getData());
             return;
         }
@@ -382,6 +384,35 @@ class TCPTest extends \PHPUnit_Framework_TestCase
         $this->tcp->establishStatus('foobar');
         $this->tcp->establish();
         $this->assertEquals('foobar', $this->tcp->getStream());
+    }
+    
+    /**
+     * @expectedException \devmx\Transmission\Exception\RuntimeException
+     */
+    public function testCheckConnection_onAction() {
+        $this->establish();
+        $this->tcp->expects($this->once())
+                  ->method('hasEof')
+                  ->will($this->returnValue(true));
+        $this->tcp->receiveData(123);
+    }
+    
+    
+    public function testCheckConnection_onTimeout() {
+        $this->establish();
+        $this->tcp->expects($this->exactly(2))
+                  ->method('getLine')
+                  ->will($this->onConsecutiveCalls('a', ''));
+        $this->tcp->expects($this->exactly(2))
+                  ->method('hasEof')
+                  ->will($this->onConsecutiveCalls(false, true));
+        try  {
+            $this->tcp->receiveData(12);
+        } catch(Exception\RuntimeException $e) {
+            $this->assertEquals("Connection to foo:9987 was closed by foreign host.", $e->getMessage());
+            return;
+        }
+        $this->fail("no exception thrown");
     }
     
     protected function expectDefaultTimeout() {
