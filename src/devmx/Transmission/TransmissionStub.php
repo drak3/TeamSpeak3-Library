@@ -19,42 +19,115 @@
 namespace devmx\Transmission;
 
 /**
- * 
+ * Implementation of the Transmissioninterface for unittesting
  * @author drak3
  */
 class TransmissionStub implements \devmx\Transmission\TransmissionInterface
 {
+    /**
+     * If the the transmission is established
+     * @var boolean 
+     */
     protected $isEstablished = false;
+    
+    /**
+     * The host we are "connected" to
+     * @var string
+     */
     protected $host;
+    
+    /**
+     * The port we are "connected" to
+     * @var int
+     */
     protected $port;
+    
+    /**
+     * The data sent to the host
+     * @var string
+     */
     protected $sentData = '';
+    
+    /**
+     * The data currently lying on the stream
+     * @var string
+     */
     protected $toReceive = '';
+    
+    /**
+     * The data received from the stream
+     * @var string 
+     */
     protected $received = '';
+    
+    /**
+     * Indicates if blocking methods are allowed
+     * @var boolean
+     */
     protected $errorOnDelay = false;
-    protected static $cloned = 0;
+    
+    /**
+     * Indicates if the underlying stream timed out
+     * @var boolean
+     */
     protected $isTimedOut = false;
     
+    /**
+     * Number of clones made
+     * @var int
+     */
+    protected static $cloned = 0;
+    
+    /**
+     * Constructor
+     * @param string $host
+     * @param int $port 
+     */
     public function __construct($host, $port) {
         $this->host = $host;
         $this->port = $port;
     }
-       
+    
+    /**
+     * Establishes the transmission
+     * @param int $timeout is ignored 
+     */
     public function establish($timeout=-1) {
         $this->isEstablished = true;
     }
-
+    
+    /**
+     * Returns the hosts port
+     * @return int 
+     */
     public function getPort() {
         return $this->port;
     }
-
+    
+    /**
+     * Returns the hostname
+     * @return string
+     */
     public function getHost() {
         return $this->host;
     }
 
+    /**
+     * Returns true if the Transmission is established
+     * @return boolean
+     */
     public function isEstablished() {
         return $this->isEstablished;
     }
-
+    
+    /**
+     * Sends data to the stream
+     * sent data could be get via getSentData
+     * @param string $data
+     * @param int $timeout is ignored
+     * @return boolean
+     * @throws Exception\NotEstablishedException 
+     */
     public function send($data, $timeout=-1) {
         if(!$this->isEstablished()) {
             throw new Exception\NotEstablishedException;
@@ -63,24 +136,41 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
         return strlen($data);
     }
     
+    /**
+     * Return the data sent to the Transmission
+     * @return string
+     */
     public function getSentData() {
         return $this->sentData;
     }
     
+    /**
+     * Sets the data sent to the Transmission
+     * @param string $data 
+     */
     public function setSentData($data) {
         $this->sentData = $data;
     }
     
+    /**
+     * If blocking methods are allowed
+     * @param boolean $error 
+     */
     public function errorOnDelay($error) {
         $this->errorOnDelay = $error;
     }
     
+    /**
+     * Lets the stream timeout if timeout is set to true
+     * @param boolean $timeout 
+     */
     public function timeout($timeout=true) {
         $this->isTimedOut = $timeout;
     }
 
     /**
      * waits until a line end and returns the data (blocking)
+     * @param float $timeout is ignored
      */
     public function receiveLine($timeout=-1) {
         if($this->isTimedOut) {
@@ -106,22 +196,41 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
         return $ret;
     }
     
+    /**
+     * Sets the data which could be received
+     * @param string $toReceive 
+     */
     public function setToReceive($toReceive) {
         $this->toReceive = $toReceive;
     }
     
+    /**
+     * Gets the data which could be received
+     * @return string
+     */
     public function getToReceive() {
         return $this->toReceive;
     }
     
+    /**
+     * Adds data to the receivable data
+     * @param string $toAdd 
+     */
     public function addToReceive($toAdd) {
         $this->toReceive .= $toAdd;
     }
     
+    /**
+     * Returns the data wich was received
+     */
     public function getReceived() {
         return $this->received;
     }
     
+    /**
+     * Sets the data which was received
+     * @param string $r 
+     */
     public function setReceived($r) {
         $this->received = $r;
     }
@@ -141,6 +250,8 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
 
     /**
      * waits until given datalength is sent and returns data
+     * @param int $length
+     * @param float $timeout is ignored
      */
     public function receiveData($length, $timeout=-1) {
         if($this->isTimedOut) {
@@ -164,14 +275,24 @@ class TransmissionStub implements \devmx\Transmission\TransmissionInterface
         return $ret;
     }
 
+    /**
+     * Closes the stream 
+     */
     public function close() {
         $this->isEstablished = FALSE;
     }
     
+    /**
+     * Clones the Transmission 
+     */
     public function __clone() {
         self::$cloned++;
     }
     
+    /**
+     * Returns how many clones were made
+     * @return int 
+     */
     public static function cloned() {
         return self::$cloned;
     }

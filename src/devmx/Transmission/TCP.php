@@ -295,7 +295,7 @@ class TCP implements TransmissionInterface
     
     /**
      * Returns the underlying stream
-     * @return type 
+     * @return ressource 
      */
     public function getStream() {
         return $this->stream;
@@ -317,7 +317,12 @@ class TCP implements TransmissionInterface
         $this->defaultTimeout = $timeout;
     }
     
-    
+    /**
+     * Converts a given timeout into an array whith information about seconds an microseconds
+     * @param float $timeout the timeout to parse if its -1 the default timeout is used
+     * @param boolean $microseconds if microseconds should be parsed, if set to false, the timeout will be rounden up to seconds
+     * @return array
+     */
     protected function getTimeout($timeout, $microseconds=true) {
         if($timeout === -1) {
             $timeout = $this->defaultTimeout;
@@ -333,11 +338,20 @@ class TCP implements TransmissionInterface
         return $ret;
     }
     
+    /**
+     * Sets the given timeout
+     * @param float $timeout 
+     */
     protected function requiresTimeout($timeout) {
         $timeout = $this->getTimeout($timeout);
         $this->setTimeout($timeout['seconds'], $timeout['microseconds']);
     }
     
+    /**
+     * Checks the connection
+     * @throws Exception\LogicException when transmission was never established
+     * @throws Exception\RuntimeException when transmission was established, but was closed by foreign host
+     */
     protected function checkConnection() {
         if (!$this->wasEstablished) {
             throw new Exception\LogicException('Transmission has to be established before any action could be taken on it');
@@ -347,6 +361,13 @@ class TCP implements TransmissionInterface
         }
     }
     
+    /**
+     * Handles a timeout occured on the stream
+     * @param float $timeout the timeout that exceeded
+     * @param string $data the data processed so far
+     * @throws Exception\RuntimeException if connection was closed by foreign host
+     * @throws Exception\TimeoutException if connection timed just out, but was not closed
+     */
     protected function handleTimeout($timeout, $data) {
         if(!$this->isEstablished()) {
             throw new Exception\RuntimeException(sprintf("Connection to %s:%s was closed by foreign host.", $this->getHost(), $this->getPort()));
@@ -360,30 +381,71 @@ class TCP implements TransmissionInterface
         }
     }
     
+    /**
+     * Opens an connection to the given host on the given port
+     * (wrapper for fsockopen)
+     * @param string $host the host to connect to
+     * @param int $port the port to connect to
+     * @param int $errno will hold the errornumber if an error occured
+     * @param string $errmsg will hold the errormessage if an error occured
+     * @param int $timeout the timeout in seconds 
+     */
     protected function open($host, $port, &$errno, &$errmsg, $timeout) {
-        $this->stream = fsockopen($host, $port, $errno, $errmsg, $timeout);
+        $this->stream = \fsockopen($host, $port, $errno, $errmsg, $timeout);
     }
     
+    /**
+     * Sets the timeout for the underlying stream
+     * (wrapper for stream_set_timeout)
+     * @param int $seconds
+     * @param int $microseconds 
+     */
     protected function setTimeout($seconds, $microseconds) {
         return \stream_set_timeout($this->stream , $seconds , $microseconds);
     }
     
+    /**
+     * Gets a line from the stream
+     * (wrapper for fgets)
+     * @param int $length the maximum length
+     * @return string
+     */
     protected function getLine($length) {
         return \fgets($this->stream, $length);
     }
     
+    /**
+     * Sets the blocking mode of the stream
+     * (wrapper for stream_set_blocking)
+     * @param int $mode 
+     */
     protected function setBlocking($mode) {
         return \stream_set_blocking($this->stream, $mode);
     }
     
+    /**
+     * Writes the data to the stream
+     * (wrapper for fwrite)
+     * @param string $data
+     * @return int bytes written
+     */
     protected function write($data) {
         return \frwite($this->stream, $data);
     }
     
+    /**
+     * Closes the stream
+     * (wrapper for fclose)
+     */
     protected function closeStream() {
         return \fclose($this->stream);
     }
     
+    /**
+     * Checks if the stream received the EOF signal
+     * (wrapper for feof)
+     * @return boolean
+     */
     protected function hasEof() {
         return \feof($this->stream);
     }
