@@ -117,7 +117,7 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
         try {
            $this->transmission->establish();
             $this->checkWelcomeMessage();
-            $this->isConnected = TRUE; 
+            $this->isConnected = true; 
         } catch(Exception\ExceptionInterface $e) {
             throw $e;
         } catch(\devmx\Transmission\Exception\ExceptionInterface $e) {
@@ -249,7 +249,7 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
         // because disconnect could be also called on invalid servers, we just send the quit message and don't wait for any response
         $this->transmission->send("quit\n");
         $this->transmission->close();
-        $this->isConnected = FALSE;
+        $this->isConnected = false;
     }
     
     /**

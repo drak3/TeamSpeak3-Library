@@ -16,6 +16,7 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace devmx\Teamspeak3\Query;
+use devmx\Teamspeak3\Query\Transport\TransportInterface;
 
 /**
  * A wrapper for a TransportInterface that abstracts all commands which have directly to do with the query
@@ -54,28 +55,85 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * @var boolean 
      */
     protected $isOnVirtualServer = false;
+    
+    /**
+     * The identifyer used to select the virtualserver
+     * array() if no virtualserver is selected, array('id'=><vServerID>) if used by id or array('port'=><vServerPort>) if used by port
+     * @var array
+     */
     protected $virtualServerIdentifyer = Array();
+    
+    /**
+     * The commands used to register for events
+     * @var array 
+     */
     protected $registerCommands = Array();
+    
+    /**
+     * The current channelid
+     * @var int 
+     */
     protected $channelID = 0;
+    
+    /**
+     * The virtualServer status
+     * @var string
+     */
     protected $virtualServerStatus = 'unknown';
+    
+    /**
+     * The vServer port
+     * @var int 
+     */
     protected $virtualServerPort = 0;
+    
+    /**
+     * The vServer id
+     * @var int 
+     */
     protected $virtualServerID = 0;
+    
+    /**
+     * The queryuser's uniqueID
+     * @var string 
+     */
     protected $uniqueID = '';
+    
+    /**
+     * The queryuser's nickname
+     * @var string
+     */
     protected $nickname = '';
+    
+    /**
+     * The queryuser's database id
+     * @var int 
+     */
     protected $databaseID = 0;
+    
+    /**
+     * The unique vServer id if on a virtualserver
+     * @var type 
+     */
     protected $uniqueVirtualServerID = '';
+    
+    /**
+     * the queryuser's cid
+     * @var type 
+     */
     protected $clientID = 0;
     
     /**
      * Constructor
-     * @param Transport\TransportInterface $transport the transport to wrap
+     * @param TransportInterface $transport the transport to wrap
      */
-    public function __construct(Transport\TransportInterface $transport) {
+    public function __construct(TransportInterface $transport) {
         $this->transport = $transport;
     }
     
     /**
-     *
+     * Queries the server
+     * (wrapper for sendCommand and new Command)
      * @param string $name
      * @param array $args
      * @param array $options
@@ -85,8 +143,12 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
         return $this->sendCommand(new Command($name, $args, $options));
     }
     
+    /**
+     * Refreshes the whoami information
+     * @return \devmx\Teamspeak3\Query\CommandResponse
+     */
     public function refreshWhoAmI() {
-        $response = $this->transport->query("whoami");
+        $response = $this->transport->query('whoami');
         if(!$response->errorOccured()) {
             $this->loginName = $response['client_login_name'];
             $this->isLoggedIn = $this->loginName != '';
@@ -109,39 +171,74 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
         else {
             $response->toException();
         }
-        return $this;
+        return $response;
     }
     
-    
-    public function login($username, $pass) {
+    /**
+     * Logs in
+     * @param string $username
+     * @param string $pass
+     * @param mixed $commandResponse if you need the CommandResponse, you can a variable which is not null where the response will be stored in
+     * @return \devmx\Teamspeak3\Query\ServerQuery 
+     */
+    public function login($username, $pass, &$commandResponse=null) {
         $response = $this->transport->query("login", Array("client_login_name"=>$username, 'client_login_password'=>$pass));
         $response->toException();
         $this->isLoggedIn = TRUE;
         $this->loginName = $username;
         $this->loginPass = $pass;
+        if($commandResponse !== null) {
+            $commandResponse = $response;
+        }
         return $this;
     }
     
-    public function logout() {
+    /**
+     * Logs out
+     * @param mixed $commandResponse if you need the CommandResponse, you can a variable which is not null where the response will be stored in
+     * @return \devmx\Teamspeak3\Query\ServerQuery 
+     */
+    public function logout(&$commandResponse=null) {
         $response = $this->transport->query('logout');
         $response->toException();
         $this->isLoggedIn = FALSE;
         $this->loginName = '';
         $this->loginPass = '';
+        if($commandResponse !== null) {
+            $commandResponse = $response;
+        }
         return $this;
     }
     
-    public function useByPort($port,$virtual=TRUE) {
+    /**
+     * Selects a virtual server by port
+     * @param int $port the port of the vServer to select
+     * @param boolean $virtual if virtual is set, offline server will be set into a "virtual" mode. See official serverquery docs
+     * @param mixed $commandResponse if you need the CommandResponse, you can a variable which is not null where the response will be stored in
+     * @return \devmx\Teamspeak3\Query\ServerQuery 
+     */
+    public function useByPort($port,$virtual=TRUE, &$commandResponse=null) {
         $options = $virtual ? Array('virtual') : Array();
         $response = $this->transport->query("use", Array('port'=>$port), $options);
         $response->toException();
         $this->isOnVirtualServer = TRUE;
         $this->virtualServerIdentifyer = Array('port'=>$port);
         $this->virtualServerPort = $port;
+        if($commandResponse !== null) {
+            $commandResponse = $response;
+        }
         return $this;
     }
     
-    public function useByID($id,$virtual=TRUE) {
+    /**
+     * Selects a virtual server by id
+     * @param int $id the id of the vServer to use
+     * @param string $virtual if virtual is set, offline server will be set into a "virtual" mode. See official serverquery docs
+     * @param mixed $commandResponse if you need the CommandResponse, you can a variable which is not null where the response will be stored in
+     * @return \devmx\Teamspeak3\Query\ServerQuery
+     * @throws Exception\InvalidArgumentException if the id is invalid
+     */
+    public function useByID($id,$virtual=TRUE, &$commandResponse=null) {
         if($id < 1) {
             throw new Exception\InvalidArgumentException("Invalid server ID, if you want to deselect the current server, please use deselect() instead");
         }
@@ -151,36 +248,71 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
         $this->isOnVirtualServer = TRUE;
         $this->virtualServerIdentifyer = Array('id'=>$id);
         $this->virtualServerID = $id;
+        if($commandResponse !== null) {
+            $commandResponse = $response;
+        }
         return $this;
     }
     
-    protected function useVirtualServer($args, $virtual) {
-       if(isset($args['id'])) {
-            return $this->useByID($args['id'], $virtual); 
+    /**
+     * Decides how to select the virtual server by the $args param
+     * @param array $args
+     * @param boolean $virtual
+     * @param mixed $commandResponse if you need the CommandResponse, you can a variable which is not null where the response will be stored in
+     * @return \devmx\Teamspeak3\Query\ServerQuery 
+     */
+    protected function useVirtualServer($args, $virtual, &$commandResponse=null) {
+       if(isset($args['sid'])) {
+            return $this->useByID($args['sid'], $virtual, $commandResponse); 
        }
        elseif(isset($args['port'])) {
-            return $this->useByPort($args['port'], $virtual);
+            return $this->useByPort($args['port'], $virtual, $commandResponse);
        }
     }
     
-    public function deselect() {
+    /**
+     * Deselects the currently vServer
+     * @param mixed $commandResponse if you need the CommandResponse, you can a variable which is not null where the response will be stored in
+     * @return \devmx\Teamspeak3\Query\ServerQuery 
+     */
+    public function deselect(&$commandResponse=null) {
         $response = $this->transport->query('use');
         $response->toException();
         $this->isOnVirtualServer = FALSE;
         $this->virtualServerIdentifyer = Array();
+        if($commandResponse !== null) {
+            $commandResponse = $response;
+        }
         return $this;
     }
     
-    public function moveToChannel($cid) {
+    /**
+     * Moves the queryclient to a specific channel
+     * @param int $cid the id of the channel
+     * @param mixed $commandResponse if you need the CommandResponse, you can a variable which is not null where the response will be stored in
+     * @throws Exception\LogicException if we are'nt on a virtualserver
+     */
+    public function moveToChannel($cid, &$commandResponse=null) {
         if(!$this->isOnVirtualServer) {
             throw new Exception\LogicException("Cannot move to channel when not on virtual server.");
         }
         $response = $this->transport->query('clientmove', Array('clid'=>$this->getClientID(), 'cid'=>$cid));
         $response->toException();
         $this->channelID = $cid;
+        if($commandResponse !== null) {
+            $commandResponse = $response;
+        }
+        return $this;
     }
     
-    public function registerForEvent($name, $cid=NULL) {
+    /**
+     * Registers for a specific event
+     * @param string $name the name of the event
+     * @param int|null $cid if the event is connected with a specific channel, the $cid param has to be set
+     * @param mixed $commandResponse if you need the CommandResponse, you can a variable which is not null where the response will be stored in
+     * @return \devmx\Teamspeak3\Query\ServerQuery
+     */
+    public function registerForEvent($name, $cid=NULL, &$commandResponse=null) {
         $args = Array('event'=>$name);
         if($cid !== NULL) {
             $args['cid'] = $cid;
@@ -189,31 +321,52 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
         $response = $this->transport->sendCommand($command);
         $response->toException();
         $this->registerCommands[] = $command;
+        if($commandResponse !== null) {
+            $commandResponse = $response;
+        }
         return $this;
     }
     
-    public function unregisterEvents() {
+    /**
+     * Unregisters from all events
+     * @param mixed $commandResponse if you need the CommandResponse, you can a variable which is not null where the response will be stored in
+     * @return \devmx\Teamspeak3\Query\ServerQuery 
+     */
+    public function unregisterEvents(&$commandResponse=null) {
         $response = $this->transport->query('servernotifyunregister');
         $response->toException();
         $this->registerCommands = Array();
+        if($commandResponse !== null) {
+            $commandResponse = $response;
+        }
         return $this;
     }
     
+    /**
+     * Disconnects 
+     */
     public function quit() {
         $this->transport->disconnect();
     }
     
+    /**
+     * Clones the query, the whole state is recovered 
+     */
     public function __clone()
     {
         $this->transport = clone $transport;
         $this->recoverState();
     }
-
+    
+    
+    /**
+     * Magic sleep method
+     */
     public function __sleep()
     {
         $this->transport->disconnect();
         return array(
-            'transport', 
+            'transport',
             'isLoggedIn', 
             'loginName', 
             'loginPass', 
@@ -230,14 +383,21 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
             'clientID',
         );
     }
-        
+    
+    /**
+     * Wakes up the query, recovers the whole state 
+     */
     public function __wakeup()
     {
             $this->recoverState();
     }
     
+    /**
+     * Recovers the state of the query 
+     */
     protected  function recoverState() {
         if($this->isConnected()) {
+            $this->transport->connect();
             if($this->isLoggedIn) {
                 $this->login($this->loginName, $this->loginPass);
             }
@@ -253,99 +413,172 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
         }        
     }
     
+    /**
+     * If the queryclient is logged in
+     * @return boolean 
+     */
     public function isLoggedIn()
     {
         return $this->isLoggedIn;
     }
-
+    
+    /**
+     * Returns the loginname used to login
+     * @return string 
+     */
     public function getLoginName()
     {
         return $this->loginName;
 
     }
-
+    
+    /**
+     * Returns the login pass used to login
+     * @return string 
+     */
     public function getLoginPass()
     {
         return $this->loginPass;
 
     }
-
+    
+    /**
+     * Wether the queryuser is on a vServer or not
+     * @return boolean
+     */
     public function isOnVirtualServer()
     {
         return $this->isOnVirtualServer;
     }
     
+    /**
+     * Returns the vServer port, if on a vServer
+     * note that if there was no refreshWhoAmI call and the server was not selected by port the information may be outdated
+     * @return int
+     */
     public function getVirtualServerPort() {
         return $this->virtualServerPort;
     }
     
+    /**
+     * Returns the vServer id, if on a vServer
+     * note that if there was no refreshWhoAmI call and the server was not selected by id the information may be outdated
+     * @return int
+     */
     public function getVirtualServerID() {
         return $this->virtualServerID;
     }
-
-    public function getVirtualServerIdentifyer()
-    {
-        return $this->virtualServerIdentifyer;
-    }
-
+    
+    /**
+     * Returns the commands used to register for the serverevents
+     * @return array
+     */
     public function getRegisterCommands()
     {
         return $this->registerCommands;
     }
     
+    /**
+     * Returns the current channelid
+     * @return int
+     */
     public function getChannelID()
     {
         return $this->channelID;
     }
-
+    
+    /**
+     * Returns the current vServer status
+     * @return string
+     */
     public function getVirtualServerStatus()
     {
         return $this->virtualServerStatus;
 
     }
-
+    
+    /**
+     * Returns the queryclients unique id
+     * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
+     * @return string 
+     */
     public function getUniqueID()
     {
         return $this->uniqueID;
 
     }
-
+    
+    /**
+     * Returns the queryclients nickname
+     * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
+     * @return string 
+     */
     public function getNickname()
     {
         return $this->nickname;
 
     }
-
+    
+    /**
+     * Returns the queryclients database id
+     * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
+     * @return int
+     */
     public function getDatabaseID()
     {
         return $this->databaseID;
 
     }
-
+    
+    /**
+     * Returns the unique vServer id
+     * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
+     * @return string
+     */
     public function getUniqueVirtualServerID()
     {
         return $this->uniqueVirtualServerID;
     }
     
+    /**
+     * Returns the clients id
+     * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
+     * @return int 
+     */
     public function getClientID() {
         return $this->clientID;
     }
     
+    /**
+     * Returns if the queryclient has registered for any command
+     * @return boolean
+     */
     public function hasRegisteredForEvents() {
         return $this->registerCommands != array();
     }
 
-    
+    /**
+     * Connects the query 
+     */
     public function connect()
     {
         $this->transport->connect();
     }
-
+    
+    /**
+     * Disconnects the query 
+     */
     public function disconnect()
     {
         $this->transport->disconnect();
     }
-
+    
+    /**
+     * Returns all events occured since last time checking the query
+     * This method is non-blocking, so it returns even if no event is on the query
+     * @return array Array of all events lying on the query  
+     * @throws Exception\LogicException if the query is not registered for any events
+     */
     public function getAllEvents()
     {
         if(!$this->hasRegisteredForEvents()) {
@@ -353,46 +586,67 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
         }
         return $this->transport->getAllEvents();
     }
-
+    
+    /**
+     * Returns if the query is connected
+     * @return boolean
+     */
     public function isConnected()
     {
         return $this->transport->isConnected();
     }
-
+    
+    /**
+     * Sends a command to the query and returns the result plus all occured events
+     * This method is aware of all querystate changing commands like use
+     * @param Command $command
+     * @return \devmx\Teamspeak3\Query\CommandResponse
+     */
     public function sendCommand( \devmx\Teamspeak3\Query\Command $command )
     {
         $args = $command->getParameters();
+        $response = '';
         if($command->getName() == 'use') {
-            return $this->useVirtualServer($args, in_array('virtual', $command->getOptions()));
+            $this->useVirtualServer($args, in_array('virtual', $command->getOptions()), $response);
         }
         if($command->getName() == 'login') {
             if(isset($args['client_login_name']) && isset($args['client_login_password'])) {
-                return $this->login($args['client_login_name'], $args['client_login_password']);
+                $this->login($args['client_login_name'], $args['client_login_password'], $response);
             }
         }
         if($command->getName() == 'logout') {
-            return $this->logout();
+            $this->logout($response);
         }
         if($command->getName() == 'servernotifyregister') {
             if(isset($args['event'])) {
                 if(isset($args['id'])) {
-                    return $this->registerForEvent($args['event'], $args['id']);
+                    $this->registerForEvent($args['event'], $args['id'], $response);
                 }
                 else {
-                    return $this->registerForEvent($args['event']);
+                    $this->registerForEvent($args['event'], null, $response);
                 }
             }
         }
         if($command->getName() == 'servernotifyunregister') {
-            return $this->unregisterEvents();
+            $this->unregisterEvents($response);
         }
         if($command->getName() === 'whoami') {
             return $this->refreshWhoAmI();
         }
+        if($response !== '') {
+            return $response;
+        }
         return $this->transport->sendCommand($command);
     }
 
-
+    /**
+     * Waits until an event occurs
+     * This method is blocking, it returns only if a event occurs, so avoid calling this method if you aren't registered to any events
+     * @param float the timeout in second how long to wait for an event. If there is no event after the given timeout, an empty array is returned
+     *   -1 means that the method may wait forever
+     * @return array array of all occured events (e.g if two events occur together it is possible to get 2 events) 
+     * @throws Exception\LogicException if the query is not registered for any events
+     */
     public function waitForEvent($timeout=-1)
     {
          if(!$this->hasRegisteredForEvents()) {
@@ -401,6 +655,10 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
          return $this->transport->waitForEvent($timeout);
     }
     
+    /**
+     * Returns the underlying transport
+     * @return \devmx\Teamspeak3\Query\Transport\TransportInterface
+     */
     public function getTransport() {
         return $this->transport;
     }

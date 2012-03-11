@@ -160,6 +160,16 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->query->isLoggedIn());
     }
     
+    public function testLogin_responseByReference() {
+        $response = '';
+        $cmd = new Command('login', array('client_login_name'=>'foo', 'client_login_password'=>'bar'));
+        $r = new CommandResponse($cmd);
+        $this->stub->addResponse($r);
+        $this->stub->connect();
+        $this->query->login('foo', 'bar', $response);
+        $this->assertEquals($r, $response);
+    }
+    
     /**
      * @expectedException \RunTimeException
      * @covers devmx\Teamspeak3\Query\ServerQuery::login
@@ -186,6 +196,16 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $this->stub->addResponse($r);
         $this->query->logout();
         $this->assertFalse($this->query->isLoggedIn());
+        $this->stub->assertAllResponsesReceived();
+    }
+    
+    public function testLogout_responseByReference() {
+        $this->login();
+        $r = new CommandResponse(new Command('logout'));
+        $this->stub->addResponse($r);
+        $response = '';
+        $this->query->logout($response);
+        $this->assertEquals($r, $response);
     }
     
     protected function login() {
@@ -211,6 +231,16 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
        $this->assertEquals(array('port'=>9987), $this->query->getVirtualServerIdentifyer());
        $this->assertEquals(array($r), $this->transport->getReceivedResponses());
     }
+    
+    public function testUseByPort_responseByReference() {
+       $cmd = new Command('use', array('port'=>9987), array('virtual'));
+       $r = new CommandResponse($cmd);
+       $this->stub->addResponse($r);
+       $this->query->connect();
+       $response = '';
+       $this->query->useByPort(9987, true, $response);
+       $this->assertEquals($r, $response);
+    }
 
     /**
      * @covers devmx\Teamspeak3\Query\ServerQuery::useByID
@@ -231,6 +261,15 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
     {
         $this->useByID(0);
     }
+    
+    public function testUseByID_getResponseByReference() {
+        $r = new CommandResponse(new Command('use', array('sid'=>17)));
+        $this->stub->addResponse($r);
+        $response = '';
+        $this->query->connect();
+        $this->query->useByID(17, false, $response);
+        $this->assertEquals($r, $response);
+    }
 
     /**
      * @covers devmx\Teamspeak3\Query\ServerQuery::deselect
@@ -242,6 +281,15 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
        $this->query->deselect();
        $this->assertFalse($this->query->isOnVirtualServer());
        $this->assertEquals(array(), $this->query->getVirtualServerIdentifyer());
+    }
+    
+    public function testDeselect_getResponseByReference() {
+        $this->useByID(123);
+        $r = new CommandResponse(new Command('use'));
+        $this->stub->addResponse($r);
+        $response = '';
+        $this->query->deselect($response);
+        $this->assertEquals($r, $response);
     }
     
     protected function useByID($id) {
@@ -293,7 +341,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $this->query->connect();
         $this->query->moveToChannel(12);
     }
-
+    
     /**
      * @covers devmx\Teamspeak3\Query\ServerQuery::registerForEvent
      * @covers devmx\Teamspeak3\Query\ServerQuery::getRegisterCommands
@@ -476,6 +524,14 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
     public function testSendCommand()
     {
         $cmd = new Command('foo');
+        $r = new CommandResponse($cmd);
+        $this->stub->addResponse($r);
+        $this->query->connect();
+        $this->assertEquals($r, $this->query->sendCommand($cmd));
+    }
+    
+    public function testSendCommand_use() {
+        $cmd = new Command('use', array('sid'=>1), array('virtual'));
         $r = new CommandResponse($cmd);
         $this->stub->addResponse($r);
         $this->query->connect();
