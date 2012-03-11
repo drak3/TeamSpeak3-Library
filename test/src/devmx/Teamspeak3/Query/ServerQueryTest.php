@@ -54,7 +54,6 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
      * @covers devmx\Teamspeak3\Query\ServerQuery::getLoginName
      * @covers devmx\Teamspeak3\Query\ServerQuery::getVirtualServerPort
      * @covers devmx\Teamspeak3\Query\ServerQuery::getVirtualServerID
-     * @covers devmx\Teamspeak3\Query\ServerQuery::getVirtualServerIdentifyer
      * @covers devmx\Teamspeak3\Query\ServerQuery::getChannelID
      * @covers devmx\Teamspeak3\Query\ServerQuery::getVirtualServerStatus
      * @covers devmx\Teamspeak3\Query\ServerQuery::getUniqueID
@@ -95,7 +94,6 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
             'getLoginName' => 'asdf',
             'getVirtualServerPort' => 9987,
             'getVirtualServerID' => 1,
-            'getVirtualServerIdentifyer' => array('id'=>1),
             'getChannelID' => 123,
             'getVirtualServerStatus' => 'online',
             'getUniqueID' => 'sdfsdf',
@@ -108,7 +106,6 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $items2 = array(
           'virtualserver_status' => 'unknown',
           'virtualserver_id' => 0,
-          'virtualserver_unique_identifyer' => '',
           'virtualserver_port' => 0,
           'client_id' => 0,
           'client_channel_id' => 0,
@@ -123,7 +120,6 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
             'getLoginName' => '',
             'getVirtualServerPort' => 0,
             'getVirtualServerID' => 0,
-            'getVirtualServerIdentifyer' => array(),
             'getChannelID' => 0,
             'getVirtualServerStatus' => 'unknown',
             'getUniqueID' => '',
@@ -228,7 +224,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
        $this->query->connect();
        $this->query->useByPort(9987);
        $this->assertTrue($this->query->isOnVirtualServer());
-       $this->assertEquals(array('port'=>9987), $this->query->getVirtualServerIdentifyer());
+       $this->assertEquals(9987, $this->query->getVirtualServerPort());
        $this->assertEquals(array($r), $this->transport->getReceivedResponses());
     }
     
@@ -249,7 +245,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
     {
        $r = $this->useByID(15);
        $this->assertTrue($this->query->isOnVirtualServer());
-       $this->assertEquals(array('id'=>15), $this->query->getVirtualServerIdentifyer());
+       $this->assertEquals(15, $this->query->getVirtualServerID());
        $this->assertEquals(array($r), $this->transport->getReceivedResponses());
     }
     
@@ -280,7 +276,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
        $this->stub->addResponse(new CommandResponse(new Command('use')));
        $this->query->deselect();
        $this->assertFalse($this->query->isOnVirtualServer());
-       $this->assertEquals(array(), $this->query->getVirtualServerIdentifyer());
+       $this->assertEquals(0, $this->query->getVirtualServerID());
     }
     
     public function testDeselect_getResponseByReference() {

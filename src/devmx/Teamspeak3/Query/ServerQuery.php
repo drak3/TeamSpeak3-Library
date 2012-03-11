@@ -280,6 +280,8 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
         $response->toException();
         $this->isOnVirtualServer = FALSE;
         $this->virtualServerIdentifyer = Array();
+        $this->virtualServerID = 0;
+        $this->virtualServerPort = 0;
         if($commandResponse !== null) {
             $commandResponse = $response;
         }
