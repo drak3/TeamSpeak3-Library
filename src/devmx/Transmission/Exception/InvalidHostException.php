@@ -35,7 +35,7 @@ class InvalidHostException extends \InvalidArgumentException implements Exceptio
      * @param string $host the invalid host 
      */
     public function __construct($host) {
-        parent::__construct(sprintf('Invalid host "%s". Host must be non empty string', $host));
+        parent::__construct(sprintf('Invalid host "%s". Host must valid ip or domain name', $host));
         $this->host = $host;
     }
     

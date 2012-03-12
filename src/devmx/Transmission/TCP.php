@@ -261,20 +261,40 @@ class TCP implements TransmissionInterface
     
     /**
      * Sets the host
+     * The hostname is validated
      * @param string $host
      */
     private function setHost($host)
     {
-        $validatedHost = \trim((string) $host);
-        if ($validatedHost === '')
-        {
-            throw new Exception\InvalidHostException($host);
+        if(\filter_var($host, FILTER_VALIDATE_IP) !== false) {
+            $this->host = $host;
         }
-        else
-        {
-            $this->originalHost = $validatedHost;
-            $this->host = "tcp://" . $validatedHost;
+        else {
+            if($this->isValidDomainName( $host )) {
+                $this->host = $host;
+            }
+            else {
+                throw new Exception\InvalidHostException($host);
+            }
         }
+        $this->originalHost = $host;
+        $this->host = 'tcp://'.$this->host;
+    }
+    
+    /**
+     * Validates the given domain name
+     * Taken from http://stackoverflow.com/a/4694816
+     * @param string $name
+     * @return boolean 
+     */
+    protected function isValidDomainName($name) {
+        $pieces = explode(".",$name);
+        foreach($pieces as $piece) {
+            if (!preg_match('/^[a-z\d][a-z\d-]{0,62}$/i', $piece) || preg_match('/-$/', $piece) ) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -450,7 +470,7 @@ class TCP implements TransmissionInterface
     protected function hasEof() {
         return \feof($this->stream);
     }
-
+    
 }
 
 ?>

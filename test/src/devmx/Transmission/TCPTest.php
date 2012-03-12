@@ -120,11 +120,22 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @expectedException \devmx\Transmission\Exception\InvalidHostException
-     * @expectedExceptionMessage Invalid host "  ". Host must be non empty string
+     * @dataProvider invalidHostProvider
      * @covers devmx\Transmission\TCP::setHost
      */
-    public function testSetHost_InvalidHost() {
-        new TCP('  ', 9987);
+    public function testSetHost_InvalidHost($host) {
+        new Tcp($host, 9987);
+    }
+    
+    public function invalidHostProvider() {
+        return array(
+            array('  '),
+            array('.'),
+            array('foo.bar.'),
+            array('foo bar'),
+            array('a-'),
+            array('b-.b-'),
+        );
     }
 
     /**
