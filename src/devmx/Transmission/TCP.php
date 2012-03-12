@@ -358,7 +358,7 @@ class TCP implements TransmissionInterface
             throw new Exception\LogicException('Transmission has to be established before any action could be taken on it');
         }
         if(!$this->isEstablished()) {
-            throw new Exception\RuntimeException(sprintf('Transmission to %s:%s was closed by the remote host.', $this->getHost(), $this->getPort()));
+            throw new Exception\TransmissionClosedException(sprintf('Transmission to %s:%s was closed by the remote host.', $this->getHost(), $this->getPort()));
         }
     }
     
@@ -371,7 +371,7 @@ class TCP implements TransmissionInterface
      */
     protected function handleTimeout($timeout, $data) {
         if(!$this->isEstablished()) {
-            throw new Exception\RuntimeException(sprintf("Connection to %s:%s was closed by foreign host.", $this->getHost(), $this->getPort()));
+            throw new Exception\TransmissionClosedException(sprintf("Connection to %s:%s was closed by foreign host.", $this->getHost(), $this->getPort()));
         }
         else {
             if($timeout === -1) {
