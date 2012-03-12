@@ -71,7 +71,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $run = 0;
         foreach($values as $method => $expected) {
             $run++;
-            $this->assertEquals($expected, $this->query->$method(), "Testing $method in run $run");
+            $this->assertEquals($expected, $this->query->$method(false), "Testing $method in run $run");
         }
     }
     
@@ -224,7 +224,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
        $this->query->connect();
        $this->query->useByPort(9987);
        $this->assertTrue($this->query->isOnVirtualServer());
-       $this->assertEquals(9987, $this->query->getVirtualServerPort());
+       $this->assertEquals(9987, $this->query->getVirtualServerPort(false));
        $this->assertEquals(array($r), $this->transport->getReceivedResponses());
     }
     
@@ -548,7 +548,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $this->query->query('whoami');
         foreach($values as $method => $expected) {
             $run++;
-            $this->assertEquals($expected, $this->query->$method(), "Testing $method in run $run");
+            $this->assertEquals($expected, $this->query->$method(false), "Testing $method in run $run");
         }
     }
     
@@ -594,6 +594,18 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $this->stub->addResponse($r);
         $this->query->connect();
         $this->assertEquals($r, $this->query->query('foo'));
+    }
+    
+    public function testGetClientId() {
+        $query = $this->getMockBuilder('\devmx\Teamspeak3\Query\ServerQuery')
+                      ->setConstructorArgs(array($this->transport))
+                      ->setMethods(array('refreshWhoAmI', 'isOnVirtualServer'))->getMock();
+        $query->expects($this->once())
+              ->method('isOnVirtualServer')
+              ->will($this->returnValue(true));
+        $query->expects($this->once())
+             ->method('refreshWhoAmI');
+        $query->getClientID();
     }
 
 }

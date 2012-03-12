@@ -406,7 +406,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
             if($this->isOnVirtualServer) {
                 $this->useVirtualServer($this->virtualServerIdentifyer, true);
             }
-            if($this->getChannelID() !== 0) {
+            if($this->channelID !== 0) {
                 $this->moveToChannel($this->channelID);
             }
             foreach($this->registerCommands as $command) {
@@ -431,7 +431,6 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     public function getLoginName()
     {
         return $this->loginName;
-
     }
     
     /**
@@ -441,7 +440,6 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     public function getLoginPass()
     {
         return $this->loginPass;
-
     }
     
     /**
@@ -458,7 +456,10 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * note that if there was no refreshWhoAmI call and the server was not selected by port the information may be outdated
      * @return int
      */
-    public function getVirtualServerPort() {
+    public function getVirtualServerPort($refreshWhenInconsistent=true) {
+        if($this->virtualServerID === 0 && $this->isOnVirtualServer() && $refreshWhenInconsistent) {
+            $this->refreshWhoAmI();
+        }
         return $this->virtualServerPort;
     }
     
@@ -467,7 +468,10 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * note that if there was no refreshWhoAmI call and the server was not selected by id the information may be outdated
      * @return int
      */
-    public function getVirtualServerID() {
+    public function getVirtualServerID($refreshWhenInconsistent=true) {
+        if($this->virtualServerID === 0 && $this->isOnVirtualServer() && $refreshWhenInconsistent) {
+            $this->refreshWhoAmI();
+        }
         return $this->virtualServerID;
     }
     
@@ -484,8 +488,11 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * Returns the current channelid
      * @return int
      */
-    public function getChannelID()
+    public function getChannelID($refreshWhenInconsistent=true)
     {
+        if($this->channelID === 0 && $this->isOnVirtualServer() && $refreshWhenInconsistent) {
+            $this->refreshWhoAmI();
+        }
         return $this->channelID;
     }
     
@@ -493,10 +500,12 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * Returns the current vServer status
      * @return string
      */
-    public function getVirtualServerStatus()
+    public function getVirtualServerStatus($refreshWhenInconsistent=true)
     {
+        if($this->virtualServerStatus === 'unknown' && $this->isOnVirtualServer() && $refreshWhenInconsistent) {
+            $this->refreshWhoAmI();
+        }
         return $this->virtualServerStatus;
-
     }
     
     /**
@@ -504,10 +513,12 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
      * @return string 
      */
-    public function getUniqueID()
+    public function getUniqueID($refreshWhenInconsistent=true)
     {
+        if($this->uniqueID === '' && $this->isOnVirtualServer && $refreshWhenInconsistent) {
+            $this->refreshWhoAmI();
+        }
         return $this->uniqueID;
-
     }
     
     /**
@@ -515,10 +526,12 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
      * @return string 
      */
-    public function getNickname()
+    public function getNickname($refreshWhenInconsistent=true)
     {
+        if($this->nickname === '' && $this->isOnVirtualServer && $refreshWhenInconsistent) {
+            $this->refreshWhoAmI();
+        }
         return $this->nickname;
-
     }
     
     /**
@@ -526,10 +539,12 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
      * @return int
      */
-    public function getDatabaseID()
+    public function getDatabaseID($refreshWhenInconsistent=true)
     {
+        if($this->databaseID === 0 && $this->isOnVirtualServer() && $refreshWhenInconsistent) {
+            $this->refreshWhoAmI();
+        }
         return $this->databaseID;
-
     }
     
     /**
@@ -537,8 +552,11 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
      * @return string
      */
-    public function getUniqueVirtualServerID()
+    public function getUniqueVirtualServerID($refreshWhenInconsistent=true)
     {
+        if($this->uniqueVirtualServerID === '' && $this->isOnVirtualServer() && $refreshWhenInconsistent) {
+            $this->refreshWhoAmI();
+        }
         return $this->uniqueVirtualServerID;
     }
     
@@ -547,7 +565,10 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
      * @return int 
      */
-    public function getClientID() {
+    public function getClientID($refreshWhenInconsistent=true) {
+        if($this->clientID === 0 && $this->isOnVirtualServer() && $refreshWhenInconsistent) {
+            $this->refreshWhoAmI();
+        }
         return $this->clientID;
     }
     
