@@ -211,6 +211,7 @@ class TCP implements TransmissionInterface
         $data = '';
         $current = '';
         $toReceive = $length;
+        $length -= 1; //fixes unexpected timeouts
         
         while (strlen($data) < $length)
         {
