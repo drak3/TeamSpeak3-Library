@@ -317,7 +317,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     public function registerForEvent($name, $cid=NULL, &$commandResponse=null) {
         $args = Array('event'=>$name);
         if($cid !== NULL) {
-            $args['cid'] = $cid;
+            $args['id'] = $cid;
         }
         $command = new Command('servernotifyregister', $args);
         $response = $this->transport->sendCommand($command);
