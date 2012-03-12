@@ -299,7 +299,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
                   ->method('getLine')
                   ->will($this->onConsecutiveCalls('a', ''));
         try {
-            $this->tcp->receiveData(2, 34.23);
+            $this->tcp->receiveData(3, 34.23);
         } catch(\devmx\Transmission\Exception\TimeoutException $e) {
             $this->assertEquals(34.23, $e->getTimeout());
             $this->assertEquals('a', $e->getData());
