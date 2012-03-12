@@ -596,7 +596,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($r, $this->query->query('foo'));
     }
     
-    public function testGetClientId() {
+    /*public function testGetClientId() {
         $query = $this->getMockBuilder('\devmx\Teamspeak3\Query\ServerQuery')
                       ->setConstructorArgs(array($this->transport))
                       ->setMethods(array('refreshWhoAmI', 'isOnVirtualServer'))->getMock();
@@ -606,7 +606,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $query->expects($this->once())
              ->method('refreshWhoAmI');
         $query->getClientID();
-    }
+    }*/
     
     public function testChangeNickname() {
         $this->query->connect();
@@ -617,7 +617,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
           'virtualserver_id' => 1,
           'virtualserver_unique_identifyer' => 'foo',
           'virtualserver_port' => 9987,
-          'client_id' => 15,
+          'client_id' => 12,
           'client_channel_id' => 123,
           'client_nickname' => 'foobar',
           'client_database_id' => 0,
@@ -628,8 +628,9 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $this->stub->addResponse($r2);
         $r3 = new CommandResponse(new Command('clientedit', array('clid'=>12, 'client_nickname'=>'FooBar')));
         $this->stub->addResponse($r3);
+        $this->query->useByPort(9987, false);
         $this->query->changeNickname('FooBar');
-        $this->assertEquals($this->query->getNickname());
+        $this->assertEquals('FooBar',$this->query->getNickname());
         $this->stub->assertAllResponsesReceived();
     }
     
@@ -650,10 +651,10 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $this->stub->addResponse($r1);
         $whoamiItems = array(
           'virtualserverstatus' => 'online',
-          'virtualserver_id' => 1,
+          'virtualserver_id' => 12,
           'virtualserver_unique_identifyer' => 'foo',
           'virtualserver_port' => 9987,
-          'client_id' => 15,
+          'client_id' => 12,
           'client_channel_id' => 123,
           'client_nickname' => 'foobar',
           'client_database_id' => 0,
@@ -664,9 +665,37 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $this->stub->addResponse($r2);
         $r3 = new CommandResponse(new Command('clientedit', array('clid'=>12, 'client_nickname'=>'FooBar')), array(), 12, 'failed');
         $this->stub->addResponse($r3);
+        $this->query->useByPort(9987, false);
         $this->query->changeNickname('FooBar');
-        $this->assertEquals($this->query->getNickname());
+        $this->assertEquals('FooBar', $this->query->getNickname());
         $this->stub->assertAllResponsesReceived();
+    }
+    
+    
+    public function testChangeNickname_GetResponse() {
+        $this->query->connect();
+        $r1 = new CommandResponse(new Command('use', array('port'=>9987)));
+        $this->stub->addResponse($r1);
+        $whoamiItems = array(
+          'virtualserverstatus' => 'online',
+          'virtualserver_id' => 12,
+          'virtualserver_unique_identifyer' => 'foo',
+          'virtualserver_port' => 9987,
+          'client_id' => 12,
+          'client_channel_id' => 123,
+          'client_nickname' => 'foobar',
+          'client_database_id' => 0,
+          'client_login_name' => 'asdf',
+          'client_unique_identifyer' => 'sdfsdf',
+        );
+        $r2 = new CommandResponse(new Command('whoami'), $whoamiItems);
+        $this->stub->addResponse($r2);
+        $r3 = new CommandResponse(new Command('clientedit', array('clid'=>12, 'client_nickname'=>'FooBar')));
+        $this->stub->addResponse($r3);
+        $this->query->useByPort(9987,false);
+        $response = '';
+        $this->query->changeNickname('FooBar', $response);
+        $this->assertEquals($r3, $response);
     }
 
 }

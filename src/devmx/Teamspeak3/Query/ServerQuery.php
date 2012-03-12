@@ -345,6 +345,25 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     }
     
     /**
+     * Changes the nickname of the queryclient
+     * @param string $newNickname 
+     * @param type $commandResponse
+     * @return \devmx\Teamspeak3\Query\ServerQuery re
+     */
+    public function changeNickname($newNickname, &$commandResponse=null) {
+        if(!$this->isOnVirtualServer()) {
+            throw new Exception\LogicException("Cannot change nickname when not on virtual server");
+        }
+        $response = $this->transport->query('clientedit', array('clid'=>$this->getClientID(), 'client_nickname'=>$newNickname));
+        $response->toException();
+        $this->nickname = $newNickname;
+        if($commandResponse !== null ){
+            $commandResponse = $response;
+        }
+        return $this;
+    }
+    
+    /**
      * Disconnects 
      */
     public function quit() {
