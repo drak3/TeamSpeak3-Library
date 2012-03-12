@@ -607,6 +607,67 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
              ->method('refreshWhoAmI');
         $query->getClientID();
     }
+    
+    public function testChangeNickname() {
+        $this->query->connect();
+        $r1 = new CommandResponse(new Command('use', array('port'=>9987)));
+        $this->stub->addResponse($r1);
+        $whoamiItems = array(
+          'virtualserverstatus' => 'online',
+          'virtualserver_id' => 1,
+          'virtualserver_unique_identifyer' => 'foo',
+          'virtualserver_port' => 9987,
+          'client_id' => 15,
+          'client_channel_id' => 123,
+          'client_nickname' => 'foobar',
+          'client_database_id' => 0,
+          'client_login_name' => 'asdf',
+          'client_unique_identifyer' => 'sdfsdf',
+        );
+        $r2 = new CommandResponse(new Command('whoami'), $whoamiItems);
+        $this->stub->addResponse($r2);
+        $r3 = new CommandResponse(new Command('clientedit', array('clid'=>12, 'client_nickname'=>'FooBar')));
+        $this->stub->addResponse($r3);
+        $this->query->changeNickname('FooBar');
+        $this->assertEquals($this->query->getNickname());
+        $this->stub->assertAllResponsesReceived();
+    }
+    
+    /**
+     * @expectedException \devmx\Teamspeak3\Query\Exception\LogicException 
+     */
+    public function testChangeNickname_ErrorWhenNotOnVServer() {
+        $this->query->connect();
+        $this->query->changeNickname('FooBar');
+    }
+    
+    /**
+     * @expectedException \devmx\Teamspeak3\Query\Exception\CommandFailedException
+     */
+    public function testChangeNickname_ErrorOnCommandFailure() {
+        $this->query->connect();
+        $r1 = new CommandResponse(new Command('use', array('port'=>9987)));
+        $this->stub->addResponse($r1);
+        $whoamiItems = array(
+          'virtualserverstatus' => 'online',
+          'virtualserver_id' => 1,
+          'virtualserver_unique_identifyer' => 'foo',
+          'virtualserver_port' => 9987,
+          'client_id' => 15,
+          'client_channel_id' => 123,
+          'client_nickname' => 'foobar',
+          'client_database_id' => 0,
+          'client_login_name' => 'asdf',
+          'client_unique_identifyer' => 'sdfsdf',
+        );
+        $r2 = new CommandResponse(new Command('whoami'), $whoamiItems);
+        $this->stub->addResponse($r2);
+        $r3 = new CommandResponse(new Command('clientedit', array('clid'=>12, 'client_nickname'=>'FooBar')), array(), 12, 'failed');
+        $this->stub->addResponse($r3);
+        $this->query->changeNickname('FooBar');
+        $this->assertEquals($this->query->getNickname());
+        $this->stub->assertAllResponsesReceived();
+    }
 
 }
 
