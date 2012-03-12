@@ -430,7 +430,7 @@ class TCP implements TransmissionInterface
      * @return int bytes written
      */
     protected function write($data) {
-        return \frwite($this->stream, $data);
+        return \fwrite($this->stream, $data);
     }
     
     /**
