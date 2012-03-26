@@ -391,7 +391,7 @@ class TCP implements TransmissionInterface
      */
     protected function handleTimeout($timeout, $data) {
         if(!$this->isEstablished()) {
-            throw new Exception\TransmissionClosedException(sprintf("Connection to %s:%s was closed by foreign host.", $this->getHost(), $this->getPort()));
+            throw new Exception\TransmissionClosedException(sprintf("Connection to %s:%s was closed by foreign host.", $this->getHost(), $this->getPort()), $data);
         }
         else {
             if($timeout === -1) {

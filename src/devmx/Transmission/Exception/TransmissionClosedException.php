@@ -23,7 +23,32 @@ namespace devmx\Transmission\Exception;
  * @author drak3
  */
 class TransmissionClosedException extends RuntimeException
-{    
+{   
+    /**
+     * The data occured before the connection was closed
+     * @var string
+     */
+    protected $data;
+    
+    /**
+     * Constructor
+     * @param string $message
+     * @param string $data
+     * @param int $code
+     * @param Exception $previous 
+     */
+    public function __construct($message, $data, $code=0, $previous=0) {
+        parent::__construct($message, $code, $previous);
+        $this->data = $data;
+    }
+    
+    /**
+     * Returns the data occured before the exception was thrown
+     * @return string
+     */
+    public function getData() {
+        return $this->data;
+    }
 }
 
 ?>
