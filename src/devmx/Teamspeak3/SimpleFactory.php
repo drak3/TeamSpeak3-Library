@@ -29,12 +29,32 @@ class SimpleFactory
      */
     protected $debug = false;
     
+    protected $host;
+    
+    protected $port;
+    
+    protected $query;
+    
+    protected $decoratedTransport;
+    
+    protected $decorators = array();
+    
+    protected $transport;
+    
+    protected $handler;
+    
+    protected $translator;
+    
+    protected $tcp; 
+    
     /**
      * Constructor
      * @param boolean $debug if classes should be created with debug mode enabled 
      *                       (currently this just adds the DebuggingDecorator for querytransports)
      */
-    public function __construct($debug=false) {
+    public function __construct($host, $port=10011, $debug=false) {
+        $this->host = $host;
+        $this->port = $port;
         $this->debug = $debug;
     }
     
@@ -44,8 +64,11 @@ class SimpleFactory
      * @param int $port the queryport 
      * @return \devmx\Teamspeak3\Query\ServerQuery 
      */
-    public function getQuery($host, $port=10011) {
-        return new Query\ServerQuery($this->getQueryTransport($host , $port));
+    public function getQuery() {
+        if(!($this->query instanceof Query\ServerQuery)) {
+            $this->query = new Query\ServerQuery($this->getQueryTransport());
+        }
+        return $this->query;
     }
     
     /**
@@ -55,12 +78,19 @@ class SimpleFactory
      * @param boolean $decorate if the query should be decorated with some default decorators specified in decorateTransport
      * @return  \devmx\Teamspeak3\Query\QueryTransport
      */
-    public function getQueryTransport($host, $port=10011, $decorate = true) {
-        $transport = new Query\QueryTransport($this->getTcp($host, $port), $this->getCommandTranslator() , $this->getResponseHandler());
-        if($decorate) {
-            $transport = $this->decorateTransport($transport);
+    public function getQueryTransport($decorated=true) {
+        if(!($this->transport instanceof Query\Transport\TransportInterface)) {
+            $this->transport = new Query\QueryTransport($this->getTcp($this->host, $this->port), $this->getCommandTranslator() , $this->getResponseHandler());
         }
-        return $transport;
+        if($decorated && !($this->decoratedTransport instanceof Query\Transport\TransportInterface)) {
+            $this->decorateTransport();
+        }
+        if($decorated) {
+            return $this->decoratedTransport;
+        }
+        else {
+            return $this->transport;
+        }
     }
     
     /**
@@ -68,15 +98,16 @@ class SimpleFactory
      * @param Query\QueryTransport $t
      * @return \devmx\Teamspeak3\Query\Transport\TransportInterface
      */
-    public function decorateTransport(Query\QueryTransport $t) {
-        $decorated = $t;
+    protected function  decorateTransport() {
+        $decorated = $this->getQueryTransport(false);
         foreach($this->getDecorators() as $decorator) {
             $method = 'get'.$decorator;
             if(!method_exists($this, $method)) {
                 throw new \LogicException(sprintf('Unknown decorator %s', $decorator));
             }
+            $decorated = $this->$method();
         }
-        return $decorated;
+        $this->decoratedTransport = $decorated;
     }
     
     /**
@@ -86,7 +117,7 @@ class SimpleFactory
     public function getDecorators() {
         $decorators = $this->getDefaultDecorators();
         if($this->debug) {
-            $decorators = array_merge($decorators, $this->getDebuggingDecorators());
+            $decorators = array_merge($decorators, $this->getDebugDecorators());
         }
         return $decorators;
     }
@@ -103,8 +134,15 @@ class SimpleFactory
      * Returns all decorators to use in debug enviroment
      * @return array of string
      */
-    public function getDebuggingDecorators() {
+    public function getDebugDecorators() {
         return array('DebuggingDecorator');
+    }
+    
+    public function getDebuggingDecorator() {
+        if(!isset($this->decorators['DebuggingDecorator'])) {
+            $this->decorators['DebuggingDecorator'] = new Query\Transport\Decorator\DebuggingDecorator($this->getQueryTransport(false));
+        }
+        return $this->decorators['DebuggingDecorator'];
     }
     
     /**
@@ -112,7 +150,10 @@ class SimpleFactory
      * @return \Query\Transport\Common\CommandTranslator 
      */
     public function getCommandTranslator() {
-        return new Query\Transport\Common\CommandTranslator();
+        if(!($this->handler instanceof Query\Transport\CommandTranslatorInterface)) {
+            $this->translator = new Query\Transport\Common\CommandTranslator();
+        }
+        return $this->translator;
     }
     
     /**
@@ -120,7 +161,10 @@ class SimpleFactory
      * @return \Query\Transport\Common\ResponseHandler 
      */
     public function getResponseHandler() {
-        return new Query\Transport\Common\ResponseHandler();
+        if(!($this->handler instanceof Query\Transport\ResponseHandlerInterface)) {
+            $this->handler = new Query\Transport\Common\ResponseHandler();
+        }
+        return $this->handler;
     }
     
     /**
@@ -130,7 +174,10 @@ class SimpleFactory
      * @return \devmx\Transmission\TCP 
      */
     public function getTcp($host, $port) {
-        return new \devmx\Transmission\TCP($host, $port);
+        if(!isset($this->tcp[$host][$port]) || !($this->tcp[$host][$port] instanceof \devmx\Transmission\TransmissionInterface)) {
+            $this->tcp[$host][$port] = new \devmx\Transmission\TCP($host, $port);
+        }
+        return $this->tcp[$host][$port];
     }    
 }
 
