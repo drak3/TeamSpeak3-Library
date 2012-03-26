@@ -348,7 +348,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * Changes the nickname of the queryclient
      * @param string $newNickname 
      * @param type $commandResponse
-     * @return \devmx\Teamspeak3\Query\ServerQuery re
+     * @return \devmx\Teamspeak3\Query\ServerQuery returns self
      */
     public function changeNickname($newNickname, &$commandResponse=null) {
         if(!$this->isOnVirtualServer()) {
@@ -601,18 +601,22 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
 
     /**
      * Connects the query 
+     * @return devmx\Teamspeak3\Query\ServerQuery returns itself
      */
     public function connect()
     {
         $this->transport->connect();
+        return $this;
     }
     
     /**
      * Disconnects the query 
+     * @return devmx\Teamspeak3\Query\ServerQuery returns itself
      */
     public function disconnect()
     {
         $this->transport->disconnect();
+        return $this;
     }
     
     /**
