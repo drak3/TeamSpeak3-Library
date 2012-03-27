@@ -37,7 +37,7 @@ class TransmissionClosedException extends RuntimeException
      * @param int $code
      * @param Exception $previous 
      */
-    public function __construct($message, $data, $code=0, $previous=0) {
+    public function __construct($message, $data, $code=0, $previous=null) {
         parent::__construct($message, $code, $previous);
         $this->data = $data;
     }

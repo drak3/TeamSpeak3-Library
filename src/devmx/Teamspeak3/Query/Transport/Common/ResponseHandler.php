@@ -185,7 +185,6 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      */
     public function isCompleteEvent($raw)
     {
-        $this->checkForBan($raw);
         if ($raw !== '' && $raw[strlen($raw)-1] === static::SEPERATOR_RESPONSE)
         {
             return true;
@@ -204,7 +203,6 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      */
     public function isCompleteResponse($raw)
     {
-        $this->checkForBan($raw);
         if ($this->match($this->errorRegex, $raw) && $raw[strlen($raw)-1] == "\n")
         {
             return true;
@@ -233,6 +231,19 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     {
         return \rtrim($ident) == static::WELCOME_IDENTIFY;
     }
+    
+    /**
+     * Checks if data from the query contains a ban message and returns the bantime when available 0 else
+     * @return int the ban time
+     */
+    public function getBanTime($raw) {
+        if(!($parsed =$this->parsePossibleBanMessage($raw))) {
+            return 0;
+        }
+        else {
+            return $this->extractBanTime($parsed);
+        }
+    }    
 
     /**
      * Parses a response (no events in it) for a given command
@@ -355,18 +366,19 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     }
     
     /**
-     * Checks if the raw response contains a Ban message and throws Exception
-     * @param string $raw
-     * @throws \RuntimeException 
+     * Parses a message from the server which may contain a ban message
+     * @param type $raw
+     * @return boolean 
      */
-    private function checkForBan($raw) {
+    protected function parsePossibleBanMessage($raw) {
         $parsed = $this->match($this->errorRegex, $raw);
         if($parsed) {
             $parsed = $this->parseData($raw);
             if(isset($parsed[0]['id']) && ($parsed[0]['id'] == static::BAN_ERROR_ID || $parsed[0]['id'] == static::FLOOD_BAN_ERROR_ID)) {
-                throw new Exception\BannedException($this->getBanTime($parsed));
+                return $parsed;
             }
         }
+        return false;
     }
     
     /**
@@ -374,7 +386,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @param array $error the parsed error section
      * @return int|string the time to wait
      */
-    private function getBanTime($error) {
+    private function extractBanTime($error) {
         if(isset($error[0]['extra_message'])) {
             $time = $this->match($this->floodBanRegex, $error[0]['extra_message']);
             if($time !== false) {
