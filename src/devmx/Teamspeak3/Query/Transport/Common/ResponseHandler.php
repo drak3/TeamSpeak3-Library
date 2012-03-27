@@ -60,7 +60,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     /**
      * The string between two data packages (e.g. key/value pair)
      */
-    const SEPERAOR_DATA = " ";
+    const SEPERATOR_DATA = " ";
 
     /**
      * The string between a key/value pair
@@ -203,7 +203,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      */
     public function isCompleteResponse($raw)
     {
-        if ($this->match($this->errorRegex, $raw) && $raw[strlen($raw)-1] == "\n")
+        if ($this->match($this->errorRegex, $raw) &&  $raw[strlen($raw)-1] == "\n")
         {
             return true;
         }
@@ -279,7 +279,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     protected function parseEvent($event)
     {
         $reason = '';
-        $event = explode(static::SEPERAOR_DATA, $event, 2);
+        $event = explode(static::SEPERATOR_DATA, $event, 2);
         $reason = $this->parseValue($event[0]); //the eventtype or eventreason is a single word at the beginnning of the event
         $event = $event[1];
         $data = $this->parseData($event); //the rest is a single block of data
@@ -301,14 +301,10 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         $items = \explode(static::SEPERATOR_ITEM, $data); //split up into single lists or blocks
         foreach ($items as $itemkey => $item)
         {
-            $keyvals = explode(static::SEPERAOR_DATA, $item); //split up into data items or keyvalue pairs
+            $keyvals = explode(static::SEPERATOR_DATA, $item); //split up into data items or keyvalue pairs
             foreach ($keyvals as $keyval)
             {
                 $keyval = explode(static::SEPERATOR_KEY_VAL, $keyval, 2); //parses key value pairs
-                if (\trim($keyval[0]) === '')
-                {
-                    continue;
-                }
                 $keyval[1] = isset($keyval[1]) ? $keyval[1] : null;
                 $parsed[$itemkey][$keyval[0]] = $this->parseValue($keyval[1]);
             }
@@ -325,23 +321,14 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      */
     protected function parseValue($val)
     {
-        $val = \trim($val);
         if (ctype_digit($val))
         {
             return (int) $val;
         }
-        if ($this->match("/^true$/Di", $val))
-        {
-            return true;
-        }
-        if ($this->match("/^false$/Di", $val))
-        {
-            return false;
-        }
         if ($val === '' || $val === null)
         {
             return '';
-        }
+        }      
 
         return $this->unescape($val);
     }

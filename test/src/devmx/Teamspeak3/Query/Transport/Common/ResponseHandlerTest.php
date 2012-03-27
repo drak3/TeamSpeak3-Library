@@ -199,12 +199,12 @@ EOF;
     public function testSpecialValues() {
         $cmd = new Command('foo');
         
-        $toParse = "foo= jkl bar=true asdf=false\nerror id=0 msg=ok";
+        $toParse = "foo= jkl asdf=123\nerror id=0 msg=ok";
         
         $response = $this->handler->getResponseInstance($cmd, $toParse);
         $response = $response['response'];
         
-        $parsed = array(array('foo'=>'', 'jkl'=>'' , 'bar'=>true, 'asdf'=>false));
+        $parsed = array(array('foo'=>'', 'jkl'=>'' , 'asdf'=>123));
         
         $this->assertEquals($parsed, $response->getItems());
     }
