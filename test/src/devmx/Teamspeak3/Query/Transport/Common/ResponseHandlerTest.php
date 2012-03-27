@@ -210,19 +210,21 @@ EOF;
     }
     
     public function testGetBanTime() {
-        $toParse = 'Foobar=sdf error id=3329 msg=banned extra_message=you\smay\sretry\sin\s593\sseconds\n\r';
-        $this->assertEquals(593, $this->handler->getBanTime($toParse));
+        $toParse = "\n\rerror id=3329 msg=connection\\sfailed,\\syou\\sare\\sbanned extra_msg=you\\smay\\sretry\\sin\\s508\\sseconds\\n\\r";
+        $this->assertTrue($this->handler->containsBanMessage($toParse));
+        $this->assertEquals(508, $this->handler->extractBanTime($toParse));
     }
     
     
     public function testGetBanTime_FloodBan() {
-        $toParse = 'foo= bar=true asdf=false'."\n".'error id=3331 msg=banned extra_message=you\smay\sretry\sin\s63\sseconds\n\r';
-        $this->assertEquals(63, $this->handler->getBanTime($toParse));
+        $toParse = 'foo= bar=true asdf=false'."\n".'error id=3331 msg=banned\r';
+        $this->assertTrue($this->handler->containsBanMessage($toParse));
+        $this->assertEquals(0, $this->handler->extractBanTime($toParse));
     }
     
     public function testGetBanTime_NoBan() {
-        $toParse = 'foo= bar=true asdf=false'."\n".'error id=3332 msg=banned extra_message=you\smay\sretry\sin\s63\sseconds\n\r'."\n";
-        $this->assertSame(0, $this->handler->getBanTime($toParse));
+        $toParse = 'foo= bar=true asdf=false'."\n".'error id=3332 msg=banned extra_msg=you\smay\sretry\sin\s63\sseconds\n\r'."\n";
+        $this->assertFalse($this->handler->containsBanMessage($toParse));
     }
     
 }

@@ -35,7 +35,7 @@ class BannedException extends RuntimeException
      * @param int $retryTime the time which should be awaited before executing commands on the query again
      */
     public function __construct($retryTime) {
-        parent::__construct(sprintf('You got banned. Retry in %d seconds', $retryTime));
+        parent::__construct($this->createMessage($retryTime));
         $this->retryTime = $retryTime;
     }
     
@@ -46,6 +46,15 @@ class BannedException extends RuntimeException
      */
     public function getRetryTime() {
         return $this->retryTime;
+    }
+    
+    protected function createMessage($retryTime) {
+        if($retryTime > 0) {
+            return sprintf('You got banned, retry in %d seconds', $retryTime);
+        }
+        else {
+            return 'You got banned';
+        }
     }
 }
 

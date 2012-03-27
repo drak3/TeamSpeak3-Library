@@ -68,11 +68,6 @@ interface ResponseHandlerInterface
      */
     public function getEventInstances($raw);
     
-    /**
-     * Checks if data from the query contains a ban message and returns the bantime when available 0 else
-     * @return int the ban time
-     */
-    public function getBanTime($raw);
 }
 
 ?>

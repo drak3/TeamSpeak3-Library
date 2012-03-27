@@ -24,7 +24,7 @@ use devmx\Teamspeak3\Query\Command;
  * It checks if the server is valid, checks commands and events for completeness and parses them
  * @author drak3
  */
-class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandlerInterface
+class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareResponseHandlerInterface
 {
     /**
      * The Length of the message sent by a common query on connect
@@ -232,16 +232,16 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         return \rtrim($ident) == static::WELCOME_IDENTIFY;
     }
     
-    /**
-     * Checks if data from the query contains a ban message and returns the bantime when available 0 else
-     * @return int the ban time
-     */
-    public function getBanTime($raw) {
+    public function containsBanMessage($raw) {
+        return (boolean) $this->parsePossibleBanMessage($raw);
+    }
+    
+    public function extractBanTime($raw) {
         if(!($parsed =$this->parsePossibleBanMessage($raw))) {
             return 0;
         }
         else {
-            return $this->extractBanTime($parsed);
+            return $this->extractBanTimeFromParsed($parsed);
         }
     }    
 
@@ -373,14 +373,14 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * @param array $error the parsed error section
      * @return int|string the time to wait
      */
-    private function extractBanTime($error) {
-        if(isset($error[0]['extra_message'])) {
-            $time = $this->match($this->floodBanRegex, $error[0]['extra_message']);
+    private function extractBanTimeFromParsed($error) {
+        if(isset($error[0]['extra_msg'])) {
+            $time = $this->match($this->floodBanRegex, $error[0]['extra_msg']);
             if($time !== false) {
                 return (int) $time[1];
             }
         }
-        return "<could'nt extract ban time>";
+        return 0;
     }
 
 }

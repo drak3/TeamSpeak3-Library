@@ -261,7 +261,7 @@ EOF;
                            ->will($this->returnValue(substr($this->getWelcomeMessage(), 2)));
         $this->transmission->expects($this->at(5))
                            ->method('receiveLine')
-                           ->will($this->throwException(new \devmx\Transmission\Exception\TransmissionClosedException('Transmission was closed by foreign host',  'error id=3331 msg=banned extra_message=you\smay\sretry\sin\s63\sseconds\n\r')));
+                           ->will($this->throwException(new \devmx\Transmission\Exception\TransmissionClosedException('Transmission was closed by foreign host',  'error id=3331 msg=banned extra_msg=you\smay\sretry\sin\s63\sseconds\n\r')));
         $this->transmission->expects($this->once())
                            ->method('receiveData')
                            ->will($this->returnValue($this->getWelcomeMessage()));
@@ -283,7 +283,7 @@ EOF;
         $this->transmission = $this->getMockForAbstractClass('\devmx\Transmission\TransmissionInterface');
         $this->transmission->expects($this->once())
                            ->method('receiveLine')
-                           ->will($this->throwException(new TransmissionClosedException('Transmission was closed by foreign host', 'error id=3332 msg=banned extra_message=you\smay\sretry\sin\s63\sseconds\n\r')));
+                           ->will($this->throwException(new TransmissionClosedException('Transmission was closed by foreign host', 'error id=3332 msg=banned extra_msg=you\smay\sretry\sin\s63\sseconds\n\r')));
         $this->transmission->expects($this->once())
                             ->method('establish');
         

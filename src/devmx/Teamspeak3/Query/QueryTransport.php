@@ -193,12 +193,13 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
             }
 
         } catch(TransmissionClosedException $e) {
-            $bantime = $this->responseHandler->getBanTime($e->getData());
-            if($bantime > 0) {
-                throw new Exception\BannedException($bantime);
-            } else {
-                throw $e;
+            if($this->responseHandler instanceof Transport\BanAwareResponseHandlerInterface) {
+                $response = $data . $e->getData();
+                if($this->responseHandler->containsBanMessage($response)) {
+                    throw new Exception\BannedException($this->responseHandler->extractBanTime($response));
+                }
             }
+            throw $e;
         } 
         
         $responses = $this->responseHandler->getResponseInstance( $command , $data );
