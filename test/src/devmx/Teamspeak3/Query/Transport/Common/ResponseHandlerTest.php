@@ -209,22 +209,15 @@ EOF;
         $this->assertEquals($parsed, $response->getItems());
     }
     
-    /**
-     * @expectedException \devmx\Teamspeak3\Query\Exception\BannedException
-     * @expectedExceptionMessage You got banned. Retry in 593 seconds 
-     */
-    public function testBanDetection() {
+    public function testGetBanTime() {
         $toParse = "\n".'error id=3329 msg=banned extra_message=you\smay\sretry\sin\s593\sseconds\n\r';
-        $this->handler->isCompleteResponse($toParse);
+        $this->assertEquals(593, $this->handler->getBanTime($toParse));
     }
     
-    /**
-     * @expectedException \devmx\Teamspeak3\Query\Exception\BannedException
-     * @expectedExceptionMessage You got banned. Retry in 593 seconds 
-     */
-    public function testBanDetection_FloodBan() {
-        $toParse = 'foo= bar=true asdf=false'."\n".'error id=3331 msg=banned extra_message=you\smay\sretry\sin\s593\sseconds\n\r'."\n";
-        $this->handler->isCompleteResponse($toParse);
+    
+    public function testGetBanTime_FloodBan() {
+        $toParse = 'foo= bar=true asdf=false'."\n".'error id=3331 msg=banned extra_message=you\smay\sretry\sin\s63\sseconds\n\r'."\n";
+        $this->assertEquals(63, $this->handler->getBanTime($toParse));
     }
     
 }
