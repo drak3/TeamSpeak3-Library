@@ -21,7 +21,7 @@ namespace devmx\Transmission\Exception;
  * This exception is thrown if the timeout exceeded
  * @author drak3
  */
-class TimeoutException extends \RuntimeException implements ExceptionInterface
+class TimeoutException extends TransmissionClosedException
 {
     
     /**
@@ -29,12 +29,6 @@ class TimeoutException extends \RuntimeException implements ExceptionInterface
      * @var float
      */
     protected $timeout;
-    
-    /**
-     * The data which was successfully proceeded before the timeout occured
-     * @var string 
-     */
-    protected $data;
     
     /**
      * Constructor
@@ -45,9 +39,8 @@ class TimeoutException extends \RuntimeException implements ExceptionInterface
      * @param \Exception $previous 
      */
     public function __construct($message, $timeout, $data, $code=0, $previous=null) {
-        parent::__construct($message, $code, $previous);
+        parent::__construct($message, $data, $code, $previous);
         $this->timeout = $timeout;
-        $this->data = $data;
     }
     
     /**
@@ -58,13 +51,6 @@ class TimeoutException extends \RuntimeException implements ExceptionInterface
         return $this->timeout;
     }
     
-    /**
-     *  Returns the data which was successfully proceeded before the timeout occured
-     *  @return string
-     */
-    public function getData() {
-        return $this->data;
-    }
 }
 
 ?>

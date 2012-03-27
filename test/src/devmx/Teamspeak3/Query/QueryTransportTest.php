@@ -3,6 +3,7 @@
 namespace devmx\Teamspeak3\Query;
 use devmx\Transmission\TransmissionStub;
 use devmx\Teamspeak3\Query\Transport\Common;
+use devmx\Transmission\Exception\TransmissionClosedException;
  
 class TestTranslator extends Transport\Common\CommandTranslator {
     
@@ -245,6 +246,63 @@ EOF;
         $this->connectTransport();
         $new = clone $this->transport;
         $this->assertEquals(1, TransmissionStub::cloned());
+    }
+    
+    /**
+     * @expectedException \devmx\Teamspeak3\Query\BannedException 
+     */
+    public function testBanException_FromTransmissionClosedException() {
+        $this->transmission = $this->getMockForAbstractClass('\devmx\Transmission\TransmissionInterface');
+        $this->transmission->expects($this->once())
+                           ->method('receiveLine')
+                           ->will($this->throwException(new \devmx\Transmission\Exception\TransmissionClosedException('Transmission was closed by foreign host',  'error id=3331 msg=banned extra_message=you\smay\sretry\sin\s63\sseconds\n\r')));
+        $this->transmission->expects($this->once())
+                           ->method('receiveData')
+                           ->will($this->returnValue($this->getWelcomeMessage()));
+        $this->transmission->expects($this->once())
+                            ->method('establish');
+        
+       $transport = new QueryTransport($this->transmission, new Common\CommandTranslator, new Common\ResponseHandler);
+       $transport->connect();
+       $transport->query('foo');
+    }
+    
+    /**
+     * @expectedException \devmx\Teamspeak3\Query\BannedException 
+     */
+    public function testBanException_FromTimeoutException() {
+        $this->transmission = $this->getMockForAbstractClass('\devmx\Transmission\TransmissionInterface');
+        $this->transmission->expects($this->once())
+                           ->method('receiveLine')
+                           ->will($this->throwException(new \devmx\Transmission\Exception\TimeoutException('Transmission was closed by foreign host', 12, 'error id=3331 msg=banned extra_message=you\smay\sretry\sin\s63\sseconds\n\r')));
+        $this->transmission->expects($this->once())
+                           ->method('receiveData')
+                           ->will($this->returnValue($this->getWelcomeMessage()));
+        $this->transmission->expects($this->once())
+                            ->method('establish');
+        
+       $transport = new QueryTransport($this->transmission, new Common\CommandTranslator, new Common\ResponseHandler);
+       $transport->connect();
+       $transport->query('foo');
+    }
+    
+    
+    
+    
+    /**
+     * @expectedException \devmx\Transmission\Exception\TransmissionClosedException
+     */
+    public function testNoBanException() {
+        $this->transmission = $this->getMockForAbstractClass('\devmx\Transmission\TransmissionInterface');
+        $this->transmission->expects($this->once())
+                           ->method('receiveLine')
+                           ->will($this->throwException(new TransmissionClosedException('Transmission was closed by foreign host', 'error id=3332 msg=banned extra_message=you\smay\sretry\sin\s63\sseconds\n\r')));
+        $this->transmission->expects($this->once())
+                            ->method('establish');
+        
+       $transport = new QueryTransport($this->transmission, new Common\CommandTranslator, new Common\ResponseHandler);
+       $transport->connect();
+       $transport->query('foo');
     }
 
 }
