@@ -249,32 +249,19 @@ EOF;
     }
     
     /**
-     * @expectedException \devmx\Teamspeak3\Query\BannedException 
+     * @expectedException \devmx\Teamspeak3\Query\Exception\BannedException 
      */
     public function testBanException_FromTransmissionClosedException() {
         $this->transmission = $this->getMockForAbstractClass('\devmx\Transmission\TransmissionInterface');
-        $this->transmission->expects($this->once())
+        $this->transmission->expects($this->at(1))
+                            ->method('receiveLine')
+                            ->will($this->returnValue("TS3\n"));
+        $this->transmission->expects($this->at(4))
+                           ->method('receiveData')
+                           ->will($this->returnValue(substr($this->getWelcomeMessage(), 2)));
+        $this->transmission->expects($this->at(5))
                            ->method('receiveLine')
                            ->will($this->throwException(new \devmx\Transmission\Exception\TransmissionClosedException('Transmission was closed by foreign host',  'error id=3331 msg=banned extra_message=you\smay\sretry\sin\s63\sseconds\n\r')));
-        $this->transmission->expects($this->once())
-                           ->method('receiveData')
-                           ->will($this->returnValue($this->getWelcomeMessage()));
-        $this->transmission->expects($this->once())
-                            ->method('establish');
-        
-       $transport = new QueryTransport($this->transmission, new Common\CommandTranslator, new Common\ResponseHandler);
-       $transport->connect();
-       $transport->query('foo');
-    }
-    
-    /**
-     * @expectedException \devmx\Teamspeak3\Query\BannedException 
-     */
-    public function testBanException_FromTimeoutException() {
-        $this->transmission = $this->getMockForAbstractClass('\devmx\Transmission\TransmissionInterface');
-        $this->transmission->expects($this->once())
-                           ->method('receiveLine')
-                           ->will($this->throwException(new \devmx\Transmission\Exception\TimeoutException('Transmission was closed by foreign host', 12, 'error id=3331 msg=banned extra_message=you\smay\sretry\sin\s63\sseconds\n\r')));
         $this->transmission->expects($this->once())
                            ->method('receiveData')
                            ->will($this->returnValue($this->getWelcomeMessage()));

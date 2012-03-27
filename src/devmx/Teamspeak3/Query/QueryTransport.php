@@ -19,6 +19,7 @@ namespace devmx\Teamspeak3\Query;
 use devmx\Transmission\TransmissionInterface;
 use devmx\Teamspeak3\Query\Transport\CommandTranslatorInterface;
 use devmx\Teamspeak3\Query\Transport\ResponseHandlerInterface;
+use devmx\Transmission\Exception\TransmissionClosedException;
 
 /**
  * Abstraction of the Teamspeak3-Query
@@ -183,14 +184,24 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
         }
         
         $data = '';
+        try {
+            $this->transmission->send( $this->commandTranslator->translate( $command ) );
 
-        $this->transmission->send( $this->commandTranslator->translate( $command ) );
+            while ( !$this->responseHandler->isCompleteResponse( $data ) )
+            {
+                $data .= $this->transmission->receiveLine();
+            }
 
-        while ( !$this->responseHandler->isCompleteResponse( $data ) )
-        {
-            $data .= $this->transmission->receiveLine();
-        }
-
+        } catch(TransmissionClosedException $e) {
+            echo "\n\n\n";
+            $bantime = $this->responseHandler->getBanTime($e->getData());
+            if($bantime > 0) {
+                throw new Exception\BannedException($bantime);
+            } else {
+                throw $e;
+            }
+        } 
+        
         $responses = $this->responseHandler->getResponseInstance( $command , $data );
         
         $this->pendingEvents = array_merge($this->pendingEvents,$responses['events']);
