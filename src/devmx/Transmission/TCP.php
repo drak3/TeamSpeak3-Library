@@ -378,7 +378,7 @@ class TCP implements TransmissionInterface
             throw new Exception\LogicException('Transmission has to be established before any action could be taken on it');
         }
         if(!$this->isEstablished()) {
-            throw new Exception\TransmissionClosedException(sprintf('Transmission to %s:%s was closed by the remote host.', $this->getHost(), $this->getPort()));
+            throw new Exception\TransmissionClosedException(sprintf('Transmission to %s:%s was closed by the remote host.', $this->getHost(), $this->getPort()), '');
         }
     }
     
