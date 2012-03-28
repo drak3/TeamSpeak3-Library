@@ -34,6 +34,10 @@ class SimpleFactoryTest extends \PHPUnit_Framework_TestCase
     public function testDebugDecoration() {
         $this->assertInstanceof('\devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator', $this->factory->getQueryTransport());
     }
+    
+    public function testGetProfilingDecorator() {
+        $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\ProfilingDecorator', $this->factory->getProfilingDecorator());
+    }
 
 }
 

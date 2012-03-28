@@ -135,7 +135,7 @@ class SimpleFactory
      * @return array of string
      */
     public function getDebugDecorators() {
-        return array('DebuggingDecorator');
+        return array('ProfilingDecorator', 'DebuggingDecorator');
     }
     
     public function getDebuggingDecorator() {
@@ -143,6 +143,13 @@ class SimpleFactory
             $this->decorators['DebuggingDecorator'] = new Query\Transport\Decorator\DebuggingDecorator($this->getQueryTransport(false));
         }
         return $this->decorators['DebuggingDecorator'];
+    }
+    
+    public function getProfilingDecorator() {
+        if(!isset($this->decorators['ProfilingDecorator'])) {
+            $this->decorators['ProfilingDecorator'] = new Query\Transport\Decorator\ProfilingDecorator($this->getQueryTransport(false));
+        }
+        return $this->decorators['ProfilingDecorator'];
     }
     
     /**
