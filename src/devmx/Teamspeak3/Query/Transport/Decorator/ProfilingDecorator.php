@@ -20,102 +20,205 @@ namespace devmx\Teamspeak3\Query\Transport\Decorator;
 use devmx\Teamspeak3\Query\Command;
 
 /**
- *
+ * This decorator provides basic abilities to profile the Query transactions
  * @author drak3
  */
 class ProfilingDecorator extends \devmx\Teamspeak3\Query\Transport\AbstractQueryDecorator
 {
-    
+    /**
+     * Stores an array of all times a connectcall took
+     * @var array
+     */
     protected $connectionTimes = array();
     
+    /**
+     * Stores an array of all times the disconnectcalls took
+     * @var array
+     */
     protected $disconnectionTimes = array();
     
+    /**
+     * Stores an array of all times the sendCommandcalls took
+     * @var array
+     */
     protected $sendCommandTimes = array();
     
+    /**
+     * Stores an array of all times the waitForEventcalls took
+     * @var array
+     */
     protected $waitForEventTimes = array();
     
+    /**
+     * Stores an array of all times the getAllEventscalls took
+     * @var array
+     */
     protected $getAllEventsTimes = array();
     
+    /**
+     * Returns an array of all durations of the connect() calls
+     * @return array
+     */
     public function getConnectionTimes() {
         return $this->connectionTimes;
     }
     
+    /**
+     * Returns an array of all durations of the disconnect() calls
+     * @return array
+     */
     public function getDisconnectionTimes() {
         return $this->disconnectionTimes;
     }
     
+    /**
+     * Returns an array of all durations of the sendCommand() calls
+     * @return array
+     */
     public function getSendCommandTimes() {
         return $this->sendCommandTimes;
     }
     
+    /**
+     * Returns an array of all durations of the waitForEvent() calls
+     * @return array
+     */
     public function getWaitForEventTimes() {
         return $this->waitForEventTimes;
     }
     
+    /**
+     * Returns an array of all durations of the getAllEvents() calls
+     * @return array
+     */
     public function getAllEventsTimes() {
         return $this->getAllEventsTimes;
     }
     
+    /**
+     * Returns the duration of all connect() calls together
+     * @return float
+     */
     public function getTotalConnectionTime() {
         return $this->getTotal($this->getConnectionTimes());
     }
     
+    /**
+     * Returns the duration of all disconnect() calls together
+     * @return float
+     */
     public function getTotalDisconnectionTime() {
         return $this->getTotal($this->getDisconnectionTimes());
     }
     
+    /**
+     * Returns the duration of all sendCommand() calls together
+     * @return float
+     */
     public function getTotalSendCommandTime() {
         return $this->getTotal($this->getSendCommandTimes());
     }
     
+    /**
+     * Returns the duration of all waitForEvent() calls together
+     * @return float
+     */
     public function getTotalWaitForEventTime() {
         return $this->getTotal($this->getWaitForEventTimes());
     }
     
+    /**
+     * Returns the duration of all getAllEvents() calls together
+     * @return float
+     */
     public function getTotalGetAllEventsTime() {
         return $this->getTotal($this->getAllEventsTimes());
     }
     
+    /**
+     * Returns the duration of all query actions together
+     * @return float
+     */
     public function getTotalTime() {
         return $this->getTotalConnectionTime() + $this->getTotalDisconnectionTime() + $this->getTotalGetAllEventsTime() + $this->getTotalSendCommandTime() + $this->getTotalWaitForEventTime();
     }
     
+    /**
+     * Returns the total number of connect() calls
+     * @return int
+     */
     public function getNumberOfConnections() {
         return count($this->getConnectionTimes());
     }
     
+    /**
+     * Returns the total number of disconnect() calls
+     * @return int
+     */
     public function getNumberOfDisconnections() {
         return count($this->getDisconnectionTimes());
     }
     
+    /**
+     * Returns the total number of sendCommand() calls
+     * @return int 
+     */
     public function getNumberOfSentCommands() {
         return count($this->getSendCommandTimes());
     }
     
+    /**
+     * Returns the total number of waitForEvent() calls
+     * @return int
+     */
     public function getNumberOfWaitForEventCalls() {
         return count($this->getWaitForEventTimes());
     }
     
+    /**
+     * Returns the total number of getAllEvents() calls
+     * @return int
+     */
     public function getNumberOfGetAllEventsCalls() {
         return count($this->getAllEventsTimes());
     }
     
+    /**
+     * Returns the avearage time it took to connect
+     * @return float
+     */
     public function getAverageConnectTime() {
         return $this->getTotalConnectionTime() / $this->getNumberOfConnections();
     }
     
+    /**
+     * Returns the avearage time it took to disconnect
+     * @return float
+     */
     public function getAverageDisconnectTime() {
         return $this->getTotalDisconnectionTime() / $this->getNumberOfDisconnections();
     }
     
+    /**
+     * Returns the avearage time it took to send a command
+     * @return float
+     */
     public function getAverageSendCommandTime() {
         return $this->getTotalSendCommandTime() / $this->getNumberOfSentCommands();
     }
     
+    /**
+     * Returns the avearage time it took to wait for an event
+     * @return float
+     */
     public function getAverageWaitForEventTime() {
         return $this->getTotalWaitForEventTime() / $this->getNumberOfWaitForEventCalls();
     }
     
+    /**
+     * Returns the avearage time it took to get all events
+     * @return float
+     */
     public function getAverageGetAllEventsTime() {
         return $this->getTotalGetAllEventsTime() / $this->getNumberOfGetAllEventsCalls();
     }    
@@ -205,6 +308,11 @@ class ProfilingDecorator extends \devmx\Teamspeak3\Query\Transport\AbstractQuery
         $this->waitForEventTimes[] = $total;
     }
     
+    /**
+     * Calculates the total time of a given times array
+     * @param array $times
+     * @return float
+     */
     protected function getTotal(array $times) {
         $total = 0;
         foreach($times as $time) {
