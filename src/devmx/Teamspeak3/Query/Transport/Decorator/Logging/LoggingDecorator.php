@@ -148,10 +148,11 @@ class LoggingQueryDecorator extends Transport\AbstractQueryDecorator
 
         if ($ret->errorOccured())
         {
-            $this->logger->addLog(sprintf("Failed executing command: %s: %s (%s)", $ret->getCommand(), $ret->getErrorMessage(), $ret->getErrorID()), LoggingInterface::LOGGING_LEVEL_WARNING);
+            $this->logger->addLog(sprintf("Failed executing command: %s: %s (%s)", $ret->getCommand()->getName(), $ret->getErrorMessage(), $ret->getErrorID()), LoggingInterface::LOGGING_LEVEL_WARNING);
+        } else {
+            $this->logger->addLog(sprintf("Successfully executed command: %s", $ret->getCommand()->getName()), LoggingInterface::LOGGING_LEVEL_INFO);
         }
-        
-        $this->logger->addLog(sprintf("Successfully executed command: %s"), LoggingInterface::LOGGING_LEVEL_INFO);
+                
         return $ret;
     }
     
@@ -171,6 +172,7 @@ class LoggingQueryDecorator extends Transport\AbstractQueryDecorator
         catch (\RuntimeException $ex)
         {
             $this->logger->addLog($this->getExceptionDetails($ex), LoggingInterface::LOGGING_LEVEL_ERROR);
+            throw $ex;
         }
         
         $this->logger->addLog("Successfully waited for next event", LoggingInterface::LOGGING_LEVEL_INFO);
