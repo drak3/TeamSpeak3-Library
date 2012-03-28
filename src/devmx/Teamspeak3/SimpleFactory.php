@@ -29,26 +29,64 @@ class SimpleFactory
      */
     protected $debug = false;
     
+    /**
+     * The host all objects will be bound to
+     * @var string 
+     */
     protected $host;
     
+    /**
+     * The port all objects will be bound to
+     * @var type 
+     */
     protected $port;
     
+    /**
+     * Stores the ServerQuery instance
+     * @var \devmx\Teamspeak3\Query\ServerQuery 
+     */
     protected $query;
     
+    /**
+     * Stores the fully decorated QueryTransport
+     * @var \devmx\Teamspeak3\Query\Transport\QueryTransportInterface
+     */
     protected $decoratedTransport;
     
+    /**
+     * Stores all decorators the transport is decorated with
+     * @var array
+     */
     protected $decorators = array();
     
+    /**
+     * The underlying QueryTransport
+     * @var \devmx\Teamspeak3\Query\Transport\QueryTransportInterface
+     */
     protected $transport;
     
+    /**
+     * Stores the ResponseHandler implementation
+     * @var \devmx\Teamspeak3\Query\Transport\ResponseHandlerInterface
+     */
     protected $handler;
     
+    /**
+     * Stores the CommandTranslator implementation
+     * @var \devmx\Teamspek3\Query\Transport\CommandTranslatorInterface 
+     */
     protected $translator;
     
+    /**
+     * Stores the Tcp implementation
+     * @var \devmx\Teamspeak3\Query\Transmission\TCP
+     */
     protected $tcp; 
     
     /**
      * Constructor
+     * @param string  $host the host all created (query-)objects will use
+     * @param int     $port the port all created (query-)objects will use 
      * @param boolean $debug if classes should be created with debug mode enabled 
      *                       (currently this just adds the DebuggingDecorator for querytransports)
      */
@@ -59,9 +97,7 @@ class SimpleFactory
     }
     
     /**
-     * Creates a new ServerQuery instance for the given host/port combination
-     * @param string $host the host of the Teamspeak3-Server
-     * @param int $port the queryport 
+     * Creates a new ServerQuery instance
      * @return \devmx\Teamspeak3\Query\ServerQuery 
      */
     public function getQuery() {
@@ -72,10 +108,8 @@ class SimpleFactory
     }
     
     /**
-     * Creates a new QueryTransport instance for the given host/port combination
-     * @param string $host the host of the Teamspeak3-Server
-     * @param int $port the queryport
-     * @param boolean $decorate if the query should be decorated with some default decorators specified in decorateTransport
+     * Creates a new QueryTransport instance
+     * @param boolean $decorated if the decorated transport should be returned
      * @return  \devmx\Teamspeak3\Query\QueryTransport
      */
     public function getQueryTransport($decorated=true) {
@@ -94,8 +128,7 @@ class SimpleFactory
     }
     
     /**
-     * Decorates the given transport with the configured decorators (via getDefaultDecorators, getDebuggingDecorators)
-     * @param Query\QueryTransport $t
+     * Decorates the transport with the configured decorators (via getDefaultDecorators, getDebuggingDecorators)
      * @return \devmx\Teamspeak3\Query\Transport\TransportInterface
      */
     protected function  decorateTransport() {
@@ -138,6 +171,10 @@ class SimpleFactory
         return array('ProfilingDecorator', 'DebuggingDecorator');
     }
     
+    /**
+     * Returns the used DebuggingDecorator instance (or creates it when none is present
+     * @return \devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator
+     */
     public function getDebuggingDecorator() {
         if(!isset($this->decorators['DebuggingDecorator'])) {
             $this->decorators['DebuggingDecorator'] = new Query\Transport\Decorator\DebuggingDecorator($this->getQueryTransport(false));
@@ -145,6 +182,10 @@ class SimpleFactory
         return $this->decorators['DebuggingDecorator'];
     }
     
+    /**
+     * Returns the used ProfilingDecorator instance (or creates it when none is present
+     * @return \devmx\Teamspeak3\Query\Transport\Decorator\ProfilingDecorator
+     */
     public function getProfilingDecorator() {
         if(!isset($this->decorators['ProfilingDecorator'])) {
             $this->decorators['ProfilingDecorator'] = new Query\Transport\Decorator\ProfilingDecorator($this->getQueryTransport(false));
