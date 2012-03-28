@@ -17,6 +17,8 @@
  */
 namespace devmx\Teamspeak3\Query\Transport\Decorator;
 
+use devmx\Teamspeak3\Query\Command;
+
 /**
  *
  * @author drak3
