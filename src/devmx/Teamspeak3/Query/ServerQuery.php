@@ -113,13 +113,13 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     
     /**
      * The unique vServer id if on a virtualserver
-     * @var type 
+     * @var string
      */
     protected $uniqueVirtualServerID = '';
     
     /**
      * the queryuser's cid
-     * @var type 
+     * @var int
      */
     protected $clientID = 0;
     
@@ -347,7 +347,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     /**
      * Changes the nickname of the queryclient
      * @param string $newNickname 
-     * @param type $commandResponse
+     * @param mixed $commandResponse if this var is not equal to null, the fetched commandresponse will be stored in it
      * @return \devmx\Teamspeak3\Query\ServerQuery returns self
      */
     public function changeNickname($newNickname, &$commandResponse=null) {
@@ -473,6 +473,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     /**
      * Returns the vServer port, if on a vServer
      * note that if there was no refreshWhoAmI call and the server was not selected by port the information may be outdated
+     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return int
      */
     public function getVirtualServerPort($refreshWhenInconsistent=true) {
@@ -485,6 +486,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     /**
      * Returns the vServer id, if on a vServer
      * note that if there was no refreshWhoAmI call and the server was not selected by id the information may be outdated
+     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return int
      */
     public function getVirtualServerID($refreshWhenInconsistent=true) {
@@ -505,6 +507,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     
     /**
      * Returns the current channelid
+     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return int
      */
     public function getChannelID($refreshWhenInconsistent=true)
@@ -517,6 +520,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     
     /**
      * Returns the current vServer status
+     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return string
      */
     public function getVirtualServerStatus($refreshWhenInconsistent=true)
@@ -529,7 +533,8 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     
     /**
      * Returns the queryclients unique id
-     * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
+     * Note, that if when there was no refreshWhoAmI call, the data may be outdated
+     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present) 
      * @return string 
      */
     public function getUniqueID($refreshWhenInconsistent=true)
@@ -543,6 +548,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     /**
      * Returns the queryclients nickname
      * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
+     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return string 
      */
     public function getNickname($refreshWhenInconsistent=true)
@@ -555,7 +561,8 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     
     /**
      * Returns the queryclients database id
-     * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
+     * Note, that if when there was no refreshWhoAmI call, the data may be outdated
+     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return int
      */
     public function getDatabaseID($refreshWhenInconsistent=true)
@@ -568,7 +575,8 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     
     /**
      * Returns the unique vServer id
-     * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
+     * Note, that if when there was no refreshWhoAmI call, the data may be outdated
+     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return string
      */
     public function getUniqueVirtualServerID($refreshWhenInconsistent=true)
@@ -581,7 +589,8 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     
     /**
      * Returns the clients id
-     * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
+     * Note, that if when there was no refreshWhoAmI call, the data may be outdated
+     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return int 
      */
     public function getClientID($refreshWhenInconsistent=true) {

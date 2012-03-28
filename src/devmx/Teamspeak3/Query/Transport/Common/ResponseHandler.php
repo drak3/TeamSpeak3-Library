@@ -232,10 +232,20 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
         return \rtrim($ident) == static::WELCOME_IDENTIFY;
     }
     
+    /**
+     * Checks if the given query response contains a ban message
+     * @param string $raw
+     * @return boolean 
+     */
     public function containsBanMessage($raw) {
         return (boolean) $this->parsePossibleBanMessage($raw);
     }
     
+    /**
+     * Tries to extract the bantime out of a ban message
+     * @param string $raw
+     * @return int returns the bantime on success 0 else
+     */
     public function extractBanTime($raw) {
         if(!($parsed =$this->parsePossibleBanMessage($raw))) {
             return 0;
@@ -354,7 +364,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
     
     /**
      * Parses a message from the server which may contain a ban message
-     * @param type $raw
+     * @param string $raw
      * @return boolean 
      */
     protected function parsePossibleBanMessage($raw) {

@@ -48,6 +48,11 @@ class BannedException extends RuntimeException
         return $this->retryTime;
     }
     
+    /**
+     * Creates the message for this exception
+     * @param int $retryTime
+     * @return string 
+     */
     protected function createMessage($retryTime) {
         if($retryTime > 0) {
             return sprintf('You got banned, retry in %d seconds', $retryTime);
