@@ -16,10 +16,10 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace devmx\Teamspeak3\Query\Transport\Decorator\Caching;
-use devmx\Teamspeak3\Query\Transport\Decorator\Caching;
 use devmx\Teamspeak3\Query\Transport;
 use devmx\Teamspeak3\Query\Transport\TransportInterface;
 use devmx\Teamspeak3\Query\Command;
+use devmx\Teamspeak3\Query\CommandResponse;
 
 /**
  * This decorator caches command and their responses, to avoid the network overhead
@@ -32,6 +32,12 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
      * @var \devmx\Teamspeak3\Query\Decorator\Caching\CachingInterface
      */
     protected $cache;
+    
+    protected $delayableCommands = array();
+    
+    protected $cachableCommands = array();
+    
+    protected $delayedCommands = array();
     
     /**
      * Constructor
@@ -83,15 +89,21 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
         }
         else
         {
-            if (!$this->decorated->isConnected())
-            {
-                $this->decorated->connect();
+            if(!$this->decorated->isConnected() && $this->shouldBeDelayed($command))  {
+                $this->delay($command);
+                //If we are delaying the query connection, we return a successfull response
+                return new CommandResponse($command);
             }
-
-            $ret = $this->decorated->sendCommand($command);
-
-            $this->cache->cache($key, $ret);
-            return $ret;
+            if(!$this->decorated->isConnected()) {
+                $this->decorated->connect();
+                $this->applyDelayedCommands();
+            }
+            $response = $this->decorated->sendCommand($command);
+            if($this->shouldBeCached($command)) {
+                $this->cache->cache($key, $response);
+            }
+            
+            return $response;
         }
     }
     
@@ -121,6 +133,51 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
             $this->decorated->connect ();
         
         return $this->decorated->waitForEvent($timeout);
+    }
+    
+    protected function shouldBeDelayed(Command $cmd) {
+        if(in_array($cmd->getName(), $this->getDelayableCommands())) {
+            return true;
+        }
+        return false;
+    }
+    
+    protected function shouldBeCached(Command $cmd) {
+        if(in_array($cmd->getName(), $this->getCacheableCommands())) {
+            return true;
+        }
+        return false;
+    }
+    
+    protected function delay(Command $cmd) {
+        $this->delayedCommands[] = $cmd;
+    }
+    
+    protected function applyDelayedCommands() {
+        foreach($this->delayedCommands as $cmd) {
+            $response = $this->decorated->sendCommand($cmd);
+            $this->checkDelayedResponse($response);
+        }
+    }
+    
+    protected function checkDelayedResponse(CommandResponse $response) {
+        $response->toException();
+    }
+    
+    public function getDelayableCommands() {
+        return $this->delayableCommands;
+    }
+    
+    public function getCacheAbleCommands() {
+        return $this->cacheableCommand;
+    }
+    
+    public function setDelayableCommands(array $commands) {
+        $this->cachableCommands = $commands;
+    }
+    
+    public function setCacheableCommands($commands) {
+        $this->delayableCommands = $commands;
     }
 }
 
