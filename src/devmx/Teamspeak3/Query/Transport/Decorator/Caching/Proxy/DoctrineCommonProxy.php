@@ -34,7 +34,7 @@ class DoctrineCommonProxy implements CacheInterface
     }
     
     public function getCache($key) {
-        return $this->cache->fetch($ky);
+        return $this->cache->fetch($key);
     }
     
     public function isCached($key) {
