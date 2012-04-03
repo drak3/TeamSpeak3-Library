@@ -161,29 +161,40 @@ class CachingDecoratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers devmx\Teamspeak3\Query\Transport\Decorator\Caching\CachingDecorator::getAllEvents
-     * @todo Implement testGetAllEvents().
+     * @dataProvider eventGetterProvider
      */
-    public function testGetAllEvents()
+    public function testGetAllEvents_connect($method)
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+        $e = new \devmx\Teamspeak3\Query\Event('foobar', array());
+        $this->query->addEvent($e);
+        $this->assertEquals(array($e), $this->decorator->$method());
+        $this->assertTrue($this->query->isConnected());
     }
-
+    
     /**
-     * @covers devmx\Teamspeak3\Query\Transport\Decorator\Caching\CachingDecorator::waitForEvent
-     * @todo Implement testWaitForEvent().
+     * @dataProvider eventGetterProvider
      */
-    public function testWaitForEvent()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-
+    public function testGetAllEvents_applyBeforeGet($method) {
+        $this->decorator->setDelayableCommands(array('use'));
+        $this->decorator->setCacheableCommands(array());
+        $this->query->expectConnection(false);
+        
+        $useCommand = new Command('use');
+        $useResponse = new CommandResponse($useCommand);
+        $event = new \devmx\Teamspeak3\Query\Event('foo', array());
+        
+        $this->decorator->sendCommand($useCommand);
+        
+        $this->query->expectConnection();
+        $this->query->addResponse($useResponse);
+        $this->query->addEvent($event);
+        
+        $this->assertEquals(array($event), $this->decorator->$method());
+        $this->query->assertAllResponsesReceived();
+    }
+    
+    public function eventGetterProvider() {
+        return array( array('getAllEvents'), array('waitForEvent') );
     }
 
     /**

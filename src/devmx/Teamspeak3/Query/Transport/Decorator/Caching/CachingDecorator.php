@@ -99,12 +99,8 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
                 //If we are delaying the query connection, we return a successfull response
                 return new CommandResponse($command);
             }
-            if(!$this->decorated->isConnected()) {
-                $this->decorated->connect();
-            }
-            if(!$this->appliedDelayedCommands) {
-                $this->applyDelayedCommands();
-            }
+            
+            $this->setUpConnection();
             $response = $this->decorated->sendCommand($command);
             $this->sentCommand = true;
             if($this->shouldBeCached($command)) {
@@ -122,8 +118,7 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
      */
     public function getAllEvents()
     {
-        if(!$this->decorated->isConnected())
-            $this->decorated->connect ();
+        $this->setUpConnection();
         
         return $this->decorated->getAllEvents();
     }
@@ -137,8 +132,7 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
      */
     public function waitForEvent($timeout=-1)
     {
-        if(!$this->decorated->isConnected())
-            $this->decorated->connect ();
+        $this->setUpConnection();
         
         return $this->decorated->waitForEvent($timeout);
     }
@@ -187,6 +181,15 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
     
     public function setCacheableCommands($commands) {
         $this->cacheableCommands = $commands;
+    }
+    
+    protected function setUpConnection() {
+        if(!$this->decorated->isConnected()) {
+                $this->decorated->connect();
+        }
+        if(!$this->appliedDelayedCommands) {
+                $this->applyDelayedCommands();
+        }
     }
 }
 

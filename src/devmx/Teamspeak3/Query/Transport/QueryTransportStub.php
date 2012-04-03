@@ -127,7 +127,7 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
      */
     public function getAllEvents() {
         if(!$this->isConnected()) {
-            throw new Exception\LogicException('Cannot send command, not connected');
+            throw new Exception\LogicException('Cannot get events, not connected');
         }
         if(!isset($this->events[0])) {
             return array();
