@@ -25,6 +25,7 @@ use devmx\Teamspeak3\Query\CommandResponse;
  * This decorator caches command and their responses, to avoid the network overhead
  * Commands given with setDelayedCommands are delayed until the connection has to be opened 
  * (either by sending a command which should not be cached or by calling waitForEvent() of getAllEvents())
+ * Currently more complex caching strategies like multiple caches for multiple vServers are not implemented.
  * @author Maximilian Narr 
  */
 class CachingDecorator extends Transport\AbstractQueryDecorator
@@ -35,13 +36,23 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
      */
     protected $cache;
     
+    /**
+     * The names of the  commands which should be delayed
+     * @var array of string
+     */
     protected $delayableCommands = array();
     
+    /**
+     * The names of the commands which should be cached
+     * @var array of string 
+     */
     protected $cacheableCommands = array();
     
+    /**
+     * The command objects which were delayed
+     * @var array of \devmx\Teamspeak3\Query\Command
+     */
     protected $delayedCommands = array();
-    
-    protected $appliedDelayedCommands = false;
     
     
     /**
@@ -57,6 +68,7 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
     
     /**
      * Connects to the Server
+     * As we are delaying the connect as long as possible this method does actually nothing
      */
     public function connect()
     {
@@ -81,6 +93,7 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
     /**
      * Sends a command to the query and returns the result plus all occured events
      * If the command is cached, no query to the server will be made and the cached response is returned
+     * If the command is delayed a succesfull response without items is returned
      * @param Command $command
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
@@ -99,7 +112,7 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
                 //If we are delaying the query connection, we return a successfull response
                 return new CommandResponse($command);
             }
-            
+            //we actually have to send the command
             $this->setUpConnection();
             $response = $this->decorated->sendCommand($command);
             $this->sentCommand = true;
@@ -114,6 +127,7 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
     /**
      * Returns all events occured since last time checking the query
      * This method is non-blocking, so it returns even if no event is on the query
+     * All delayed commands are sent before the events are get
      * @return array Array of all events lying on the query  
      */
     public function getAllEvents()
@@ -126,6 +140,7 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
     /**
      * Waits for a event on the query
      * this mehtod is blocking
+     * All delayed commands are sent before the events are get
      * @param float the timeout in second how long to wait for an event. If there is no event after the given timeout, an empty array is returned
      *   -1 means that the method may wait forever
      * @return array 
@@ -137,6 +152,11 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
         return $this->decorated->waitForEvent($timeout);
     }
     
+    /**
+     * Checks if the given Command should be delayed by
+     * @param Command $cmd
+     * @return boolean 
+     */
     protected function shouldBeDelayed(Command $cmd) {
         if(in_array($cmd->getName(), $this->getDelayableCommands())) {
             return true;
@@ -144,6 +164,11 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
         return false;
     }
     
+    /**
+     * Checks if the given Command should be cached
+     * @param Command $cmd
+     * @return boolean 
+     */
     protected function shouldBeCached(Command $cmd) {
         if(in_array($cmd->getName(), $this->getCacheableCommands())) {
             return true;
@@ -151,45 +176,74 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
         return false;
     }
     
+    /**
+     * Stores a command for later sending
+     * @param Command $cmd 
+     */
     protected function delay(Command $cmd) {
         $this->delayedCommands[] = $cmd;
     }
     
-    protected function applyDelayedCommands() {
+    /**
+     * Sends all currently applied commands and clears the internal delayedCommands buffer 
+     */
+    protected function sendDelayedCommands() {
         foreach($this->delayedCommands as $cmd) {
             $response = $this->decorated->sendCommand($cmd);
             $this->checkDelayedResponse($response);
         }
-        $this->appliedDelayedCommands = true;
+        $this->delayedCommands = array();
     }
     
+    /**
+     * Checks if the response was successful
+     * @throws \devmx\Teamspeak3\Query\Exception\CommandFailedException
+     * @param CommandResponse $response 
+     */
     protected function checkDelayedResponse(CommandResponse $response) {
         $response->toException();
     }
     
+    /**
+     * Returns an array with the names of all commands which should be delayed
+     * @return array of string
+     */
     public function getDelayableCommands() {
         return $this->delayableCommands;
     }
     
+    /**
+     * Returns an array with the names of all commands which should be cached
+     * @return array of string
+     */
     public function getCacheAbleCommands() {
         return $this->cacheableCommands;
     }
     
-    public function setDelayableCommands(array $commands) {
-        $this->delayableCommands = $commands;
+    /**
+     * Sets which commands should be delayed
+     * @param array $commands the names of the delayable commands
+     */
+    public function setDelayableCommands(array $commandNames) {
+        $this->delayableCommands = $commandNames;
     }
     
-    public function setCacheableCommands($commands) {
-        $this->cacheableCommands = $commands;
+    /**
+     * Sets which commands should be cached
+     * @param array  $commands the names of the cacheable commands
+     */
+    public function setCacheableCommands(array $commandNames) {
+        $this->cacheableCommands = $commandNames;
     }
     
+    /**
+     * Sets up the connection (connect+send delayed commands) 
+     */
     protected function setUpConnection() {
         if(!$this->decorated->isConnected()) {
                 $this->decorated->connect();
         }
-        if(!$this->appliedDelayedCommands) {
-                $this->applyDelayedCommands();
-        }
+        $this->sendDelayedCommands();
     }
 }
 
