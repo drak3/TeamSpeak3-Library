@@ -47,18 +47,5 @@ interface CacheInterface
      * @return bool true if cached else false 
      */
     public function isCached($key);
-    
-    /**
-     * Deletes a key from the cache
-     * @param string $key key to delete from cache 
-     * @return bool true if success else false
-     */
-    public function flush($key);
-    
-    /**
-     * Flushes the whole cache 
-     * @return bool true if success else false
-     */
-    public function flushCache();
 }
 ?>
