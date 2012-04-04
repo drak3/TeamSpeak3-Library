@@ -23,16 +23,16 @@ namespace devmx\Teamspeak3\Query\Transport\Decorator\Caching;
  * Provides a simple caching interface
  * @author Maximilian Narr 
  */
-interface CachingInterface
+interface CacheInterface
 {
     /**
      * Caches a data which can be accessed with key in the cache. 
      * @param string $key identifier of the data
      * @param mixed $data data to cache
-     * @param int $ttl Time to live (cachetime) 
+     * @param int $ttl Time to live (cachetime) if null is supplied, a default value should be used
      * @return boolean true if success else false
      */
-    public function cache($key, $data, $ttl);
+    public function cache($key, $data, $ttl=null);
     
     /**
      * Returns the cached object
@@ -47,18 +47,5 @@ interface CachingInterface
      * @return bool true if cached else false 
      */
     public function isCached($key);
-    
-    /**
-     * Deletes a key from the cache
-     * @param string $key key to delete from cache 
-     * @return bool true if success else false
-     */
-    public function flush($key);
-    
-    /**
-     * Flushes the whole cache 
-     * @return bool true if success else false
-     */
-    public function flushCache();
 }
 ?>

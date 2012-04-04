@@ -47,6 +47,12 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
     protected $responses = array();
     
     /**
+     * If we are expecting to be connected
+     * @var boolean
+     */
+    protected $expectConnection = true;
+    
+    /**
      * Adds a response for a specific command, so it could be received by sendCommand
      * @param CommandResponse $r the response to be received
      * @param int $times how often the response should be available
@@ -89,9 +95,20 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
     }
     
     /**
+     * If you call this method with false a exception is thrown on a connect call
+     * @param boolean $expect 
+     */
+    public function expectConnection($expect=true) {
+        $this->expectConnection = $expect;
+    }
+    
+    /**
      * Connects the query
      */
     public function connect() {
+        if(!$this->expectConnection) {
+            throw new Exception\LogicException("No connect expected");
+        }
         $this->isConnected = true;
     }
     
@@ -110,7 +127,7 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
      */
     public function getAllEvents() {
         if(!$this->isConnected()) {
-            throw new Exception\LogicException('Cannot send command, not connected');
+            throw new Exception\LogicException('Cannot get events, not connected');
         }
         if(!isset($this->events[0])) {
             return array();
