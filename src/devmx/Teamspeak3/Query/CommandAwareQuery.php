@@ -2051,4 +2051,154 @@ class CommandAwareQuery extends ServerQuery
     {
         return is_numeric($permId) ? "permid" : "permsid";
     }
+    
+    /**
+     * Returns the names of all commands that only change the state of the query connection 
+     * @return array of string  
+     */
+    public function getQueryStateChangingCommands() {
+        return array(
+            'quit',
+            'login',
+            'logout',
+            'use',
+            'servernotifyregister',
+            'servernotifyunregister',
+        );
+    }
+    
+    /**
+     * Returns the names of all commands that can change the TeamSpeak3-Server's state
+     * @return array of string 
+     */
+    public function getServerStateChangingCommands() {
+        return array(
+            'serverdelete',
+            'servercreate',
+            'serverstart',
+            'serverstop',
+            'serverprocessstop',
+            'serveredit',
+            'servergroupadd',
+            'servergroupdel',
+            'servergroupcopy',
+            'servergrouprename',
+            'servergroupaddperm',
+            'servergroupdelperm',
+            'servergroupaddclient',
+            'servergroupdelclient',
+            'servergroupautoaddperm',
+            'servergroupautodelperm',
+            'serversnapshotdeploy',
+            'sendtextmessage',
+            'logadd',
+            'gm',
+            'channelmove',
+            'channelcreate',
+            'channeldelete',
+            'channeledit',
+            'channelgroupadd',
+            'channelgroupdel',
+            'channelgroupcopy',
+            'channelgroupcopy',
+            'channelgrouprename',
+            'channelgroupaddperm',
+            'channelgroupdelperm',
+            'setclientchannelgroup',
+            'channeladdperm',
+            'channeldelperm',
+            'clientedit',
+            'clientdbedit',
+            'clientdbdelete',
+            'clientserverquerylogin',
+            'clientupdate',
+            'clientmove',
+            'clientkick',
+            'clientpoke',
+            'clientaddperm',
+            'clientdelperm',
+            'channelclientaddperm',
+            'channelclientdelperm',
+            'permreset',
+            'privilegekeyadd',
+            'privilegekeydelete',
+            'privilegekeyuse',
+            'messageadd',
+            'messagedel',
+            'messageupdateflag',
+            'complainadd',
+            'complaindelall',
+            'complaindel',
+            'banclient',
+            'banadd',
+            'bandel',
+            'bandelall',
+            'ftinitupload',
+            'ftinitdownload',
+            'ftstop',
+            'ftdeletefile',
+            'ftcreatedir',
+            'ftrenamefile',     
+        );
+    }
+    
+    /**
+     * Returns the names of all commands that do not change anything on the Server or on the Connection
+     * @return array of string 
+     */
+    public function getNonChangingCommands() {
+        return array(
+          'help',
+          'version',
+          'hostinfo',
+          'instanceinfo',
+          'instanceedit',
+          'bindinglist',
+          'serverlist',
+          'serveridgetbyport',
+          'serverinfo',
+          'serverrequestconnectioninfo',
+          'servergrouplist',
+          'servergrouppermlist',
+          'servergroupclientlist',
+          'servergroupsbyclientid',
+          'serversnapshotcreate',
+          'logview',
+          'channellist',
+          'channelinfo',
+          'channelfind',
+          'channelgrouplist',
+          'channelgrouppermlist',
+          'channelgroupclientlist',
+          'channelpermlist',
+          'clientlist',
+          'clientinfo',
+          'clientfind',
+          'clientdblist',
+          'clientdbinfo',
+          'clientdbfind',
+          'clientgetids',
+          'clientgetdbidfromuid',
+          'clientgetnamefromuid',
+          'clientgetnamefromdbid',
+          'clientpermlist',
+          'channelclientpermlist',
+          'permissionslist',
+          'permidgetbyname',
+          'permoverview',
+          'permget',
+          'permfind',
+          'privilegekeylist',
+          'messagelist',
+          'messageget',
+          'complainlist',
+          'banlist',
+          'ftlist',
+          'ftgetfilelist',
+          'ftgetfileinfo',
+          'customsearch',
+          'custominfo',
+          'whoami',          
+        );
+    }
 }
