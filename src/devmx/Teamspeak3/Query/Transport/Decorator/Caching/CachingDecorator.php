@@ -68,7 +68,7 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
         
         //set some reasonable defaults
         $this->cacheableCommands = CommandAwareQuery::getNonChangingCommands();
-        $this->delayableCommands = CommandAwareQuery::getServerStateChangingCommands();
+        $this->delayableCommands = CommandAwareQuery::getQueryStateChangingCommands();
     }
     
     /**

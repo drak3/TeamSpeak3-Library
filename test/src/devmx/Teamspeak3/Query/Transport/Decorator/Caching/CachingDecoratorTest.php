@@ -3,6 +3,7 @@
 namespace devmx\Teamspeak3\Query\Transport\Decorator\Caching;
 use devmx\Teamspeak3\Query\Command;
 use devmx\Teamspeak3\Query\CommandResponse;
+use devmx\Teamspeak3\Query\CommandAwareQuery;
 
 require_once dirname( __FILE__ ) . '/../../../../../../../../src/devmx/Teamspeak3/Query/Transport/Decorator/Caching/CachingDecorator.php';
 
@@ -215,6 +216,11 @@ class CachingDecoratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->decorator->setCacheableCommands(array('foo', 'bar'));
         $this->assertEquals(array('foo', 'bar'), $this->decorator->getCacheableCommands());
+    }
+    
+    public function testDefaults() {
+        $this->assertEquals(CommandAwareQuery::getNonChangingCommands(), $this->decorator->getCacheAbleCommands());
+        $this->assertEquals(CommandAwareQuery::getQueryStateChangingCommands(), $this->decorator->getDelayableCommands());
     }
 
 }
