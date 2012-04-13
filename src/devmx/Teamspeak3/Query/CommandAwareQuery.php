@@ -2056,7 +2056,7 @@ class CommandAwareQuery extends ServerQuery
      * Returns the names of all commands that only change the state of the query connection 
      * @return array of string  
      */
-    public function getQueryStateChangingCommands() {
+    public static function getQueryStateChangingCommands() {
         return array(
             'quit',
             'login',
@@ -2071,7 +2071,7 @@ class CommandAwareQuery extends ServerQuery
      * Returns the names of all commands that can change the TeamSpeak3-Server's state
      * @return array of string 
      */
-    public function getServerStateChangingCommands() {
+    public static function getServerStateChangingCommands() {
         return array(
             'serverdelete',
             'servercreate',
@@ -2146,7 +2146,7 @@ class CommandAwareQuery extends ServerQuery
      * Returns the names of all commands that do not change anything on the Server or on the Connection
      * @return array of string 
      */
-    public function getNonChangingCommands() {
+    public static function getNonChangingCommands() {
         return array(
           'help',
           'version',
