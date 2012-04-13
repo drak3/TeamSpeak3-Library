@@ -20,6 +20,7 @@ use devmx\Teamspeak3\Query\Transport;
 use devmx\Teamspeak3\Query\Transport\TransportInterface;
 use devmx\Teamspeak3\Query\Command;
 use devmx\Teamspeak3\Query\CommandResponse;
+use devmx\Teamspeak3\Query\CommandAwareQuery;
 
 /**
  * This decorator caches command and their responses, to avoid the network overhead
@@ -64,6 +65,10 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
     {
         parent::__construct($toDecorate);
         $this->cache = $cache;
+        
+        //set some reasonable defaults
+        $this->cacheableCommands = CommandAwareQuery::getNonChangingCommands();
+        $this->delayableCommands = CommandAwareQuery::getServerStateChangingCommands();
     }
     
     /**
