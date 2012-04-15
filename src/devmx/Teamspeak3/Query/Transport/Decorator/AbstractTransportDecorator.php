@@ -15,15 +15,16 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace devmx\Teamspeak3\Query\Transport;
+namespace devmx\Teamspeak3\Query\Transport\Decorator;
 use devmx\Teamspeak3\Query\Command;
+use devmx\Teamspeak3\Query\Transport\TransportInterface;
 
 /**
  * Base class for an QueryTransport decorator
  * The concrete class just have to overwrite the methods it wants
  * @author drak3
  */
-abstract class AbstractQueryDecorator implements TransportInterface
+abstract class AbstractTransportDecorator implements \devmx\Teamspeak3\Query\Transport\TransportInterface
 {
 
     /**

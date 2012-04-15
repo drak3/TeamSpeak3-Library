@@ -20,6 +20,7 @@ use devmx\Teamspeak3\Query\Transport\Decorator\Logging;
 use devmx\Teamspeak3\Query\Transport;
 use devmx\Teamspeak3\Query\Transport\TransportInterface;
 use devmx\Teamspeak3\Query\Command;
+use devmx\Teamspeak3\Query\Transport\Decorator\AbstractTransportDecorator;
 
 /**
  * This QueryDecorator Logs all interesting events happenening on the query
@@ -29,7 +30,7 @@ use devmx\Teamspeak3\Query\Command;
  * LOGGING_LEVEL_INFO: All successful operations like connecting, sending command,...
  * @author Maximilian Narr 
  */
-class LoggingQueryDecorator extends Transport\AbstractQueryDecorator
+class LoggingQueryDecorator extends AbstractTransportDecorator
 {
     
     /**

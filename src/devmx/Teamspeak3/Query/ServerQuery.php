@@ -23,7 +23,7 @@ use devmx\Teamspeak3\Query\Transport\TransportInterface;
  * it also adds lots of convience methods, like support for serializing with reconnect when unserialize and automaited state recovery
  * @author drak3
  */
-class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterface
+class ServerQuery implements \devmx\Teamspeak3\Query\QueryInterface
 {
     
     /**

@@ -26,8 +26,9 @@ use devmx\Teamspeak3\Query\Response;
  *
  * @author Martin Parsiegla <martin.parsiegla@speanet.info>
  */
-class CommandAwareQuery extends ServerQuery
+class CommandAwareQuery extends Decorator\AbstractQueryDecorator //we extend the AbstractQueryDecorator just for convience, not really becaus its a decorator
 {
+    
     protected $exceptionOnError = false;
 
     /**
@@ -44,7 +45,7 @@ class CommandAwareQuery extends ServerQuery
      */
     public function sendCommand(Command $cmd)
     {
-        return $this->check(parent::sendCommand($cmd));
+        return $this->check($this->decorated->sendCommand($cmd));
     }
 
     /**

@@ -16,7 +16,6 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace devmx\Teamspeak3\Query\Transport\Decorator;
-use devmx\Teamspeak3\Query\Transport\AbstractQueryDecorator;
 use devmx\Teamspeak3\Query\Command;
 
 /**
@@ -24,7 +23,7 @@ use devmx\Teamspeak3\Query\Command;
  * or the sent commands or rather the received responses
  * @author drak3
  */
-class DebuggingDecorator extends AbstractQueryDecorator
+class DebuggingDecorator extends AbstractTransportDecorator
 {
     /**
      * The number of opened connections

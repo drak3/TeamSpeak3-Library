@@ -16,7 +16,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     protected $stub;
     protected $transport;
     /**
-     * @var CommandAwareQuery
+     * @var ServerQuery
      */
     protected $query;
 
@@ -28,9 +28,10 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     {
         $this->stub = new Transport\QueryTransportStub;
         $this->transport = new Transport\Decorator\DebuggingDecorator($this->stub);
+        $this->query = new ServerQuery($this->transport);
 
         $this->commandQuery = $this->getMockBuilder("devmx\Teamspeak3\Query\CommandAwareQuery")
-                ->setConstructorArgs(array($this->transport))
+                ->setConstructorArgs(array($this->query))
                 ->setMethods(array("query"))->getMock();
 
         $this->commandQuery->connect();

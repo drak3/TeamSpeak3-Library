@@ -23,7 +23,7 @@ use devmx\Teamspeak3\Query\Command;
  * This could be useful if you get banned and there is no way to whitelist your ip
  * @author drak3
  */
-class TickingDecorator extends \devmx\Teamspeak3\Query\Transport\AbstractQueryDecorator
+class TickingDecorator extends AbstractTransportDecorator
 {
     /**
      * The time to wait between two commands in seconds

@@ -21,6 +21,7 @@ use devmx\Teamspeak3\Query\Transport\TransportInterface;
 use devmx\Teamspeak3\Query\Command;
 use devmx\Teamspeak3\Query\CommandResponse;
 use devmx\Teamspeak3\Query\CommandAwareQuery;
+use devmx\Teamspeak3\Query\Transport\Decorator\AbstractTransportDecorator;
 
 /**
  * This decorator caches command and their responses, to avoid the network overhead
@@ -29,7 +30,7 @@ use devmx\Teamspeak3\Query\CommandAwareQuery;
  * Currently more complex caching strategies like multiple caches for multiple vServers are not implemented.
  * @author Maximilian Narr 
  */
-class CachingDecorator extends Transport\AbstractQueryDecorator
+class CachingDecorator extends AbstractTransportDecorator
 {
     /**
      * The caching implementation
