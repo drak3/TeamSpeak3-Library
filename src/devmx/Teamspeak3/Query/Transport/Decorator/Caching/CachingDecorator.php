@@ -56,13 +56,14 @@ class CachingDecorator extends AbstractTransportDecorator
      */
     protected $delayedCommands = array();
     
+    protected $prefix = '';
     
     /**
      * Constructor
      * @param TransportInterface $toDecorate
      * @param CacheInterface $cache 
      */
-    public function __construct(TransportInterface $toDecorate, CacheInterface $cache)
+    public function __construct(TransportInterface $toDecorate, CacheInterface $cache, $prefix='')
     {
         parent::__construct($toDecorate);
         $this->cache = $cache;
@@ -70,8 +71,9 @@ class CachingDecorator extends AbstractTransportDecorator
         //set some reasonable defaults
         $this->cacheableCommands = CommandAwareQuery::getNonChangingCommands();
         $this->delayableCommands = CommandAwareQuery::getQueryStateChangingCommands();
+        $this->setPrefix($prefix);
     }
-    
+        
     /**
      * Connects to the Server
      * As we are delaying the connect as long as possible this method does actually nothing
@@ -105,8 +107,7 @@ class CachingDecorator extends AbstractTransportDecorator
      */
     public function sendCommand(Command $command)
     {
-        $key = md5(serialize($command));
-
+        $key = $this->getPrefix().md5(serialize($command));
         if ($this->cache->isCached($key))
         {
             return $this->cache->getCache($key);
@@ -156,6 +157,10 @@ class CachingDecorator extends AbstractTransportDecorator
         $this->setUpConnection();
         
         return $this->decorated->waitForEvent($timeout);
+    }
+    
+    public function getPrefix() {
+        return $this->prefix;
     }
     
     /**
@@ -251,6 +256,11 @@ class CachingDecorator extends AbstractTransportDecorator
         }
         $this->sendDelayedCommands();
     }
+    
+    protected function setPrefix($prefix) {
+        $this->prefix = $prefix;
+    }
+    
 }
 
 ?>

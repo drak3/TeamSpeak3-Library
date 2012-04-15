@@ -222,6 +222,36 @@ class CachingDecoratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(CommandAwareQuery::getNonChangingCommands(), $this->decorator->getCacheAbleCommands());
         $this->assertEquals(CommandAwareQuery::getQueryStateChangingCommands(), $this->decorator->getDelayableCommands());
     }
+    
+    public function testPrefix() {
+        $this->decorator = new CachingDecorator($this->query, $this->cache, 'foo');
+        $this->decorator->setDelayableCommands(array());
+        $this->decorator->setCacheableCommands(array('clientlist'));
+        
+        $cl_cmd = new Command('clientlist');
+        $cl_r = new CommandResponse($cl_cmd);
+        
+        $this->query->addResponse($cl_r);
+        
+        $this->cache->expects($this->exactly(2))
+                    ->method('isCached')
+                    ->with('foo'.md5(serialize($cl_cmd)))
+                    ->will($this->onConsecutiveCalls(false, true));
+        
+        $this->cache->expects($this->once())
+                    ->method('cache')
+                    ->with($this->equalTo('foo'.md5(serialize($cl_cmd))), $this->equalTo($cl_r));
+        
+        $this->cache->expects($this->once())
+                    ->method('getCache')
+                    ->with($this->equalto('foo'.md5(serialize($cl_cmd))))
+                    ->will($this->returnValue($cl_r));
+        
+        $this->assertEquals($cl_r, $this->decorator->sendCommand($cl_cmd));
+        $this->assertEquals($cl_r, $this->decorator->sendCommand($cl_cmd));
+        
+        $this->query->assertAllResponsesReceived();
+    }
 
 }
 
