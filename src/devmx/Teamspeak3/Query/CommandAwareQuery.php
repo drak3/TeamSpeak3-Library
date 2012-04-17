@@ -2143,11 +2143,7 @@ class CommandAwareQuery extends Decorator\AbstractQueryDecorator //we extend the
         );
     }
     
-    /**
-     * Returns the names of all commands that do not change anything on the Server or on the Connection
-     * @return array of string 
-     */
-    public static function getNonChangingCommands() {
+    public static function getGlobalListCommands() {
         return array(
           'help',
           'version',
@@ -2164,6 +2160,14 @@ class CommandAwareQuery extends Decorator\AbstractQueryDecorator //we extend the
           'servergroupclientlist',
           'servergroupsbyclientid',
           'serversnapshotcreate',
+          'permissionslist',
+          'permidgetbyname',
+          'whoami',
+        );
+    }
+    
+    public static function getVirtualServerSpecificListCommands() {
+        return array(
           'logview',
           'channellist',
           'channelinfo',
@@ -2184,8 +2188,6 @@ class CommandAwareQuery extends Decorator\AbstractQueryDecorator //we extend the
           'clientgetnamefromdbid',
           'clientpermlist',
           'channelclientpermlist',
-          'permissionslist',
-          'permidgetbyname',
           'permoverview',
           'permget',
           'permfind',
@@ -2198,8 +2200,15 @@ class CommandAwareQuery extends Decorator\AbstractQueryDecorator //we extend the
           'ftgetfilelist',
           'ftgetfileinfo',
           'customsearch',
-          'custominfo',
-          'whoami',          
+          'custominfo',          
         );
+    }
+    
+    /**
+     * Returns the names of all commands that do not change anything on the Server or on the Connection
+     * @return array of string 
+     */
+    public static function getNonChangingCommands() {
+        return array_merge(static::getGlobalListCommands(), static::getVirtualServerSpecificListCommands());
     }
 }
