@@ -24,10 +24,10 @@ use devmx\Teamspeak3\Query\CommandAwareQuery;
 
 /**
  * This decorator caches command and their responses, to avoid the network overhead
- * Commands given with setDelayedCommands are delayed until the connection has to be opened 
- * (either by sending a command which should not be cached or by calling waitForEvent() of getAllEvents())
- * Currently more complex caching strategies like multiple caches for multiple vServers are not implemented.
+ * There is one cache per server.
+ * Note that on unexpected movements (ban/kick, NOT on uses/deselects), the cached data might be invalid
  * @author Maximilian Narr 
+ * @author drak3
  */
 class CachingDecorator extends Transport\AbstractQueryDecorator
 {
