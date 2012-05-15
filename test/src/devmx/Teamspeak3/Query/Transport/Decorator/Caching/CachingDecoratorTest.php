@@ -82,6 +82,77 @@ class CachingDecoratorTest extends \PHPUnit_Framework_TestCase
     public function testDefaults() {
         $this->assertEquals(CommandAwareQuery::getNonChangingCommands(), $this->decorator->getCacheAbleCommands());
     }
+    
+    /**
+     * @dataProvider nameProvider
+     */
+    public function testServerAwareCaching_Port($useCmd1, $useCmd2, $name1, $name2, $clientlistCommand){
+        $this->decorator->setCacheableCommands(array('clientlist'));
+        $useResponse1 = new CommandResponse($useCmd1);
+        $useResponse2 = new CommandResponse($useCmd2);
+        $clientlistResponse1 = new CommandResponse($clientlistCommand, array('asdf'=>1));
+        $clientlistResponse2 = new CommandResponse($clientlistCommand, array('asdf'=>2));
+        
+        $this->query->addResponses(array($useResponse1,  $clientlistResponse1));
+        $that = $this;
+        
+        //rewrite this somehow nicer...
+        $this->cache->expects($this->exactly(3))
+                    ->method('isCached')
+                    ->will($this->returnCallback(function($name) use ($name1, $name2, $that) {
+                        static $call = 0;
+                        $call++;
+                        if($name === $name1 && $call === 1) {
+                            return false;
+                        }
+                        elseif($name === $name2 && $call === 2 ) {
+                            return false;
+                        }
+                        elseif($name === $name2 && $call === 3) {
+                            return true;
+                        }
+                        else {
+                            $that->fail(sprintf('unexpected call with %s at %d', $name, $call));
+                        }
+                    }));
+        $this->cache->expects($this->exactly(2))
+                    ->method('cache');
+        $this->cache->expects($this->once())
+                    ->method('getCache')
+                    ->with($this->equalTo($name2))
+                    ->will($this->returnValue($clientlistResponse2));
+        $this->decorator->connect();
+        
+        $this->decorator->sendCommand($useCmd1);
+        $this->assertEquals($clientlistResponse1, $this->decorator->sendCommand($clientlistCommand));
+        $this->query->assertAllResponsesReceived();
+        
+        $this->decorator->addResponses(array($useResponse2, $clientlistResponse2));
+        $this->decorator->sendCommand($useCmd2);
+        $this->assertEquals($clientlistResponse2, $this->sendCommand($clientlistCommand));
+        $this->query->assertAllResponsesReceived();
+        $this->assertEquals($clientlistResponse2, $this->sendCommand($clientlistCommand));
+    }
+    
+    public function nameProvider() {
+        $clientlistCommand = new Command('clientlist');
+        return array(
+            array(
+                new Command('use', array('port'=>9987)),
+                new Command('use', array('port'=>9988)),
+                'devmx.ts3.server.port.9987'.md5(serialize($clientlistCommand)),
+                'devmx.ts3.server.port.9988'.md5(serialize($clientlistCommand)),
+                new Command('clientlist'),
+            ),
+            array(
+                new Command('use', array('id'=>1)),
+                new Command('use', array('id'=>2)),
+                'devmx.ts3.server.id.1'.md5(serialize($clientlistCommand)),
+                'devmx.ts3.server.id.2'.md5(serialize($clientlistCommand)),
+                new Command('clientlist'),
+            )
+        );
+    }
 
 }
 
