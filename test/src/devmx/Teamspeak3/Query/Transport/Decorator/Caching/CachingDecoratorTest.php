@@ -88,6 +88,7 @@ class CachingDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testServerAwareCaching_Port($useCmd1, $useCmd2, $name1, $name2, $clientlistCommand){
         $this->decorator->setCacheableCommands(array('clientlist'));
+        
         $useResponse1 = new CommandResponse($useCmd1);
         $useResponse2 = new CommandResponse($useCmd2);
         $clientlistResponse1 = new CommandResponse($clientlistCommand, array('asdf'=>1));
@@ -100,6 +101,7 @@ class CachingDecoratorTest extends \PHPUnit_Framework_TestCase
         $this->cache->expects($this->exactly(3))
                     ->method('isCached')
                     ->will($this->returnCallback(function($name) use ($name1, $name2, $that) {
+                        //basicaly we expect prefix1 at 1 and prefix2 at 2 and 3
                         static $call = 0;
                         $call++;
                         if($name === $name1 && $call === 1) {
@@ -112,6 +114,7 @@ class CachingDecoratorTest extends \PHPUnit_Framework_TestCase
                             return true;
                         }
                         else {
+                            echo $name1, $name2;
                             $that->fail(sprintf('unexpected call with %s at %d', $name, $call));
                         }
                     }));
@@ -127,11 +130,11 @@ class CachingDecoratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($clientlistResponse1, $this->decorator->sendCommand($clientlistCommand));
         $this->query->assertAllResponsesReceived();
         
-        $this->decorator->addResponses(array($useResponse2, $clientlistResponse2));
+        $this->query->addResponses(array($useResponse2, $clientlistResponse2));
         $this->decorator->sendCommand($useCmd2);
-        $this->assertEquals($clientlistResponse2, $this->sendCommand($clientlistCommand));
+        $this->assertEquals($clientlistResponse2, $this->decorator->sendCommand($clientlistCommand));
         $this->query->assertAllResponsesReceived();
-        $this->assertEquals($clientlistResponse2, $this->sendCommand($clientlistCommand));
+        $this->assertEquals($clientlistResponse2, $this->decorator->sendCommand($clientlistCommand));
     }
     
     public function nameProvider() {
@@ -140,16 +143,16 @@ class CachingDecoratorTest extends \PHPUnit_Framework_TestCase
             array(
                 new Command('use', array('port'=>9987)),
                 new Command('use', array('port'=>9988)),
-                'devmx.ts3.server.port.9987'.md5(serialize($clientlistCommand)),
-                'devmx.ts3.server.port.9988'.md5(serialize($clientlistCommand)),
-                new Command('clientlist'),
+                'devmx.ts3.vserver.port.9987.'.md5(serialize($clientlistCommand)),
+                'devmx.ts3.vserver.port.9988.'.md5(serialize($clientlistCommand)),
+                $clientlistCommand
             ),
             array(
                 new Command('use', array('id'=>1)),
                 new Command('use', array('id'=>2)),
-                'devmx.ts3.server.id.1'.md5(serialize($clientlistCommand)),
-                'devmx.ts3.server.id.2'.md5(serialize($clientlistCommand)),
-                new Command('clientlist'),
+                'devmx.ts3.vserver.id.1.'.md5(serialize($clientlistCommand)),
+                'devmx.ts3.vserver.id.2.'.md5(serialize($clientlistCommand)),
+                $clientlistCommand,
             )
         );
     }

@@ -31,6 +31,9 @@ use devmx\Teamspeak3\Query\CommandAwareQuery;
  */
 class CachingDecorator extends Transport\AbstractQueryDecorator
 {
+    
+    const VSERVER_PREFIX = 'devmx.ts3.vserver';
+    
     /**
      * The caching implementation
      * @var \devmx\Teamspeak3\Query\Decorator\Caching\CachingInterface
@@ -41,7 +44,13 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
      * The names of the commands which should be cached
      * @var array of string 
      */
-    protected $cacheableCommands = array();    
+    protected $cacheableCommands = array();
+    
+    /**
+     * The prefix the name is prefixed with
+     * @var string
+     */
+    protected $prefix = '';
     
     /**
      * Constructor
@@ -65,9 +74,13 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
      */
     public function sendCommand(Command $command)
     {
-        $key = md5(serialize($command));
+        if($command->getName() === 'use') {
+            $this->updatePrefix($command->getParameters());
+        }
+        
+        $key = $this->prefix.md5(serialize($command));
 
-        if ($this->cache->isCached($key))
+        if ($this->isCacheable($command) && $this->cache->isCached($key))
         {
             return $this->cache->getCache($key);
         }
@@ -76,7 +89,7 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
             //we actually have to send the command
             $response = $this->decorated->sendCommand($command);
             $this->sentCommand = true;
-            if($this->shouldBeCached($command)) {
+            if($this->isCacheable($command)) {
                 $this->cache->cache($key, $response);
             }
             
@@ -89,7 +102,7 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
      * @param Command $cmd
      * @return boolean 
      */
-    protected function shouldBeCached(Command $cmd) {
+    protected function isCacheable(Command $cmd) {
         if(in_array($cmd->getName(), $this->getCacheableCommands())) {
             return true;
         }
@@ -110,6 +123,18 @@ class CachingDecorator extends Transport\AbstractQueryDecorator
      */
     public function setCacheableCommands(array $commandNames) {
         $this->cacheableCommands = $commandNames;
+    }
+    
+    protected function updatePrefix(array $identifyer) {
+        if($identifyer === array()) {
+            $this->prefix = '';
+        }
+        if(isset($identifyer['port'])) {
+            $this->prefix = self::VSERVER_PREFIX.'.port.'.$identifyer['port'].'.';
+        }
+        if(isset($identifyer['id'])) {
+            $this->prefix = self::VSERVER_PREFIX.'.id.'.$identifyer['id'].'.';
+        }
     }
     
 }
