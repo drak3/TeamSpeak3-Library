@@ -41,7 +41,6 @@ class CachingDecoratorTest extends \PHPUnit_Framework_TestCase
     }
      
     public function testSendCommand_cache() {
-        $this->decorator->setDelayableCommands(array());
         $this->decorator->setCacheableCommands(array('clientlist'));
         
         $cl_cmd = new Command('clientlist');
@@ -63,6 +62,7 @@ class CachingDecoratorTest extends \PHPUnit_Framework_TestCase
                     ->with($this->equalto(md5(serialize($cl_cmd))))
                     ->will($this->returnValue($cl_r));
         
+        $this->decorator->connect();
         $this->assertEquals($cl_r, $this->decorator->sendCommand($cl_cmd));
         $this->assertEquals($cl_r, $this->decorator->sendCommand($cl_cmd));
         
@@ -81,7 +81,6 @@ class CachingDecoratorTest extends \PHPUnit_Framework_TestCase
     
     public function testDefaults() {
         $this->assertEquals(CommandAwareQuery::getNonChangingCommands(), $this->decorator->getCacheAbleCommands());
-        $this->assertEquals(CommandAwareQuery::getQueryStateChangingCommands(), $this->decorator->getDelayableCommands());
     }
 
 }
