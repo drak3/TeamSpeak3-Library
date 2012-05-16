@@ -49,11 +49,13 @@ class Command
      * @param array $parameters
      * @param array $options the options in form Array("foo", "bar") 
      */
-    public function __construct($name, array $parameters = Array(), array $options = Array())
+    public function __construct($name, array $parameters = array(), array $options = array())
     {
         $this->name = $name;
         $this->options = $options;
         $this->parameters = $parameters;
+        sort($this->options);
+        array_multisort($this->parameters);
     }
 
     /**
@@ -118,47 +120,28 @@ class Command
      */
     public function equals(Command $c)
     {
-        $found = FALSE;
-        if ($c->getName() !== $this->getName())
-        {
+        if(!$this->areEqualNames($this->getName(), $c->getName())) {
             return false;
         }
-        if (count($this->getOptions()) !== count($c->getOptions()))
-        {
-            return FALSE;
+        if(!$this->areEqualParameters( $this->getParameters(), $c->getParameters() )) {
+            return false;
         }
-        foreach ($this->getOptions() as $op)
-        {
-            $found = FALSE;
-            foreach ($c->getOptions() as $op2)
-            {
-                if ($op === $op2)
-                {
-                    $found = TRUE;
-                    break;
-                }
-            }
-            if (!$found) return FALSE;
+        if(!$this->areEqualOptions( $this->getOptions(), $c->getOptions() )) {
+            return false;
         }
-
-        if (count($this->getParameters()) !== count($c->getParameters()))
-        {
-            return FALSE;
-        }
-        foreach ($this->getParameters() as $pname1 => $pvalue1)
-        {
-            $found = FALSE;
-            foreach ($c->getParameters() as $pname2 => $pvalue2)
-            {
-                if ($pname1 === $pname2 && $pvalue1 === $pvalue2)
-                {
-                    $found = TRUE;
-                    break;
-                }
-            }
-            if (!$found) return FALSE;
-        }
-        return TRUE;
+        return true;
+    }
+    
+    protected function areEqualNames($name1, $name2) {
+        return $name1 === $name2;
+    }
+    
+    protected function areEqualParameters(array $params1, array $params2) {
+        return $params1 == $params2;
+    }
+    
+    protected function areEqualOptions(array $options1, array $options2) {
+        return $options1 == $options2;
     }
 
 }

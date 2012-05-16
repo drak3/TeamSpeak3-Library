@@ -89,6 +89,12 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $cmd2 = new Command('foo', array(), array('a', 'b'));
         $this->assertTrue($cmd1->equals($cmd2));
     }
+    
+    public function testEqualCommandResultsInEqualSerialization() {
+        $cmd1 = new Command('foo', array('a' => 'b', 'c' => 'd' , array('cid'=>1), array('cid'=>2)), array('a','b','c'));
+        $cmd2 = new Command('foo', array( array('cid'=>2), array('cid'=>1), 'c'=>'d', 'a' =>'b' ), array('c', 'b', 'a'));
+        $this->assertEquals(serialize($cmd1), serialize($cmd2));
+    }
 }
 
 ?>

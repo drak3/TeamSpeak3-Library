@@ -54,7 +54,7 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
         $cmd = new Command("test", Array(), Array("foo"));
         $this->assertEquals("test -foo\n", $this->translator->translate($cmd));
         $cmd = new Command("test", Array(), Array("foo", "bar"));
-        $this->assertEquals("test -foo -bar\n", $this->translator->translate($cmd));
+        $this->assertEquals("test -bar -foo\n", $this->translator->translate($cmd));
     }
     
     public function testEscaping() {
@@ -107,7 +107,7 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
     
     public function testBooleanToIntTranslation() {
         $cmd = new Command('foo', array('foo'=>true, 'bar'=>false));
-        $this->assertEquals("foo foo=1 bar=0\n", $this->translator->translate($cmd));
+        $this->assertEquals("foo bar=0 foo=1\n", $this->translator->translate($cmd));
     }
     
     public function testTranslateNameWithNumber() {
