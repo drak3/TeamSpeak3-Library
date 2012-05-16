@@ -120,28 +120,16 @@ class Command
      */
     public function equals(Command $c)
     {
-        if(!$this->areEqualNames($this->getName(), $c->getName())) {
+        if($this->getName() !== $c->getName()) {
             return false;
         }
-        if(!$this->areEqualParameters( $this->getParameters(), $c->getParameters() )) {
+        if( $this->getParameters() !== $c->getParameters() ) {
             return false;
         }
-        if(!$this->areEqualOptions( $this->getOptions(), $c->getOptions() )) {
+        if($this->getOptions() !== $c->getOptions()) {
             return false;
         }
         return true;
-    }
-    
-    protected function areEqualNames($name1, $name2) {
-        return $name1 === $name2;
-    }
-    
-    protected function areEqualParameters(array $params1, array $params2) {
-        return $params1 == $params2;
-    }
-    
-    protected function areEqualOptions(array $options1, array $options2) {
-        return $options1 == $options2;
     }
 
 }
