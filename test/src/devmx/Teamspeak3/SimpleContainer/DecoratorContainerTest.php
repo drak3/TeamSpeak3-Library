@@ -29,10 +29,10 @@ class DecoratorContainerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\Caching\CachingDecorator', $this->container['decorated']);
     }
     
-    public function testFullCreation() {
+    /*public function testFullCreation() {
         $this->container['order'] = array('caching.in_memory', 'profiling', 'debugging');
         $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator', $this->container['decorated']);
-    }
+    }*/
     
     public function testExternalDecorator() {
         $this->container['order'] = array('stub1', 'profiling', 'debugging', 'stub2');
