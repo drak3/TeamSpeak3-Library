@@ -6,6 +6,12 @@
     "require": {
         "php": ">=5.3.2"
     },
+    "require-dev": {
+        "pimple/pimple": "1.0.*"
+    },
+    "suggest": {
+        "pimple/pimple": "To use the preconfigured container"
+    },
     "autoload": {
         "psr-0": {"devmx": "src"}
     }

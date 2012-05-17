@@ -27,6 +27,10 @@ class InMemoryCache implements \devmx\Teamspeak3\Query\Transport\Decorator\Cachi
     
     protected $defaultTtl = 0;
     
+    public function __construct($defaultTimeToLive=0) {
+        $this->defaultTtl = $defaultTimeToLive;
+    }
+    
     public function setDefaultTtl($ttl) {
         $this->defaultTtl = $ttl;
     }
