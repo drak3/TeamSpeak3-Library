@@ -34,7 +34,7 @@ class DecoratorContainerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator', $this->container['decorated']);
     }*/
     
-    public function testExternalDecorator() {
+    /*public function testExternalDecorator() {
         $this->container['order'] = array('stub1', 'profiling', 'debugging', 'stub2');
         $that = $this;
         $this->container['stub1'] = $this->container->share(function($c) use ($that) {
@@ -59,7 +59,7 @@ class DecoratorContainerTest extends \PHPUnit_Framework_TestCase
                                        ->will($this->returnValue($r));
         $this->assertEquals($r, $this->container['decorated']->sendCommand($cmd));
         $this->assertEquals(1, $this->container['profiling']->getNumberOfSentCommands());
-    }
+    }*/
 }
 
 ?>
