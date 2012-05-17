@@ -45,7 +45,7 @@ class SimpleContainer extends \Pimple
         });
         
         $this['query.serverquery'] = $this->share(function($c){
-            return new Query\ServerQuery($this['query.transport']);
+            return new Query\ServerQuery($c['query.transport']);
         });
         
         $this['query.transport'] = $this->share(function($c){
@@ -70,7 +70,7 @@ class SimpleContainer extends \Pimple
         $this['query.transport.decorators']['undecorated'] = $this->raw('query.transport.undecorated');
         
         $this['query.transport.transmission'] = $this->share(function($c){
-            return new TCP($this['host'], $this['query.port']);
+            return new TCP($c['host'], $c['query.port']);
         });
         
         $this['query.transport.translator'] = $this->share(function($c){

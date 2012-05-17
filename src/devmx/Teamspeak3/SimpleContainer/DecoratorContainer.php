@@ -26,12 +26,12 @@ class DecoratorContainer extends \Pimple {
     
     public function __construct() {
         $this['decorated'] = $this->share(function($c){
-             return $this['_last'];
+             return $c['_last'];
         });
                         
         $this['caching.in_memory'] = $this->share(function($c) {
-            $toDecorate = $this['_prev']('caching.in_memory', $c);
-            $cache = $this['caching.in_memory.cache'];
+            $toDecorate = $c['_prev']('caching.in_memory', $c);
+            $cache = $c['caching.in_memory.cache'];
             return new CachingDecorator($toDecorate, $cache);
         });
         
