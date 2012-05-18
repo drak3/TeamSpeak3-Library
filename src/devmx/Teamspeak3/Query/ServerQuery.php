@@ -451,11 +451,9 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     
     /**
      * Returns the queryclients nickname
-     * Note, that if when there was no refreshWhoAmI call, the data may be outdated 
-     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return string 
      */
-    public function getNickname($refreshWhenInconsistent=true)
+    public function getNickname()
     {
         return $this->whoami('client_nickname');
     }
