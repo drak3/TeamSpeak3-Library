@@ -35,8 +35,8 @@ class SimpleContainer extends \Pimple
         if($host !== null) {
             $this['host'] = $host;
             $this['query.port'] = $queryPort;
-            $this['debug'] = $debug;
-        }        
+        }
+        $this['debug'] = $debug;
         $this->configure();
     }
     
