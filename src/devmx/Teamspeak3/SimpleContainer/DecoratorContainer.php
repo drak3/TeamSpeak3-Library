@@ -61,6 +61,9 @@ class DecoratorContainer extends \Pimple {
         });
         
         $this['_last'] = $this->share(function($c){
+            if(count($c['order']) === 0) {
+                return $c['undecorated'];
+            }
             return $c[$c['order'][count($c['order'])-1]];          
         });
     }
