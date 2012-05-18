@@ -75,12 +75,23 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     protected $shouldBeConnected;
     
+    protected $fetchDeterminableProperties = true;
+    
     /**
      * Constructor
      * @param TransportInterface $transport the transport to wrap
      */
     public function __construct(TransportInterface $transport) {
         $this->transport = $transport;
+    }
+    
+    /**
+     * Call this method to prevent issuing a query when getting in principle knowable but not 100% sure values like vserver port
+     * Note that this could lead to inconsitencies when the client gets moved unintentionally, so this is probaply not a good idea in long running apps.
+     * @param boolean $dont turn this to false to disable this feature again
+     */
+    public function doNotFetchKnownProperties($dont=true) {
+        $this->fetchDeterminableProperties = !$dont;
     }
     
     /**
@@ -362,7 +373,8 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function isLoggedIn()
     {
-        return $this->whoami('client_login_name') != '';
+        //there is no other way so. can logout, so it is save to ignore whoami here
+        return $this->loginName !== '';
     }
     
     /**
@@ -371,7 +383,8 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function getLoginName()
     {
-        return $this->whoami('client_login_name');
+        //there is no other way so. can logout, so it is save to ignore whoami here
+        return $this->loginName;
     }
     
     /**
@@ -380,12 +393,8 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function getLoginPass()
     {
-        if(!$this->isLoggedIn()) {
-            return '';
-        }
-        else {
-            return $this->loginPass;
-        }
+        //there is no other way so. can logout, so it is save to ignore whoami here
+        return $this->loginPass;
     }
     
     /**
@@ -394,6 +403,9 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function isOnVirtualServer()
     {
+        if(!$this->fetchDeterminableProperties) {
+            return $this->virtualServerIdentifyer !== array();
+        }
         return $this->whoami('virtualserver_port') !== 0;
     }
     
@@ -402,6 +414,9 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * @return int
      */
     public function getVirtualServerPort() {
+        if(!$this->fetchDeterminableProperties && $this->isOnVirtualServer() && isset($this->virtualServerIdentifyer['port'])) {
+            return $this->virtualServerIdentifyer['port'];
+        }
         return $this->whoami('virtualserver_port');
     }
     
@@ -410,6 +425,9 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * @return int
      */
     public function getVirtualServerID() {
+        if(!$this->fetchDeterminableProperties && $this->isOnVirtualServer() && isset($this->virtualServerIdentifyer['id'])) {
+            return $this->virtualServerIdentifyer['id'];
+        }
         return $this->whoami('virtualserver_id');
     }
     
@@ -428,6 +446,9 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function getChannelID()
     {
+        if(!$this->fetchDeterminableProperties && ($this->selectedChannelID != 0 || !$this->isOnVirtualServer() )) {
+            return $this->selectedChannelID;
+        }
         return $this->whoami('client_channel_id');
     }
     
@@ -446,6 +467,9 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function getUniqueID()
     {
+        if(!$this->fetchDeterminableProperties && !$this->isOnVirtualServer()) {
+            return 'unknown';
+        }
         return $this->whoami('client_unique_identifyer');
     }
     
