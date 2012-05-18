@@ -31,7 +31,7 @@ class DecoratorContainerTest extends \PHPUnit_Framework_TestCase
     
     public function testFullCreation() {
         if(PHP_VERSION_ID >= 50310 && PHP_VERSION_ID <= 50313) {
-            $this->skip("This test will segfault out of unknown reasons");
+            $this->markTestSkipped("This test will segfault out of unknown reasons");
         }
         $this->container['order'] = array('caching.in_memory', 'profiling', 'debugging');
         $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator', $this->container['decorated']);
@@ -39,7 +39,7 @@ class DecoratorContainerTest extends \PHPUnit_Framework_TestCase
     
     public function testExternalDecorator() {
         if(PHP_VERSION_ID >= 50310 && PHP_VERSION_ID <= 50313) {
-            $this->skip("This test will segfault out of unknown reasons");
+            $this->markTestSkipped("This test will segfault out of unknown reasons");
         }
         $this->container['order'] = array('stub1', 'profiling', 'debugging', 'stub2');
         $that = $this;
