@@ -15,13 +15,13 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace devmx\Teamspeak3\Query\Transport\Decorator\Caching;
+namespace devmx\Teamspeak3\Query\Transport\Decorator;
 use devmx\Teamspeak3\Query\Transport;
 use devmx\Teamspeak3\Query\Transport\TransportInterface;
 use devmx\Teamspeak3\Query\Command;
 use devmx\Teamspeak3\Query\CommandResponse;
 use devmx\Teamspeak3\Query\CommandAwareQuery;
-use devmx\Teamspeak3\Query\Transport\Decorator\AbstractQueryDecorator;
+use devmx\Teamspeak3\Query\Transport\Decorator\Caching\CacheInterface;
 
 /**
  * This decorator caches command and their responses, to avoid the network overhead

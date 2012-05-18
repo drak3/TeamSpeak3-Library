@@ -26,7 +26,7 @@ class DecoratorContainerTest extends \PHPUnit_Framework_TestCase
 
     public function testBasicCreation() {
         $this->container['order'] = array('caching.in_memory');
-        $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\Caching\CachingDecorator', $this->container['decorated']);
+        $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\CachingDecorator', $this->container['decorated']);
     }
     
     public function testFullCreation() {

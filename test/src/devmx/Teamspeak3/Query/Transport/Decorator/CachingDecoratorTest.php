@@ -1,11 +1,9 @@
 <?php
 
-namespace devmx\Teamspeak3\Query\Transport\Decorator\Caching;
+namespace devmx\Teamspeak3\Query\Transport\Decorator;
 use devmx\Teamspeak3\Query\Command;
 use devmx\Teamspeak3\Query\CommandResponse;
 use devmx\Teamspeak3\Query\CommandAwareQuery;
-
-require_once dirname( __FILE__ ) . '/../../../../../../../../src/devmx/Teamspeak3/Query/Transport/Decorator/Caching/CachingDecorator.php';
 
 /**
  * Test class for CachingDecorator.

@@ -28,7 +28,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
     protected $transport;
     
     /**
-     * @var \devmx\Teamspeak3\Query\Transport\Decorator\Caching\CachingDecorator
+     * @var \devmx\Teamspeak3\Query\Transport\Decorator\CachingDecorator
      */
     protected $cachedTransport;
     
@@ -50,7 +50,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
     protected function needsCachedQuery() {
         $this->stub = new Transport\QueryTransportStub;
         $this->cache = new Transport\Decorator\Caching\Cache\InMemoryCache(100);
-        $this->cachedTransport = new Transport\Decorator\Caching\CachingDecorator($this->stub, $this->cache);
+        $this->cachedTransport = new Transport\Decorator\CachingDecorator($this->stub, $this->cache);
         $this->transport = new Transport\Decorator\DebuggingDecorator($this->cachedTransport);
         $this->query = new ServerQuery($this->transport);
     }

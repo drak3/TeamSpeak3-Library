@@ -17,7 +17,7 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace devmx\Teamspeak3\SimpleContainer;
-use devmx\Teamspeak3\Query\Transport\Decorator\Caching\CachingDecorator;
+use devmx\Teamspeak3\Query\Transport\Decorator\CachingDecorator;
 use devmx\Teamspeak3\Query\Transport\Decorator\Caching\Cache\InMemoryCache;
 use devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator;
 use devmx\Teamspeak3\Query\Transport\Decorator\ProfilingDecorator;
