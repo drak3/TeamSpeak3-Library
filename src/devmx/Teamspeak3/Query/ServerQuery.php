@@ -75,7 +75,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     protected $shouldBeConnected;
     
-    protected $fetchDeterminableProperties = true;
+    protected $queryDeterminableProperties = true;
     
     /**
      * Constructor
@@ -90,8 +90,8 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * Note that this could lead to inconsitencies when the client gets moved unintentionally, so this is probaply not a good idea in long running apps.
      * @param boolean $dont turn this to false to disable this feature again
      */
-    public function doNotFetchKnownProperties($dont=true) {
-        $this->fetchDeterminableProperties = !$dont;
+    public function doNotQueryKnownProperties($dont=false) {
+        $this->queryDeterminableProperties = !$dont;
     }
     
     /**
@@ -373,8 +373,10 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function isLoggedIn()
     {
-        //there is no other way so. can logout, so it is save to ignore whoami here
-        return $this->loginName !== '';
+        if(!$this->queryDeterminableProperties) {
+            return $this->loginName !== '';
+        }
+        return $this->whoami('client_login_name') !== '';
     }
     
     /**
@@ -383,8 +385,10 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function getLoginName()
     {
-        //there is no other way so. can logout, so it is save to ignore whoami here
-        return $this->loginName;
+        if(!$this->queryDeterminableProperties) {
+            return $this->loginName;
+        }
+        return $this->whoami('client_login_name');
     }
     
     /**
@@ -393,7 +397,12 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function getLoginPass()
     {
-        //there is no other way so. can logout, so it is save to ignore whoami here
+        if(!$this->queryDeterminableProperties) {
+            return $this->loginPass;
+        }
+        if(!$this->isLoggedIn()) {
+            return '';
+        }
         return $this->loginPass;
     }
     
@@ -403,7 +412,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function isOnVirtualServer()
     {
-        if(!$this->fetchDeterminableProperties) {
+        if(!$this->queryDeterminableProperties) {
             return $this->virtualServerIdentifyer !== array();
         }
         return $this->whoami('virtualserver_port') !== 0;
@@ -414,7 +423,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * @return int
      */
     public function getVirtualServerPort() {
-        if(!$this->fetchDeterminableProperties && $this->isOnVirtualServer() && isset($this->virtualServerIdentifyer['port'])) {
+        if(!$this->queryDeterminableProperties && $this->isOnVirtualServer() && isset($this->virtualServerIdentifyer['port'])) {
             return $this->virtualServerIdentifyer['port'];
         }
         return $this->whoami('virtualserver_port');
@@ -425,7 +434,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * @return int
      */
     public function getVirtualServerID() {
-        if(!$this->fetchDeterminableProperties && $this->isOnVirtualServer() && isset($this->virtualServerIdentifyer['id'])) {
+        if(!$this->queryDeterminableProperties && $this->isOnVirtualServer() && isset($this->virtualServerIdentifyer['id'])) {
             return $this->virtualServerIdentifyer['id'];
         }
         return $this->whoami('virtualserver_id');
@@ -446,7 +455,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function getChannelID()
     {
-        if(!$this->fetchDeterminableProperties && ($this->selectedChannelID != 0 || !$this->isOnVirtualServer() )) {
+        if(!$this->queryDeterminableProperties && ($this->selectedChannelID != 0 || !$this->isOnVirtualServer() )) {
             return $this->selectedChannelID;
         }
         return $this->whoami('client_channel_id');
@@ -467,7 +476,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function getUniqueID()
     {
-        if(!$this->fetchDeterminableProperties && !$this->isOnVirtualServer()) {
+        if(!$this->queryDeterminableProperties && !$this->isOnVirtualServer()) {
             return 'unknown';
         }
         return $this->whoami('client_unique_identifyer');
