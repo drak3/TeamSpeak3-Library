@@ -31,10 +31,12 @@ use devmx\Teamspeak3\SimpleContainer\DecoratorContainer;
  */
 class SimpleContainer extends \Pimple
 {
-    public function __construct($host, $queryPort, $debug=false) {
-        $this['host'] = $host;
-        $this['query.port'] = $queryPort;
-        $this['debug'] = $debug;
+    public function __construct($host=null, $queryPort=10011, $debug=false) {
+        if($host !== null) {
+            $this['host'] = $host;
+            $this['query.port'] = $queryPort;
+            $this['debug'] = $debug;
+        }        
         $this->configure();
     }
     
