@@ -2001,16 +2001,6 @@ class CommandAwareQuery extends ServerQuery
     }
 
     /**
-     * Displays information about your current ServerQuery connection including your loginname, etc.
-     *
-     * @return \devmx\Teamspeak3\Query\CommandResponse
-     */
-    public function whoami()
-    {
-        return $this->query("whoami");
-    }
-
-    /**
      * Retrieve the options set in the given method and arg array.
      *
      * @param string $method

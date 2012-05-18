@@ -23,9 +23,19 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
     protected $stub;
     
     /**
-     *@var type \ðevmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator
+     *@var \devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator
      */
     protected $transport;
+    
+    /**
+     * @var \devmx\Teamspeak3\Query\Transport\Decorator\Caching\CachingDecorator
+     */
+    protected $cachedTransport;
+    
+    /**
+     * @var \devmx\Teamspeak3\Query\Transport\Decorator\Caching\Cache\InMemoryCache
+     */
+    protected $cache;
 
     /**
      * This method is called before a test is executed.
@@ -34,6 +44,14 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
     {
         $this->stub = new Transport\QueryTransportStub;
         $this->transport = new Transport\Decorator\DebuggingDecorator($this->stub);
+        $this->query = new ServerQuery($this->transport);
+    }
+    
+    protected function needsCachedQuery() {
+        $this->stub = new Transport\QueryTransportStub;
+        $this->cache = new Transport\Decorator\Caching\Cache\InMemoryCache(100);
+        $this->cachedTransport = new Transport\Decorator\Caching\CachingDecorator($this->stub, $this->cache);
+        $this->transport = new Transport\Decorator\DebuggingDecorator($this->cachedTransport);
         $this->query = new ServerQuery($this->transport);
     }
     
@@ -62,16 +80,14 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
      * @covers devmx\Teamspeak3\Query\ServerQuery::getUniqueVirtualServerID
      * @covers devmx\Teamspeak3\Query\ServerQuery::getClientID
      */
-    public function testRefreshWhoAmI($items, $values)
+    public function testWhoAmI($items, $values)
     {
+        $this->needsCachedQuery();
         $cmd = new Command('whoami');
-        $this->stub->addResponse(new CommandResponse($cmd, $items));
+        $this->stub->addResponse(new CommandResponse($cmd, array($items)));
         $this->query->connect();
-        $this->query->refreshWhoAmI();
-        $run = 0;
         foreach($values as $method => $expected) {
-            $run++;
-            $this->assertEquals($expected, $this->query->$method(false), "Testing $method in run $run");
+            $this->assertEquals($expected, $this->query->$method(), "Testing $method");
         }
     }
     
@@ -79,7 +95,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $items1 = array(
           'virtualserver_status' => 'online',
           'virtualserver_id' => 1,
-          'virtualserver_unique_identifyer' => 'foo',
+          'virtualserver_unique_identifier' => 'foo',
           'virtualserver_port' => 9987,
           'client_id' => 11,
           'client_channel_id' => 123,
@@ -107,6 +123,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
           'virtualserver_status' => 'unknown',
           'virtualserver_id' => 0,
           'virtualserver_port' => 0,
+          'virtualserver_unique_identifier' => '',
           'client_id' => 0,
           'client_channel_id' => 0,
           'client_nickname' => '',
@@ -135,16 +152,6 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         );
     }
     
-    /**
-     * @covers devmx\Teamspeak3\Query\ServerQuery::refreshWhoAmI
-     * @expectedException \RuntimeException
-     */
-    public function testRefreshWhoAmI_failedResponse() {
-        $r = new CommandResponse(new Command('whoami'), array(), 123, 'failed');
-        $this->stub->addResponse($r);
-        $this->query->connect();
-        $this->query->refreshWhoAmI();
-    }
 
     /**
      * @covers devmx\Teamspeak3\Query\ServerQuery::login
@@ -152,8 +159,16 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
      */
     public function testLogin()
     {
-        $this->login();
-        $this->assertTrue($this->query->isLoggedIn());
+        $this->needsCachedQuery();
+        $this->expectWhoAmI(array('client_login_name'=>'foo'));
+        $cmd = new Command('login', array('client_login_name'=>'foo', 'client_login_password'=>'bar'));
+        $r = new CommandResponse($cmd, array());
+        $this->stub->addResponse($r);
+        
+        $this->query->connect();
+        $this->query->login('foo', 'bar');
+        $this->assertEquals('foo', $this->query->getLoginName());
+        $this->assertEquals('bar', $this->query->getLoginPass());
     }
     
     public function testLogin_responseByReference() {
@@ -186,31 +201,26 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
      */
     public function testLogout()
     {
-        $this->login();
+        $this->testLogin();
+        $this->cache->flush();
         $cmd = new Command('logout');
         $r = new CommandResponse($cmd);
         $this->stub->addResponse($r);
         $this->query->logout();
+        $this->expectWhoAmI(array());
         $this->assertFalse($this->query->isLoggedIn());
         $this->stub->assertAllResponsesReceived();
     }
     
     public function testLogout_responseByReference() {
-        $this->login();
+        $this->testLogin();
         $r = new CommandResponse(new Command('logout'));
         $this->stub->addResponse($r);
         $response = '';
         $this->query->logout($response);
         $this->assertEquals($r, $response);
     }
-    
-    protected function login() {
-        $cmd = new Command('login', array('client_login_name'=>'foo', 'client_login_password'=>'bar'));
-        $r = new CommandResponse($cmd, array());
-        $this->stub->addResponse($r);
-        $this->query->connect();
-        $this->query->login('foo','bar');
-    }
+
     
     
     /**
@@ -218,14 +228,17 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
      */
     public function testUseByPort()
     {
+       $this->needsCachedQuery();
        $cmd = new Command('use', array('port'=>9987), array('virtual'));
        $r = new CommandResponse($cmd);
        $this->stub->addResponse($r);
        $this->query->connect();
        $this->query->useByPort(9987);
+       
+       $this->expectWhoAmI(array('virtualserver_port'=>9987));
        $this->assertTrue($this->query->isOnVirtualServer());
        $this->assertEquals(9987, $this->query->getVirtualServerPort(false));
-       $this->assertEquals(array($r), $this->transport->getReceivedResponses());
+       $this->stub->assertAllResponsesReceived();
     }
     
     public function testUseByPort_responseByReference() {
@@ -243,10 +256,13 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
      */
     public function testUseByID()
     {
+       $this->needsCachedQuery();
        $r = $this->useByID(15);
+              
+       $this->expectWhoAmI(array('virtualserver_id'=>15, 'virtualserver_port'=>123));
        $this->assertTrue($this->query->isOnVirtualServer());
        $this->assertEquals(15, $this->query->getVirtualServerID());
-       $this->assertEquals(array($r), $this->transport->getReceivedResponses());
+       $this->stub->assertAllResponsesReceived();
     }
     
     /**
@@ -272,11 +288,16 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
      */
     public function testDeselect()
     {
+       $this->needsCachedQuery();
        $this->useByID(32);
        $this->stub->addResponse(new CommandResponse(new Command('use')));
        $this->query->deselect();
+       $this->stub->assertAllResponsesReceived();
+       
+       $this->expectWhoAmI(array());
        $this->assertFalse($this->query->isOnVirtualServer());
        $this->assertEquals(0, $this->query->getVirtualServerID());
+
     }
     
     public function testDeselect_getResponseByReference() {
@@ -302,38 +323,31 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
      */
     public function testMoveToChannel()
     {
+        $this->needsCachedQuery();
         $cmd = new Command('clientmove', array('clid'=>15, 'cid'=>12));
-        $whoamiCmd = new Command('whoami');
-        $whoamiItems = array(
-          'virtualserverstatus' => 'online',
-          'virtualserver_id' => 1,
-          'virtualserver_unique_identifyer' => 'foo',
-          'virtualserver_port' => 9987,
-          'client_id' => 15,
-          'client_channel_id' => 123,
-          'client_nickname' => 'foobar',
-          'client_database_id' => 0,
-          'client_login_name' => 'asdf',
-          'client_unique_identifyer' => 'sdfsdf',
-        );
+        
         $this->stub->addResponse(new CommandResponse(new Command('use', array('port'=>123), array('virtual'))));
-        $this->stub->addResponse(new CommandResponse($whoamiCmd, $whoamiItems));
         $this->stub->addResponse(new CommandResponse($cmd));
+        $this->expectWhoAmI(array('port'=>123, 'client_id'=>15, 'client_channel_id'=>12, 'virtualserver_port'=>123));
+        
         $this->query->connect();
         $this->query->useByPort(123);
-        $this->query->refreshWhoAmI();
         $this->query->moveToChannel(12);
+        
         $this->assertEquals(12, $this->query->getChannelID());
+        $this->stub->assertAllResponsesReceived();
     }
     
     /**
-     * @expectedException \devmx\Teamspeak3\Query\Exception\LogicException
+     * @expectedException devmx\Teamspeak3\Query\Exception\LogicException
      * @covers devmx\Teamspeak3\Query\ServerQuery::moveToChannel
      */
     public function testMoveToChannel_notOnVirtualServer()
     {
         $cmd = new Command('clientmove', array('clid'=>15, 'cid'=>12));
         $this->stub->addResponse(new CommandResponse($cmd));
+        $this->expectWhoAmI(array());
+        
         $this->query->connect();
         $this->query->moveToChannel(12);
     }
@@ -427,10 +441,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $serialized = serialize($this->query);
         $this->assertFalse($this->transport->isConnected());
         $unserialized = unserialize($serialized);
-        $this->assertTrue($unserialized->isOnVirtualServer());
-        $this->assertEquals(12, $unserialized->getVirtualServerID());
-        $this->assertEquals(array($r2->getCommand()), $unserialized->getRegisterCommands());
-        $this->assertTrue($unserialized->isLoggedIn());
+        $this->assertEquals(array($r2->getCommand()), $unserialized->getRegisterCommands());        
     }
 
     
@@ -535,24 +546,6 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @dataProvider whoamiProvider
-     * @covers devmx\Teamspeak3\Query\ServerQuery::sendCommand
-     */
-    public function testSendCommand_recognizeWhoAmI($items, $values) {
-        $cmd = new Command('whoami');
-        $r = new CommandResponse($cmd, $items);
-        $this->stub->addResponse($r);
-        $run = 0;
-        
-        $this->query->connect();
-        $this->query->query('whoami');
-        foreach($values as $method => $expected) {
-            $run++;
-            $this->assertEquals($expected, $this->query->$method(false), "Testing $method in run $run");
-        }
-    }
-    
-    /**
      * @covers devmx\Teamspeak3\Query\ServerQuery::sendCommand
      * @covers devmx\Teamspeak3\Query\ServerQuery::useVirtualServer
      */
@@ -561,7 +554,6 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $this->stub->addResponse(new CommandResponse($cmd));
         $this->query->connect();
         $this->query->sendCommand($cmd);
-        $this->assertEquals(true, $this->query->isOnVirtualServer());
         $this->stub->assertAllResponsesReceived();
     }
     
@@ -574,13 +566,10 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         $this->stub->addResponse(new CommandResponse($cmd));
         $this->query->connect();
         $this->query->sendCommand($cmd);
-        $this->assertEquals(true, $this->query->isLoggedIn());
-        $this->assertEquals('foo', $this->query->getLoginName());
-        $this->assertEquals('bar', $this->query->getLoginPass());
         $this->stub->assertAllResponsesReceived();
         $this->stub->addResponse(new CommandResponse(new Command('logout')));
         $this->query->query('logout');
-        $this->assertFalse($this->query->isLoggedIn());
+        $this->stub->assertAllResponsesReceived();
     }
     
     
@@ -609,28 +598,15 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
     }*/
     
     public function testChangeNickname() {
+        $this->needsCachedQuery();
         $this->query->connect();
         $r1 = new CommandResponse(new Command('use', array('port'=>9987)));
         $this->stub->addResponse($r1);
-        $whoamiItems = array(
-          'virtualserverstatus' => 'online',
-          'virtualserver_id' => 1,
-          'virtualserver_unique_identifyer' => 'foo',
-          'virtualserver_port' => 9987,
-          'client_id' => 12,
-          'client_channel_id' => 123,
-          'client_nickname' => 'foobar',
-          'client_database_id' => 0,
-          'client_login_name' => 'asdf',
-          'client_unique_identifyer' => 'sdfsdf',
-        );
-        $r2 = new CommandResponse(new Command('whoami'), $whoamiItems);
-        $this->stub->addResponse($r2);
+        $this->expectWhoAmI(array('client_id'=>12, 'virtualserver_port'=>9987));
         $r3 = new CommandResponse(new Command('clientedit', array('clid'=>12, 'client_nickname'=>'FooBar')));
         $this->stub->addResponse($r3);
         $this->query->useByPort(9987, false);
         $this->query->changeNickname('FooBar');
-        $this->assertEquals('FooBar',$this->query->getNickname());
         $this->stub->assertAllResponsesReceived();
     }
     
@@ -646,58 +622,37 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
      * @expectedException \devmx\Teamspeak3\Query\Exception\CommandFailedException
      */
     public function testChangeNickname_ErrorOnCommandFailure() {
+        $this->needsCachedQuery();
         $this->query->connect();
         $r1 = new CommandResponse(new Command('use', array('port'=>9987)));
         $this->stub->addResponse($r1);
-        $whoamiItems = array(
-          'virtualserverstatus' => 'online',
-          'virtualserver_id' => 12,
-          'virtualserver_unique_identifyer' => 'foo',
-          'virtualserver_port' => 9987,
-          'client_id' => 12,
-          'client_channel_id' => 123,
-          'client_nickname' => 'foobar',
-          'client_database_id' => 0,
-          'client_login_name' => 'asdf',
-          'client_unique_identifyer' => 'sdfsdf',
-        );
-        $r2 = new CommandResponse(new Command('whoami'), $whoamiItems);
-        $this->stub->addResponse($r2);
+        $this->expectWhoAmI(array('client_id'=>12, 'virtualserver_port'=>9987));
         $r3 = new CommandResponse(new Command('clientedit', array('clid'=>12, 'client_nickname'=>'FooBar')), array(), 12, 'failed');
         $this->stub->addResponse($r3);
         $this->query->useByPort(9987, false);
         $this->query->changeNickname('FooBar');
-        $this->assertEquals('FooBar', $this->query->getNickname());
         $this->stub->assertAllResponsesReceived();
     }
     
-    
-    public function testChangeNickname_GetResponse() {
-        $this->query->connect();
-        $r1 = new CommandResponse(new Command('use', array('port'=>9987)));
-        $this->stub->addResponse($r1);
-        $whoamiItems = array(
-          'virtualserverstatus' => 'online',
-          'virtualserver_id' => 12,
-          'virtualserver_unique_identifyer' => 'foo',
-          'virtualserver_port' => 9987,
-          'client_id' => 12,
-          'client_channel_id' => 123,
-          'client_nickname' => 'foobar',
-          'client_database_id' => 0,
-          'client_login_name' => 'asdf',
-          'client_unique_identifyer' => 'sdfsdf',
+    protected function expectWhoAmI($values, $errorID=0, $errorMsg='ok') {
+        $items = array(
+            'virtualserver_status' => 'unknown',
+            'virtualserver_unique_identifyer' => '',
+            'virtualserver_port' => 0,
+            'virtualserver_id' => 0,
+            'client_id' => 0,
+            'client_channel_id' => 0,
+            'client_nickname' => '',
+            'client_database_id' => 0,
+            'client_login_name' => '',
+            'client_unique_identifyer' => '',
+            'client_server_origin' => 0
         );
-        $r2 = new CommandResponse(new Command('whoami'), $whoamiItems);
-        $this->stub->addResponse($r2);
-        $r3 = new CommandResponse(new Command('clientedit', array('clid'=>12, 'client_nickname'=>'FooBar')));
-        $this->stub->addResponse($r3);
-        $this->query->useByPort(9987,false);
-        $response = '';
-        $this->query->changeNickname('FooBar', $response);
-        $this->assertEquals($r3, $response);
+        foreach($values as $name => $val) {
+            $items[$name] = $val;
+        }
+        $this->stub->addResponse(new CommandResponse(new Command('whoami'), array($items), $errorID, $errorMsg));
     }
-
 }
 
 ?>

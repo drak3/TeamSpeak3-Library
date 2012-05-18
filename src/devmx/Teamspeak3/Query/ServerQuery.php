@@ -33,12 +33,6 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     protected $transport;
     
     /**
-     * Indicates if we are logged in
-     * @var boolean
-     */
-    protected $isLoggedIn = false;
-    
-    /**
      * The name we used to login
      * @var string
      */
@@ -49,13 +43,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * @var string 
      */
     protected $loginPass = '';
-    
-    /**
-     * Indicates if we are on a vServer (= successfully executed a use command)
-     * @var boolean 
-     */
-    protected $isOnVirtualServer = false;
-    
+        
     /**
      * The identifyer used to select the virtualserver
      * array() if no virtualserver is selected, array('id'=><vServerID>) if used by id or array('port'=><vServerPort>) if used by port
@@ -73,55 +61,19 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * The current channelid
      * @var int 
      */
-    protected $channelID = 0;
-    
-    /**
-     * The virtualServer status
-     * @var string
-     */
-    protected $virtualServerStatus = 'unknown';
-    
-    /**
-     * The vServer port
-     * @var int 
-     */
-    protected $virtualServerPort = 0;
-    
-    /**
-     * The vServer id
-     * @var int 
-     */
-    protected $virtualServerID = 0;
-    
-    /**
-     * The queryuser's uniqueID
-     * @var string 
-     */
-    protected $uniqueID = '';
+    protected $selectedChannelID = 0;
     
     /**
      * The queryuser's nickname
      * @var string
      */
-    protected $nickname = '';
+    protected $selectedNickname = '';
     
     /**
-     * The queryuser's database id
-     * @var int 
+     * Used for state recovering
+     * @var boolean
      */
-    protected $databaseID = 0;
-    
-    /**
-     * The unique vServer id if on a virtualserver
-     * @var string
-     */
-    protected $uniqueVirtualServerID = '';
-    
-    /**
-     * the queryuser's cid
-     * @var int
-     */
-    protected $clientID = 0;
+    protected $shouldBeConnected;
     
     /**
      * Constructor
@@ -144,37 +96,6 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     }
     
     /**
-     * Refreshes the whoami information
-     * @return \devmx\Teamspeak3\Query\CommandResponse
-     */
-    public function refreshWhoAmI() {
-        $response = $this->transport->query('whoami');
-        if(!$response->errorOccured()) {
-            $this->loginName = $response['client_login_name'];
-            $this->isLoggedIn = $this->loginName != '';
-            if(!$this->isLoggedIn)
-                $this->loginPass = '';
-            $this->isOnVirtualServer =($response['virtualserver_port'] !== 0);
-            if($this->isOnVirtualServer) {
-                $this->virtualServerIdentifyer = Array('id'=>$response['virtualserver_id']);
-            }
-            $this->virtualServerID = $response['virtualserver_id'];
-            $this->virtualServerPort = $response['virtualserver_port'];
-            $this->uniqueVirtualServerID = $response['virtualserver_unique_identifyer'];
-            $this->uniqueID = $response['client_unique_identifyer']; 
-            $this->channelID = $response['client_channel_id'];
-            $this->virtualServerStatus = $response['virtualserver_status'];
-            $this->databaseID = $response['client_database_id'];
-            $this->clientID = $response['client_id'];
-            $this->nickname = $response['client_nickname'];
-        }
-        else {
-            $response->toException();
-        }
-        return $response;
-    }
-    
-    /**
      * Logs in
      * @param string $username
      * @param string $pass
@@ -184,7 +105,6 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     public function login($username, $pass, &$commandResponse=null) {
         $response = $this->transport->query("login", Array("client_login_name"=>$username, 'client_login_password'=>$pass));
         $response->toException();
-        $this->isLoggedIn = TRUE;
         $this->loginName = $username;
         $this->loginPass = $pass;
         if($commandResponse !== null) {
@@ -201,7 +121,6 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     public function logout(&$commandResponse=null) {
         $response = $this->transport->query('logout');
         $response->toException();
-        $this->isLoggedIn = FALSE;
         $this->loginName = '';
         $this->loginPass = '';
         if($commandResponse !== null) {
@@ -223,7 +142,6 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
         $response->toException();
         $this->isOnVirtualServer = TRUE;
         $this->virtualServerIdentifyer = Array('port'=>$port);
-        $this->virtualServerPort = $port;
         if($commandResponse !== null) {
             $commandResponse = $response;
         }
@@ -238,16 +156,14 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * @return \devmx\Teamspeak3\Query\ServerQuery
      * @throws Exception\InvalidArgumentException if the id is invalid
      */
-    public function useByID($id,$virtual=TRUE, &$commandResponse=null) {
+    public function useByID($id,$virtual=true, &$commandResponse=null) {
         if($id < 1) {
             throw new Exception\InvalidArgumentException("Invalid server ID, if you want to deselect the current server, please use deselect() instead");
         }
-        $options = $virtual ? Array('virtual') : Array();
-        $response = $this->transport->query("use", Array('sid'=>$id), $options);
+        $options = $virtual ? array('virtual') : array();
+        $response = $this->transport->query("use", array('sid'=>$id), $options);
         $response->toException();
-        $this->isOnVirtualServer = TRUE;
-        $this->virtualServerIdentifyer = Array('id'=>$id);
-        $this->virtualServerID = $id;
+        $this->virtualServerIdentifyer = array('id'=>$id);
         if($commandResponse !== null) {
             $commandResponse = $response;
         }
@@ -278,10 +194,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     public function deselect(&$commandResponse=null) {
         $response = $this->transport->query('use');
         $response->toException();
-        $this->isOnVirtualServer = FALSE;
         $this->virtualServerIdentifyer = Array();
-        $this->virtualServerID = 0;
-        $this->virtualServerPort = 0;
         if($commandResponse !== null) {
             $commandResponse = $response;
         }
@@ -295,12 +208,12 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * @throws Exception\LogicException if we are'nt on a virtualserver
      */
     public function moveToChannel($cid, &$commandResponse=null) {
-        if(!$this->isOnVirtualServer) {
+        if(!$this->isOnVirtualServer()) {
             throw new Exception\LogicException("Cannot move to channel when not on virtual server.");
         }
         $response = $this->transport->query('clientmove', Array('clid'=>$this->getClientID(), 'cid'=>$cid));
         $response->toException();
-        $this->channelID = $cid;
+        $this->selectedChannelID = $cid;
         if($commandResponse !== null) {
             $commandResponse = $response;
         }
@@ -356,11 +269,26 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
         }
         $response = $this->transport->query('clientedit', array('clid'=>$this->getClientID(), 'client_nickname'=>$newNickname));
         $response->toException();
-        $this->nickname = $newNickname;
+        $this->selectedNickname = $newNickname;
         if($commandResponse !== null ){
             $commandResponse = $response;
         }
         return $this;
+    }
+    
+    
+    /**
+     * Returns information about your current ServerQuery connection including your loginname, etc.
+     * @param $value if set whami will return the specific whoami-value (e.g whoami('virtualserver_status'))
+     * @return \devmx\Teamspeak3\Query\CommandResponse
+     */
+    public function whoami($value=null)
+    {
+        $r = $this->transport->query('whoami');
+        if($value !== null) {
+            return $r->getValue($value);
+        }
+        return $r;
     }
     
     /**
@@ -385,23 +313,17 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function __sleep()
     {
+        $this->shouldBeConnected = $this->isConnected();
         $this->transport->disconnect();
         return array(
             'transport',
-            'isLoggedIn', 
             'loginName', 
             'loginPass', 
-            'isOnVirtualServer', 
             'virtualServerIdentifyer', 
             'registerCommands', 
-            'channelID', 
-            'virtualServerStatus',
-            'virtualServerID',
-            'uniqueID',
-            'nickname',
-            'databaseID',
-            'uniqueVirtualServerID',
-            'clientID',
+            'selectedChannelID', 
+            'selectedNickname',
+            'shouldBeConnected',
         );
     }
     
@@ -417,30 +339,30 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      * Recovers the state of the query 
      */
     protected  function recoverState() {
-        if($this->isConnected()) {
+        if($this->shouldBeConnected) {
             $this->transport->connect();
-            if($this->isLoggedIn) {
+            if($this->loginName !== '') {
                 $this->login($this->loginName, $this->loginPass);
             }
-            if($this->isOnVirtualServer) {
+            if($this->virtualServerIdentifyer !== array()) {
                 $this->useVirtualServer($this->virtualServerIdentifyer, true);
             }
-            if($this->channelID !== 0) {
-                $this->moveToChannel($this->channelID);
+            if($this->selectedChannelID !== 0) {
+                $this->moveToChannel($this->selectedChannelID);
             }
             foreach($this->registerCommands as $command) {
                 $this->transport->sendCommand($command);
             }
         }        
     }
-    
+
     /**
      * If the queryclient is logged in
      * @return boolean 
      */
     public function isLoggedIn()
     {
-        return $this->isLoggedIn;
+        return $this->whoami('client_login_name') != '';
     }
     
     /**
@@ -449,7 +371,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function getLoginName()
     {
-        return $this->loginName;
+        return $this->whoami('client_login_name');
     }
     
     /**
@@ -458,7 +380,12 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function getLoginPass()
     {
-        return $this->loginPass;
+        if(!$this->isLoggedIn()) {
+            return '';
+        }
+        else {
+            return $this->loginPass;
+        }
     }
     
     /**
@@ -467,33 +394,23 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function isOnVirtualServer()
     {
-        return $this->isOnVirtualServer;
+        return $this->whoami('virtualserver_port') !== 0;
     }
     
     /**
      * Returns the vServer port, if on a vServer
-     * note that if there was no refreshWhoAmI call and the server was not selected by port the information may be outdated
-     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return int
      */
-    public function getVirtualServerPort($refreshWhenInconsistent=true) {
-        if($this->virtualServerID === 0 && $this->isOnVirtualServer() && $refreshWhenInconsistent) {
-            $this->refreshWhoAmI();
-        }
-        return $this->virtualServerPort;
+    public function getVirtualServerPort() {
+        return $this->whoami('virtualserver_port');
     }
     
     /**
      * Returns the vServer id, if on a vServer
-     * note that if there was no refreshWhoAmI call and the server was not selected by id the information may be outdated
-     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return int
      */
-    public function getVirtualServerID($refreshWhenInconsistent=true) {
-        if($this->virtualServerID === 0 && $this->isOnVirtualServer() && $refreshWhenInconsistent) {
-            $this->refreshWhoAmI();
-        }
-        return $this->virtualServerID;
+    public function getVirtualServerID() {
+        return $this->whoami('virtualserver_id');
     }
     
     /**
@@ -507,42 +424,29 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     
     /**
      * Returns the current channelid
-     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return int
      */
-    public function getChannelID($refreshWhenInconsistent=true)
+    public function getChannelID()
     {
-        if($this->channelID === 0 && $this->isOnVirtualServer() && $refreshWhenInconsistent) {
-            $this->refreshWhoAmI();
-        }
-        return $this->channelID;
+        return $this->whoami('client_channel_id');
     }
     
     /**
      * Returns the current vServer status
-     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return string
      */
-    public function getVirtualServerStatus($refreshWhenInconsistent=true)
+    public function getVirtualServerStatus()
     {
-        if($this->virtualServerStatus === 'unknown' && $this->isOnVirtualServer() && $refreshWhenInconsistent) {
-            $this->refreshWhoAmI();
-        }
-        return $this->virtualServerStatus;
+        return $this->whoami('virtualserver_status');
     }
     
     /**
      * Returns the queryclients unique id
-     * Note, that if when there was no refreshWhoAmI call, the data may be outdated
-     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present) 
      * @return string 
      */
-    public function getUniqueID($refreshWhenInconsistent=true)
+    public function getUniqueID()
     {
-        if($this->uniqueID === '' && $this->isOnVirtualServer && $refreshWhenInconsistent) {
-            $this->refreshWhoAmI();
-        }
-        return $this->uniqueID;
+        return $this->whoami('client_unique_identifyer');
     }
     
     /**
@@ -553,51 +457,33 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
      */
     public function getNickname($refreshWhenInconsistent=true)
     {
-        if($this->nickname === '' && $this->isOnVirtualServer && $refreshWhenInconsistent) {
-            $this->refreshWhoAmI();
-        }
-        return $this->nickname;
+        return $this->whoami('client_nickname');
     }
     
     /**
      * Returns the queryclients database id
-     * Note, that if when there was no refreshWhoAmI call, the data may be outdated
-     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return int
      */
-    public function getDatabaseID($refreshWhenInconsistent=true)
+    public function getDatabaseID()
     {
-        if($this->databaseID === 0 && $this->isOnVirtualServer() && $refreshWhenInconsistent) {
-            $this->refreshWhoAmI();
-        }
-        return $this->databaseID;
+        return $this->whoami('client_database_id');
     }
     
     /**
      * Returns the unique vServer id
-     * Note, that if when there was no refreshWhoAmI call, the data may be outdated
-     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
      * @return string
      */
-    public function getUniqueVirtualServerID($refreshWhenInconsistent=true)
+    public function getUniqueVirtualServerID()
     {
-        if($this->uniqueVirtualServerID === '' && $this->isOnVirtualServer() && $refreshWhenInconsistent) {
-            $this->refreshWhoAmI();
-        }
-        return $this->uniqueVirtualServerID;
+        return $this->whoami('virtualserver_unique_identifier');
     }
     
     /**
-     * Returns the clients id
-     * Note, that if when there was no refreshWhoAmI call, the data may be outdated
-     * @param boolean $refreshWhenInconsistent if this flag is set, the method will trigger a whoami query if there is no consisten data (i.e no vServerId present)
+     * Returns the client's id
      * @return int 
      */
-    public function getClientID($refreshWhenInconsistent=true) {
-        if($this->clientID === 0 && $this->isOnVirtualServer() && $refreshWhenInconsistent) {
-            $this->refreshWhoAmI();
-        }
-        return $this->clientID;
+    public function getClientID() {
+        return $this->whoami()->getValue('client_id');
     }
     
     /**
@@ -686,7 +572,7 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
             $this->unregisterEvents($response);
         }
         if($command->getName() === 'whoami') {
-            return $this->refreshWhoAmI();
+            return $this->whoami();
         }
         if($response !== '') {
             return $response;

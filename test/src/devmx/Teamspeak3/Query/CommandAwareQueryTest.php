@@ -1306,12 +1306,4 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
         $this->commandQuery->customInfo(9086);
     }
 
-    /**
-     * @covers CommandAwareQuery::whoami
-     */
-    public function testWhoami()
-    {
-        $this->commandQuery->expects($this->once())->method("query")->with($this->equalTo("whoami"));
-        $this->commandQuery->whoami();
-    }
 }

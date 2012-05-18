@@ -81,6 +81,13 @@ class InMemoryCache implements \devmx\Teamspeak3\Query\Transport\Decorator\Cachi
             }
         }
     }
+    
+    /**
+     * Clears the whole cache
+     */
+    public function flush() {
+        $this->cache = array();
+    }
 }
 
 ?>

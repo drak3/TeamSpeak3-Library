@@ -194,7 +194,11 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
      */
     public function assertAllResponsesReceived() {
         if(!empty($this->responses)) {
-            throw new Exception\LogicException('Assertion that all responses are received failed');
+            $msg = "Unreceived commands:\n";
+            foreach($this->responses as $r)  {
+                $msg .= $r->getCommand()->getName()."\n";
+            }
+            throw new Exception\LogicException($msg);
         }
     }
     
