@@ -1,11 +1,10 @@
 <?php
 
-namespace devmx\Teamspeak3\Query\Transport\Decorator\Logging;
+namespace devmx\Teamspeak3\Query\Transport\Decorator;
 
 use devmx\Teamspeak3\Query\CommandResponse;
 use devmx\Teamspeak3\Query\Command;
-
-require_once dirname( __FILE__ ) . '/../../../../../../../../src/devmx/Teamspeak3/Query/Transport/Decorator/Logging/LoggingDecorator.php';
+use devmx\Teamspeak3\Query\Transport\Decorator\Logging\LoggingInterface;
 
 /**
  * Test class for LoggingQueryDecorator.
@@ -31,7 +30,7 @@ class LoggingQueryDecoratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->logger = $this->getMockForAbstractClass('\devmx\Teamspeak3\Query\Transport\Decorator\Logging\LoggingInterface');
         $this->transport = $this->getMock('\devmx\Teamspeak3\Query\Transport\TransportInterface');
-        $this->decorator = new LoggingQueryDecorator($this->transport, $this->logger);
+        $this->decorator = new LoggingDecorator($this->transport, $this->logger);
     }
 
     /**
