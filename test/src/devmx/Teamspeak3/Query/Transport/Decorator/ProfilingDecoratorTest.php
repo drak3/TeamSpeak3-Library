@@ -24,7 +24,7 @@ class ProfilingDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->transport = $this->getMockBuilder('\devmx\Teamspeak3\Query\QueryTransport')
+        $this->transport = $this->getMockBuilder('\devmx\Teamspeak3\Query\Transport\QueryTransport')
                                 ->disableOriginalConstructor()
                                 ->getMock();
         $this->decorator = $this->getMockBuilder('\devmx\Teamspeak3\Query\Transport\Decorator\ProfilingDecorator')

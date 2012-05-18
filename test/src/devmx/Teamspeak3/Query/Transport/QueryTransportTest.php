@@ -1,15 +1,16 @@
 <?php
 
-namespace devmx\Teamspeak3\Query;
+namespace devmx\Teamspeak3\Query\Transport;
 use devmx\Transmission\TransmissionStub;
 use devmx\Teamspeak3\Query\Transport\Common;
 use devmx\Transmission\Exception\TransmissionClosedException;
+use devmx\Teamspeak3\Query\Command;
  
-class TestTranslator extends Transport\Common\CommandTranslator {
+class TestTranslator extends Common\CommandTranslator {
     
 }
 
-class TestHandler extends Transport\Common\ResponseHandler {
+class TestHandler extends Common\ResponseHandler {
     
 }
 
@@ -50,7 +51,7 @@ class QueryTransportTest extends \PHPUnit_Framework_TestCase
     public function testSetGetTranslator()
     {
         $this->transport->setTranslator(new TestTranslator());
-        $this->assertInstanceOf('\devmx\Teamspeak3\Query\TestTranslator', $this->transport->getTranslator());
+        $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\TestTranslator', $this->transport->getTranslator());
     }
 
     /**
@@ -61,7 +62,7 @@ class QueryTransportTest extends \PHPUnit_Framework_TestCase
     public function testSetGetHandler()
     {
         $this->transport->setHandler(new TestHandler());
-        $this->assertInstanceOf('\devmx\Teamspeak3\Query\TestHandler', $this->transport->getHandler());
+        $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\TestHandler', $this->transport->getHandler());
     }
 
 

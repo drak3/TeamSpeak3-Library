@@ -15,11 +15,13 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace devmx\Teamspeak3\Query;
+namespace devmx\Teamspeak3\Query\Transport;
 use devmx\Transmission\TransmissionInterface;
 use devmx\Teamspeak3\Query\Transport\CommandTranslatorInterface;
 use devmx\Teamspeak3\Query\Transport\ResponseHandlerInterface;
 use devmx\Transmission\Exception\TransmissionClosedException;
+use devmx\Teamspeak3\Query\Command;
+use devmx\Teamspeak3\Query\Exception;
 
 /**
  * Abstraction of the Teamspeak3-Query
@@ -193,7 +195,7 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
             }
 
         } catch(TransmissionClosedException $e) {
-            if($this->responseHandler instanceof Transport\BanAwareResponseHandlerInterface) {
+            if($this->responseHandler instanceof BanAwareResponseHandlerInterface) {
                 $response = $data . $e->getData();
                 if($this->responseHandler->containsBanMessage($response)) {
                     throw new Exception\BannedException($this->responseHandler->extractBanTime($response));

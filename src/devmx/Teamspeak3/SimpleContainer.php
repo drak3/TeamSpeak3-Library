@@ -18,7 +18,7 @@
  */
 namespace devmx\Teamspeak3;
 use devmx\Transmission\TCP;
-use devmx\Teamspeak3\Query\QueryTransport;
+use devmx\Teamspeak3\Query\Transport\QueryTransport;
 use devmx\Teamspeak3\Query\Transport\Common\CommandTranslator;
 use devmx\Teamspeak3\Query\Transport\Common\ResponseHandler;
 use devmx\Teamspeak3\Query\ServerQuery;
