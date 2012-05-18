@@ -21,6 +21,7 @@ use devmx\Teamspeak3\Query\Transport\TransportInterface;
 use devmx\Teamspeak3\Query\Command;
 use devmx\Teamspeak3\Query\CommandResponse;
 use devmx\Teamspeak3\Query\CommandAwareQuery;
+use devmx\Teamspeak3\Query\Transport\Decorator\AbstractQueryDecorator;
 
 /**
  * This decorator caches command and their responses, to avoid the network overhead
@@ -29,7 +30,7 @@ use devmx\Teamspeak3\Query\CommandAwareQuery;
  * @author Maximilian Narr 
  * @author drak3
  */
-class CachingDecorator extends Transport\AbstractQueryDecorator
+class CachingDecorator extends AbstractQueryDecorator
 {
     
     const VSERVER_PREFIX = 'devmx.ts3.vserver';

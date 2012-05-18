@@ -25,7 +25,7 @@ use devmx\Teamspeak3\Query\CommandResponse;
  * This decorator delays the connection and the sending of specific commands until a not delayable Command is sent, or events are requested.
  * @author drak3
  */
-class DelayingDecorator extends \devmx\Teamspeak3\Query\Transport\AbstractQueryDecorator
+class DelayingDecorator extends AbstractQueryDecorator
 {   
     /**
      * Name of the Commands that could be delayed

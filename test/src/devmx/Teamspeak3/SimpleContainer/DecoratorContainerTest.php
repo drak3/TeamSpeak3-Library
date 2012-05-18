@@ -44,13 +44,13 @@ class DecoratorContainerTest extends \PHPUnit_Framework_TestCase
         $this->container['order'] = array('stub1', 'profiling', 'debugging', 'stub2');
         $that = $this;
         $this->container['stub1'] = $this->container->share(function($c) use ($that) {
-          return $that->getMockBuilder('\devmx\Teamspeak3\Query\Transport\AbstractQueryDecorator')
+          return $that->getMockBuilder('\devmx\Teamspeak3\Query\Transport\Decorator\AbstractQueryDecorator')
                       ->setConstructorArgs(array($c['_prev']('stub1', $c)))
                       ->getMockForAbstractClass();  
         });
         
         $this->container['stub2'] = $this->container->share(function($c) use ($that) {
-          return $that->getMockBuilder('\devmx\Teamspeak3\Query\Transport\AbstractQueryDecorator')
+          return $that->getMockBuilder('\devmx\Teamspeak3\Query\Transport\Decorator\AbstractQueryDecorator')
                       ->setConstructorArgs(array($c['_prev']('stub2', $c)))
                       ->getMockForAbstractClass();  
         });

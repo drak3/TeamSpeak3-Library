@@ -23,7 +23,7 @@ use devmx\Teamspeak3\Query\Command;
  * This decorator provides basic abilities to profile the Query transactions
  * @author drak3
  */
-class ProfilingDecorator extends \devmx\Teamspeak3\Query\Transport\AbstractQueryDecorator
+class ProfilingDecorator extends AbstractQueryDecorator
 {
     /**
      * Stores an array of all times a connectcall took

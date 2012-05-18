@@ -17,7 +17,7 @@
  */
 namespace devmx\Teamspeak3\Query\Transport\Decorator\Logging;
 use devmx\Teamspeak3\Query\Transport\Decorator\Logging;
-use devmx\Teamspeak3\Query\Transport;
+use devmx\Teamspeak3\Query\Transport\Decorator\AbstractQueryDecorator;
 use devmx\Teamspeak3\Query\Transport\TransportInterface;
 use devmx\Teamspeak3\Query\Command;
 
@@ -29,7 +29,7 @@ use devmx\Teamspeak3\Query\Command;
  * LOGGING_LEVEL_INFO: All successful operations like connecting, sending command,...
  * @author Maximilian Narr 
  */
-class LoggingQueryDecorator extends Transport\AbstractQueryDecorator
+class LoggingQueryDecorator extends AbstractQueryDecorator
 {
     
     /**
