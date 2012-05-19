@@ -260,7 +260,11 @@ class QueryTransport implements \devmx\Teamspeak3\Query\Transport\TransportInter
      */
     public function disconnect() {
         // because disconnect could be also called on invalid servers, we just send the quit message and don't wait for any response
-        $this->transmission->send("quit\n");
+        try {
+            $this->transmission->send("quit\n");
+        } catch (Exception $e) {
+            //we do not care if sending succeeded or failed, we just want to close our transmission
+        }        
         $this->transmission->close();
         $this->isConnected = false;
     }
