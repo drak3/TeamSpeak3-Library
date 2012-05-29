@@ -45,7 +45,7 @@ class CommandFailedException extends RuntimeException
      * This response contains (among other things) the errorID and the errorMessage
      * @return CommandResponse
      */
-    public function getRespose() {
+    public function getResponse() {
         return $this->response;
     }
     
