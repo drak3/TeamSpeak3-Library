@@ -42,6 +42,8 @@ class SimpleContainer extends \Pimple
     
     protected function configure() {
         
+        $that = $this;
+        
         $this['query'] = $this->share(function($c){
             return new CommandAwareQuery($c['query.serverquery']);
         });
@@ -55,16 +57,15 @@ class SimpleContainer extends \Pimple
         });
         
         $this['query.transport.decorators'] = new DecoratorContainer();
+       
+        $this['query.transport.decorators']['order'] = function($c) use ($that) {
+            if($that['debug']) {
+                return  array('caching.in_memory', 'profiling', 'debugging');
+            } else {
+                return array('caching.in_memory');
+            }
+        };
         
-        $this['query.transport.decorators']['order'] = array(
-            'caching.in_memory',
-        );
-        
-        if($this['debug']) {
-            $this['query.transport.decorators']['order'] = $this['query.transport.decorators']['order'] + array('profiling', 'debugging');
-        }
-        
-        $that = $this;               
         $this['query.transport.undecorated'] = $this->share(function($c) use ($that){
             return new QueryTransport($that['query.transport.transmission'], $that['query.transport.translator'], $that['query.transport.handler']);
         });
