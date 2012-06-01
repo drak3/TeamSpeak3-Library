@@ -35,8 +35,8 @@ class CommandFailedException extends RuntimeException
      * Constructor
      * @param CommandResponse $response the response caused by the failed command
      */
-    public function __construct(CommandResponse $response) {
-        parent::__construct($this->buildMessage($response));
+    public function __construct(CommandResponse $response, $message='') {
+        parent::__construct($this->buildMessage($response, $message));
         $this->response = $response;
     }
     
@@ -54,7 +54,10 @@ class CommandFailedException extends RuntimeException
      * @param CommandResponse $response
      * @return string
      */
-    private function buildMessage(CommandResponse $response) {
+    private function buildMessage(CommandResponse $response, $message) {
+        if($message !== '') {
+            return $message;
+        }
         $message = sprintf('Command "%s" caused error with message "%s" and id %d.', $response->getCommand()->getName(), $response->getErrorMessage(), $response->getErrorID());
         if($response->hasErrorValue('extra_message')) {
             $message .= sprintf("\n".'Extra message: "%s"', $response->getErrorValue('extra_message'));
