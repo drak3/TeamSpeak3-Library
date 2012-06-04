@@ -204,7 +204,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
      */
     public function testReceiveLine_CustomParams() {
         $this->establish();
-        $this->expectTimeout(22, 23);
+        $this->expectTimeout(22, 230000);
         $this->tcp->expects($this->once())
                     ->method('getLine')
                     ->will($this->returnValue("foobar\n"));
@@ -216,7 +216,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
      */
     public function testReceiveLine_Timeout() {
         $this->establish();
-        $this->expectTimeout(23, 23);
+        $this->expectTimeout(23, 230000);
         $this->tcp->expects($this->exactly(2))
                   ->method('getLine')
                   ->will($this->onConsecutiveCalls('asdf', ''));
@@ -288,7 +288,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
      */
     public function testReceiveData_CustomTimeout() {
         $this->establish();
-        $this->expectTimeout(34, 23);
+        $this->expectTimeout(34, 230000);
         $this->tcp->expects($this->at(2))
                   ->method('getLine')
                   ->with($this->equalTo(4))
@@ -305,7 +305,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
      */
     public function testReceiveData_Timeout() {
         $this->establish();
-        $this->expectTimeout(34, 23);
+        $this->expectTimeout(34, 230000);
         $this->tcp->expects($this->exactly(2))
                   ->method('getLine')
                   ->will($this->onConsecutiveCalls('a', ''));
@@ -363,7 +363,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
      */
     public function testSend_CustomTimeOut() {
         $this->establish();
-        $this->expectTimeout( 23, 42 );
+        $this->expectTimeout( 23, 420000 );
         $this->tcp->expects($this->once())
                   ->method('write')
                   ->with($this->equalTo('foobar'))
@@ -373,7 +373,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     
     public function testSend_Timeout() {
         $this->establish();
-        $this->expectTimeout(1,20);
+        $this->expectTimeout(1,200000);
         $this->tcp->expects($this->exactly(2))
                   ->method('write')
                   ->will($this->onConsecutiveCalls(3, 0));
@@ -427,7 +427,7 @@ class TCPTest extends \PHPUnit_Framework_TestCase
     }
     
     protected function expectDefaultTimeout() {
-        $this->expectTimeout(19, 21);
+        $this->expectTimeout(19, 210000);
     }
     
     protected function expectTimeout($seconds, $micro) {
