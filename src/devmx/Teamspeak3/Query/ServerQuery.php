@@ -23,7 +23,7 @@ use devmx\Teamspeak3\Query\Transport\TransportInterface;
  * it also adds lots of convience methods, like support for serializing with reconnect when unserialize and automaited state recovery
  * @author drak3
  */
-class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterface
+class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterface, \Serializable
 {
     
     /**
@@ -320,30 +320,39 @@ class ServerQuery implements \devmx\Teamspeak3\Query\Transport\TransportInterfac
     
     
     /**
-     * Magic sleep method
+     * Serialization method
      */
-    public function __sleep()
+    public function serialize()
     {
         $this->shouldBeConnected = $this->isConnected();
         $this->transport->disconnect();
-        return array(
-            'transport',
-            'loginName', 
-            'loginPass', 
-            'virtualServerIdentifyer', 
-            'registerCommands', 
-            'selectedChannelID', 
-            'selectedNickname',
-            'shouldBeConnected',
-        );
+        return \serialize(array(
+            'transport' => $this->transport,
+            'loginName' => $this->loginName, 
+            'loginPass' => $this->loginPass, 
+            'virtualServerIdentifyer' => $this->virtualServerIdentifyer, 
+            'registerCommands' => $this->registerCommands, 
+            'selectedChannelID' => $this->selectedChannelID, 
+            'selectedNickname' => $this->selectedNickname,
+            'shouldBeConnected' => $this->shouldBeConnected,
+        ));
     }
     
     /**
      * Wakes up the query, recovers the whole state 
      */
-    public function __wakeup()
-    {
-            $this->recoverState();
+    public function unserialize($serialized)
+    {   
+        $data = \unserialize($serialized);
+        $this->transport = $data['transport'];
+        $this->loginName = $data['loginName'];
+        $this->loginPass = $data['loginPass'];
+        $this->virtualServerIdentifyer = $data['virtualServerIdentifyer'];
+        $this->registerCommands = $data['registerCommands'];
+        $this->selectedChannelID = $data['selectedChannelID'];
+        $this->selectedNickname = $data['selectedNickname'];
+        $this->shouldBeConnected = $data['shouldBeConnected'];
+        $this->recoverState();
     }
     
     /**
