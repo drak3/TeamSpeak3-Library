@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<docblox>
+<phpdoc>
   <title>TeamSpeak3-Library</title>
   <parser>
     <target>doc/api/</target>
@@ -10,4 +10,4 @@
   <files>
     <directory>src/</directory>
   </files>
-</docblox>
+</phpdoc>
