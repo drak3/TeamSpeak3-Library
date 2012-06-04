@@ -352,7 +352,8 @@ class TCP implements TransmissionInterface
         if($microseconds) {
             $timeout = round($timeout, 2);
             $ret['seconds'] = intval($timeout);
-            $ret['microseconds'] = intval(strval(($timeout-$ret['seconds'])*100)); //nasty hack with strval, see http://de3.php.net/manual/en/function.intval.php#86590
+            //micro = (total-seconds) * 10^5 (0.1 seconds are 100000 (=10E5) microseconds)
+            $ret['microseconds'] = intval(strval(($timeout-$ret['seconds'])*10E5)); //nasty hack with strval, see http://de3.php.net/manual/en/function.intval.php#86590
         } else {
             $ret['seconds'] = ceil($timeout);
         }
