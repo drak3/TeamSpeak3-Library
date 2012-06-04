@@ -19,6 +19,7 @@
 
 namespace devmx\Teamspeak3\Query\Transport\Common;
 use devmx\Teamspeak3\Query\Command;
+use devmx\Teamspeak3\Query\Response\HelpResponse;
 
 /**
  *
@@ -26,8 +27,28 @@ use devmx\Teamspeak3\Query\Command;
  */
 class HelpAwareResponseHandler extends ResponseHandler
 {
+    
     protected function parseResponse(Command $cmd, $error, $data='') {
-                
+        if($cmd->getName() === 'help') {
+            return $this->parseHelpResponse($cmd, $error, $data);
+        } else {
+            return parent::parseResponse($cmd, $error, $data);
+        }
+    }
+    
+    /**
+     * This method parses a response issued by a help command
+     * It simply takes the data as helpMessage
+     * @param Command $cmd
+     * @param string $error
+     * @param string $data
+     * @return \devmx\Teamspeak3\Query\Response\HelpResponse 
+     */
+    protected function parseHelpResponse(Command $cmd, $error, $data) {
+        $parsedError = $this->parseData($error);
+        $errorID = $parsedError[0]['id'];
+        $errorMessage = $parsedError[0]['msg'];
+        return new HelpResponse($cmd, $data, $errorID, $errorMessage, $parsedError[0]);
     }
 }
 

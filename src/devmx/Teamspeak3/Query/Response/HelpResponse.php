@@ -17,14 +17,39 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace devmx\Teamspeak3\Query\Response;
+use devmx\Teamspeak3\Query\Command;
 
 /**
  *
  * @author drak3
  */
-class HelpResponse
+class HelpResponse extends CommandResponse
 {
+    /**
+     * @var string 
+     */
+    protected $helpText = '';
     
+    /**
+     * Constructor.
+     * @param Command $cmd
+     * @param string $helpText
+     * @param int $errorID
+     * @param string $errorMessage
+     * @param array $errorItems 
+     */
+    public function __construct(Command $cmd, $helpText, $errorID, $errorMessage, $errorItems) {
+        parent::__construct($cmd, array(), $errorID, $errorMessage, $errorItems);
+        $this->helpText = $helpText;
+    }
+    
+    /**
+     * Returns the help text
+     * @return string 
+     */
+    public function getHelpText() {
+        return $this->helpText;
+    }
 }
 
 ?>
