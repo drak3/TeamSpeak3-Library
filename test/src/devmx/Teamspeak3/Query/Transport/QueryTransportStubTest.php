@@ -1,8 +1,8 @@
 <?php
 
 namespace devmx\Teamspeak3\Query\Transport;
-use devmx\Teamspeak3\Query\Event;
-use devmx\Teamspeak3\Query\CommandResponse;
+use devmx\Teamspeak3\Query\Response\Event;
+use devmx\Teamspeak3\Query\Response\CommandResponse;
 use devmx\Teamspeak3\Query\Command;
 require_once dirname( __FILE__ ) . '/../../../../../../src/devmx/Teamspeak3/Query/Transport/QueryTransportStub.php';
 

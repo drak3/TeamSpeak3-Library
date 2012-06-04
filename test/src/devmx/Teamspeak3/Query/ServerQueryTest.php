@@ -1,6 +1,8 @@
 <?php
 
 namespace devmx\Teamspeak3\Query;
+use devmx\Teamspeak3\Query\Response\CommandResponse;
+use devmx\Teamspeak3\Query\Response\Event;
 
 
 require_once dirname( __FILE__ ) . '/../../../../../src/devmx/Teamspeak3/Query/ServerQuery.php';

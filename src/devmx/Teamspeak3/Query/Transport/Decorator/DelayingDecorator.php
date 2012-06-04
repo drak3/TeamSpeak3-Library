@@ -19,7 +19,7 @@ namespace devmx\Teamspeak3\Query\Transport\Decorator;
 use devmx\Teamspeak3\Query\Transport\TransportInterface;
 use devmx\Teamspeak3\Query\Command;
 use devmx\Teamspeak3\Query\CommandAwareQuery;
-use devmx\Teamspeak3\Query\CommandResponse;
+use devmx\Teamspeak3\Query\Response\CommandResponse;
 
 /**
  * This decorator delays the connection and the sending of specific commands until a not delayable Command is sent, or events are requested.

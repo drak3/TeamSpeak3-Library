@@ -2,8 +2,9 @@
 
 namespace devmx\Teamspeak3\Query\Transport\Decorator;
 use devmx\Teamspeak3\Query\Command;
-use devmx\Teamspeak3\Query\CommandResponse;
+use devmx\Teamspeak3\Query\Response\CommandResponse;
 use devmx\Teamspeak3\Query\CommandAwareQuery;
+use devmx\Teamspeak3\Query\Response\Event;
 
 /**
  * Test class for DelayingDecorator.
@@ -84,7 +85,7 @@ class DelayingDecoratorTest extends \PHPUnit_Framework_TestCase
         
         $useCommand = new Command('use');
         $useResponse = new CommandResponse($useCommand);
-        $event = new \devmx\Teamspeak3\Query\Event('foo', array());
+        $event = new Event('foo', array());
         
         $this->decorator->sendCommand($useCommand);
         
@@ -101,7 +102,7 @@ class DelayingDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetAllEvents_connect($method)
     {
-        $e = new \devmx\Teamspeak3\Query\Event('foobar', array());
+        $e = new Event('foobar', array());
         $this->query->addEvent($e);
         $this->assertEquals(array($e), $this->decorator->$method());
         $this->assertTrue($this->query->isConnected());

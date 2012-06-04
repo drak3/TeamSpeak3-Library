@@ -15,7 +15,7 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace devmx\Teamspeak3\Query;
+namespace devmx\Teamspeak3\Query\Response;
 
 /**
  * The base class for all responses sent by the Query

@@ -18,6 +18,8 @@
 namespace devmx\Teamspeak3\Query\Transport\Common;
 use devmx\Teamspeak3\Query\Exception;
 use devmx\Teamspeak3\Query\Command;
+use devmx\Teamspeak3\Query\Response\CommandResponse;
+use devmx\Teamspeak3\Query\Response\Event;
 
 /**
  * The Responsehandler handles all output given by the Query.
@@ -278,7 +280,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
             $items = Array();
         }
 
-        return new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $parsedError[0]);
+        return new CommandResponse($cmd, $items, $errorID, $errorMessage, $parsedError[0]);
     }
 
     /**
@@ -294,7 +296,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
         $event = $event[1];
         $data = $this->parseData($event); //the rest is a single block of data
 
-        return new \devmx\Teamspeak3\Query\Event($reason, $data);
+        return new Event($reason, $data);
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace devmx\Teamspeak3\Query\Transport\Decorator;
 use devmx\Teamspeak3\Query\Command;
-use devmx\Teamspeak3\Query\CommandResponse;
+use devmx\Teamspeak3\Query\Response\CommandResponse;
 use devmx\Teamspeak3\Query\CommandAwareQuery;
 
 /**

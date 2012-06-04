@@ -17,8 +17,8 @@
  */
 namespace devmx\Teamspeak3\Query\Transport;
 use \devmx\Teamspeak3\Query\Exception;
-use \devmx\Teamspeak3\Query\CommandResponse;
-use \devmx\Teamspeak3\Query\Event;
+use \devmx\Teamspeak3\Query\Response\CommandResponse;
+use \devmx\Teamspeak3\Query\Response\Event;
 use \devmx\Teamspeak3\Query\Command;
 
 /**

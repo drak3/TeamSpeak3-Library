@@ -16,7 +16,7 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace devmx\Teamspeak3\Query\Exception;
-use devmx\Teamspeak3\Query\CommandResponse;
+use devmx\Teamspeak3\Query\Response\CommandResponse;
 
 /**
  * The exception thrown when an command sent to the Query resulted in an error

@@ -15,7 +15,9 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace devmx\Teamspeak3\Query;
+namespace devmx\Teamspeak3\Query\Response;
+use devmx\Teamspeak3\Query\Command;
+use devmx\Teamspeak3\Query\Exception\CommandFailedException;
 
 /**
  * A response caused directly by a command (e.g. channellist)
@@ -110,7 +112,7 @@ class CommandResponse extends Response
      */
     public function toException() {
         if($this->errorOccured()) {
-            throw new Exception\CommandFailedException($this);
+            throw new CommandFailedException($this);
         }
     }
     

@@ -161,7 +161,7 @@ notifybar asdf=sdfff fnord=asda
 
 EOF;
         $this->transmission->setToReceive($raw);
-        $this->assertInstanceOf('\devmx\Teamspeak3\Query\CommandResponse',$this->transport->sendCommand(new Command('foo')));
+        $this->assertInstanceOf('\devmx\Teamspeak3\Query\Response\CommandResponse',$this->transport->sendCommand(new Command('foo')));
         $this->transmission->close();
         $events = $this->transport->getAllEvents(true);
         $this->assertCount(2, $events);

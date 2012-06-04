@@ -137,7 +137,7 @@ EOF;
         $cmd = new Command('foo');
         $parsed = $this->handler->getResponseInstance($cmd, $raw);
         $parsed = $parsed['response'];
-        $this->assertInstanceOF('\devmx\Teamspeak3\Query\CommandResponse', $parsed);
+        $this->assertInstanceOF('\devmx\Teamspeak3\Query\Response\CommandResponse', $parsed);
         $this->assertEquals(0, $parsed->getErrorID());
         $this->assertEquals('[spacer1]---', $parsed->getValue('channel_name', 2));
     }
@@ -162,7 +162,7 @@ notifysomeothercrap asdfg=345 bar=foo
 EOF;
         $parsedEvents = $this->handler->getEventInstances($events);
         $this->assertEquals(2,count($parsedEvents));
-        $this->assertInstanceOf('\devmx\Teamspeak3\Query\Event', $parsedEvents[0], $parsedEvents[1]);
+        $this->assertInstanceOf('\devmx\Teamspeak3\Query\Response\Event', $parsedEvents[0], $parsedEvents[1]);
         $this->assertEquals(114, $parsedEvents[0]->getValue('cid'));
         $this->assertEquals('notifysomeothercrap', $parsedEvents[1]->getReason());
     }

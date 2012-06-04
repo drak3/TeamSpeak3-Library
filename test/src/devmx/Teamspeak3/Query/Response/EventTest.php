@@ -1,6 +1,7 @@
 <?php
 
-namespace devmx\Teamspeak3\Query;
+namespace devmx\Teamspeak3\Query\Response;
+use devmx\Teamspeak3\Query\Command;
 
  
 /**
