@@ -101,12 +101,18 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
         "\\t" => "\t",
         "\\v" => "\v",
     );
-
+    
     /**
      * The regular expression to describe the error block of a response
      * @var string
      */
-    protected $errorRegex = "/error id=[0-9]* msg=[a-zA-Z\\\\]*/";
+    protected $errorRegex = "/^error id=[0-9]* msg=[a-zA-Z\\\\]*/";
+    
+    /**
+     * The laxErrorRegex can be used to parse a error message that is not at the beginning of the string
+     * @var string 
+     */
+    protected $laxErrorRegex = "/error id=[0-9]* msg=[a-zA-Z\\\\]*/";
     
     /**
      * The regular expression to describe the extra_message of a (flood)ban response
@@ -129,6 +135,15 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
     /**
      * Parses a response coming from the query for a given command
      * Event notifications occured before sending the command are parsed too
+     * This method does simply the following:
+     * Split up the response by line break (static::SEPERATOR_RESPONSE) 
+     *  Iterate over the pieces and decide of which type they are:
+     *      error (matches $this->errorRegex):                      put it into error
+     *      event (first chars are notify (static::EVENT_PREFIX)):  put it into events[]
+     *      everything else:                                        append it+static::SEPERATOR_RESPONSE to data
+     * error is then parsed as the error messages,
+     * the events are parsed and put under the 'events' key of the return array
+     * the data is parsed as response items
      * @param Command $cmd the command which caused this response
      * @param string $raw the raw query response
      * @return \devmx\Teamspeak3\Query\Response[] in form Array('response' => $responseObject, 'events' => Array($eventobject1,$eventobject2));  
@@ -138,28 +153,27 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
         $response = Array('response' => NULL, 'events' => Array());
         $parsed = Array();
 
-        $raw = \trim($raw, "\r\n");
+        
         $parsed = \explode(static::SEPERATOR_RESPONSE, $raw);
-
-        //find error message
-        foreach($parsed as $key=>$value) {
-            if($this->match($this->errorRegex, $value)) {
-                $error = $value;
-                unset($parsed[$key]);
-                break;
-            }
-        }
+        
+        $error = '';
+        $events = array();
         $data = '';
-        foreach($parsed as $part) {
-            if(substr($part, 0, strlen(static::EVENT_PREFIX)) === static::EVENT_PREFIX) {
-                $response['events'][] = $this->parseEvent($part);
+        
+        foreach($parsed as $line) {
+            if($this->match( $this->errorRegex, $line )) {
+                $error = $line;
+            } elseif(substr($line, 0, strlen(static::EVENT_PREFIX)) === static::EVENT_PREFIX) {
+                $events[] = $this->parseEvent($line);
+            } else {
+                $data .= $line.static::SEPERATOR_RESPONSE;
             }
-            else {
-                $data = $part;
-            }
-        }
+        } 
+        
+        $data = \trim($data, static::SEPERATOR_RESPONSE);
         
         $response['response'] = $this->parseResponse($cmd, $error, $data);
+        $response['events'] = $events;
         return $response;
     }
     
@@ -205,14 +219,16 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
      */
     public function isCompleteResponse($raw)
     {
-        if ($this->match($this->errorRegex, $raw) &&  $raw[strlen($raw)-1] == "\n")
-        {
-            return true;
-        }
-        else
-        {
+        if(strlen($raw) === 0 || !($raw[strlen($raw)-1] === static::SEPERATOR_RESPONSE)) {
             return false;
         }
+        $lines = \explode(static::SEPERATOR_RESPONSE, $raw);
+        foreach($lines as $line) {
+            if($this->match($this->errorRegex, $line)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**
@@ -370,7 +386,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
      * @return boolean 
      */
     protected function parsePossibleBanMessage($raw) {
-        $parsed = $this->match($this->errorRegex, $raw);
+        $parsed = $this->match($this->laxErrorRegex, $raw);
         if($parsed) {
             $parsed = $this->parseData($raw);
             if(isset($parsed[0]['id']) && ($parsed[0]['id'] == static::BAN_ERROR_ID || $parsed[0]['id'] == static::FLOOD_BAN_ERROR_ID)) {
