@@ -37,7 +37,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::version
+     * @covers \devmx\Teamspeak3\Query\CommandAwareQuery::version
      */
     public function testVersion()
     {
@@ -46,7 +46,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::hostInfo
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::hostInfo
      */
     public function testHostInfo()
     {
@@ -56,7 +56,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::instanceInfo
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::instanceInfo
      */
     public function testInstanceInfo()
     {
@@ -65,7 +65,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::instanceEdit
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::instanceEdit
      */
     public function testInstanceEdit()
     {
@@ -79,7 +79,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::bindingList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::bindingList
      */
     public function testBindingList()
     {
@@ -88,7 +88,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverList
      */
     public function testServerList()
     {
@@ -97,7 +97,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverIdGetByPort
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverIdGetByPort
      */
     public function testServerIdGetByPort()
     {
@@ -107,7 +107,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverDelete
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverDelete
      */
     public function testServerDelete()
     {
@@ -116,7 +116,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverCreate
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverCreate
      */
     public function testServerCreate()
     {
@@ -127,7 +127,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverStart
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverStart
      */
     public function testServerStart()
     {
@@ -137,7 +137,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverStop
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverStop
      */
     public function testServerStop()
     {
@@ -147,7 +147,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverProcessStop
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverProcessStop
      */
     public function testServerProcessStop()
     {
@@ -156,7 +156,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverInfo
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverInfo
      */
     public function testServerInfo()
     {
@@ -165,7 +165,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverRequestConnectionInfo
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverRequestConnectionInfo
      */
     public function testServerRequestConnectionInfo()
     {
@@ -174,7 +174,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverTempPasswordAdd
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverTempPasswordAdd
      */
     public function testServerTempPasswordAdd()
     {
@@ -193,7 +193,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverTempPasswordDel
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverTempPasswordDel
      */
     public function testServerTempPasswordDel()
     {
@@ -203,7 +203,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverTempPasswordList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverTempPasswordList
      */
     public function testServerTempPasswordList()
     {
@@ -212,7 +212,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverEdit
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverEdit
      */
     public function testServerEdit()
     {
@@ -224,7 +224,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupList
      */
     public function testServerGroupList()
     {
@@ -233,7 +233,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupAdd
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupAdd
      */
     public function testServerGroupAdd()
     {
@@ -247,7 +247,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupDel
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupDel
      */
     public function testServerGroupDel()
     {
@@ -261,7 +261,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupCopy
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupCopy
      */
     public function testServerGroupCopy()
     {
@@ -278,7 +278,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupRename
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupRename
      */
     public function testServerGroupRename()
     {
@@ -293,7 +293,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupPermList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupPermList
      */
     public function testServerGroupPermList()
     {
@@ -305,7 +305,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupAddPerm
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupAddPerm
      */
     public function testServerGroupAddPerm()
     {
@@ -323,7 +323,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupDelPerm
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupDelPerm
      */
     public function testServerGroupDelPerm()
     {
@@ -336,7 +336,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupAddClient
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupAddClient
      */
     public function testServerGroupAddClient()
     {
@@ -351,7 +351,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupDelClient
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupDelClient
      */
     public function testServerGroupDelClient()
     {
@@ -366,7 +366,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupClientList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupClientList
      */
     public function testServerGroupClientList()
     {
@@ -378,7 +378,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupClientList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupClientList
      */
     public function testServerGroupClientListWithoutNames()
     {
@@ -390,7 +390,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupsByClientId
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupsByClientId
      */
     public function testServerGroupsByClientId()
     {
@@ -400,7 +400,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupAutoAddPerm
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupAutoAddPerm
      */
     public function testServerGroupAutoAddPerm()
     {
@@ -420,7 +420,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverGroupAutoDelPerm
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverGroupAutoDelPerm
      */
     public function testServerGroupAutoDelPerm()
     {
@@ -440,7 +440,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverSnapshotCreate
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverSnapshotCreate
      */
     public function testServerSnapshotCreate()
     {
@@ -449,7 +449,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverSnapshotDeploy
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverSnapshotDeploy
      */
     public function testServerSnapshotDeploy()
     {
@@ -463,7 +463,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverNotifyRegister
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverNotifyRegister
      */
     public function testServerNotifyRegister()
     {
@@ -478,7 +478,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::serverNotifyUnregister
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::serverNotifyUnregister
      */
     public function testServerNotifyUnregister()
     {
@@ -487,7 +487,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::sendTextMessage
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::sendTextMessage
      */
     public function testSendTextMessage()
     {
@@ -504,7 +504,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::logview
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::logview
      */
     public function testLogView()
     {
@@ -513,7 +513,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::logAdd
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::logAdd
      */
     public function testLogAdd()
     {
@@ -523,7 +523,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::gm
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::gm
      */
     public function testGm()
     {
@@ -533,7 +533,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelList
      */
     public function testChannelList()
     {
@@ -549,7 +549,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelInfo
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelInfo
      */
     public function testChannelInfo()
     {
@@ -559,7 +559,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelFind
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelFind
      */
     public function testChannelFind()
     {
@@ -569,7 +569,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelMove
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelMove
      */
     public function testChannelMove()
     {
@@ -580,7 +580,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelCreate
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelCreate
      */
     public function testChannelCreate()
     {
@@ -590,7 +590,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelDelete
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelDelete
      */
     public function testChannelDelete()
     {
@@ -600,7 +600,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelEdit
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelEdit
      */
     public function testChannelEdit()
     {
@@ -613,7 +613,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelGroupList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelGroupList
      */
     public function testChannelGroupList()
     {
@@ -622,7 +622,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelGroupAdd
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelGroupAdd
      */
     public function testChannelGroupAdd()
     {
@@ -632,7 +632,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelGroupDel
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelGroupDel
      */
     public function testChannelGroupDel()
     {
@@ -642,7 +642,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelGroupCopy
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelGroupCopy
      */
     public function testChannelGroupCopy()
     {
@@ -654,7 +654,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelGroupRename
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelGroupRename
      */
     public function testChannelGroupRename()
     {
@@ -665,7 +665,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelGroupAddPerm
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelGroupAddPerm
      */
     public function testChannelGroupAddPerm()
     {
@@ -676,7 +676,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelGroupPermList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelGroupPermList
      */
     public function testChannelGroupPermList()
     {
@@ -686,7 +686,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelGroupDelPerm
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelGroupDelPerm
      */
     public function testChannelGroupDelPerm()
     {
@@ -697,7 +697,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelGroupClientList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelGroupClientList
      */
     public function testChannelGroupClientList()
     {
@@ -709,7 +709,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::setClientChannelGroup
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::setClientChannelGroup
      */
     public function testSetClientChannelGroup()
     {
@@ -721,7 +721,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelPermList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelPermList
      */
     public function testChannelPermList()
     {
@@ -733,7 +733,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelAddPerm
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelAddPerm
      */
     public function testChannelAddPerm()
     {
@@ -744,7 +744,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelDelPerm
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelDelPerm
      */
     public function testChannelDelPerm()
     {
@@ -755,7 +755,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientList
      */
     public function testClientList()
     {
@@ -773,7 +773,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientInfo
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientInfo
      */
     public function testClientInfo()
     {
@@ -783,7 +783,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientFind
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientFind
      */
     public function testClientFind()
     {
@@ -793,7 +793,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientEdit
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientEdit
      */
     public function testClientEdit()
     {
@@ -806,7 +806,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientDbList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientDbList
      */
     public function testClientDbList()
     {
@@ -815,7 +815,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientDbInfo
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientDbInfo
      */
     public function testClientDbInfo()
     {
@@ -825,7 +825,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientDbFind
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientDbFind
      */
     public function testClientDbFind()
     {
@@ -835,7 +835,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientDbEdit
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientDbEdit
      */
     public function testClientDbEdit()
     {
@@ -845,7 +845,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientDbDelete
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientDbDelete
      */
     public function testClientDbDelete()
     {
@@ -854,7 +854,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientGetIds
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientGetIds
      */
     public function testClientGetIds()
     {
@@ -863,7 +863,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientGetDbIdFromUid
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientGetDbIdFromUid
      */
     public function testClientGetDbIdFromUid()
     {
@@ -872,7 +872,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientGetNameFromUid
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientGetNameFromUid
      */
     public function testClientGetNameFromUid()
     {
@@ -881,7 +881,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientGetNameFromDbId
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientGetNameFromDbId
      */
     public function testClientGetNameFromDbId()
     {
@@ -890,7 +890,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientSetServerQueryLogin
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientSetServerQueryLogin
      */
     public function testClientSetServerQueryLogin()
     {
@@ -899,7 +899,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientUpdate
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientUpdate
      */
     public function testClientUpdate()
     {
@@ -908,7 +908,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientMove
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientMove
      */
     public function testClientMove()
     {
@@ -917,7 +917,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientKick
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientKick
      */
     public function testClientKick()
     {
@@ -926,7 +926,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientPoke
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientPoke
      */
     public function testClientPoke()
     {
@@ -935,7 +935,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientPermList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientPermList
      */
     public function testClientPermList()
     {
@@ -944,7 +944,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientAddPerm
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientAddPerm
      */
     public function testClientAddPerm()
     {
@@ -953,7 +953,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::clientDelPerm
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::clientDelPerm
      */
     public function testClientDelPerm()
     {
@@ -962,7 +962,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelClientPermList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelClientPermList
      */
     public function testChannelClientPermList()
     {
@@ -971,7 +971,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelClientAddPerm
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelClientAddPerm
      */
     public function testChannelClientAddPerm()
     {
@@ -980,7 +980,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::channelClientDelPerm
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::channelClientDelPerm
      */
     public function testChannelClientDelPerm()
     {
@@ -989,7 +989,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::permissionList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::permissionList
      */
     public function testPermissionList()
     {
@@ -998,7 +998,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::permIdGetByName
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::permIdGetByName
      */
     public function testPermIdGetByName()
     {
@@ -1007,7 +1007,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::permOverview
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::permOverview
      */
     public function testPermOverview()
     {
@@ -1016,7 +1016,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::permGet
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::permGet
      */
     public function testPermGet()
     {
@@ -1025,7 +1025,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::permFind
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::permFind
      */
     public function testPermFind()
     {
@@ -1034,7 +1034,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::permReset
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::permReset
      */
     public function testPermReset()
     {
@@ -1043,7 +1043,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::privilegeKeyList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::privilegeKeyList
      */
     public function testPrivilegeKeyList()
     {
@@ -1052,7 +1052,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::privilegeKeyAdd
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::privilegeKeyAdd
      */
     public function testPrivilegeKeyAdd()
     {
@@ -1061,7 +1061,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::privilegeKeyDelete
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::privilegeKeyDelete
      */
     public function testPrivilegeKeyDelete()
     {
@@ -1070,7 +1070,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::privilegeKeyUse
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::privilegeKeyUse
      */
     public function testPrivilegeKeyUse()
     {
@@ -1079,7 +1079,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::messageList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::messageList
      */
     public function testMessageList()
     {
@@ -1088,7 +1088,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::messageAdd
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::messageAdd
      */
     public function testMessageAdd()
     {
@@ -1097,7 +1097,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::messageDel
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::messageDel
      */
     public function testMessageDel()
     {
@@ -1106,7 +1106,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::messageGet
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::messageGet
      */
     public function testMessageGet()
     {
@@ -1115,7 +1115,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::messageUpdateFlag
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::messageUpdateFlag
      */
     public function testMessageUpdateFlag()
     {
@@ -1124,7 +1124,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::complainList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::complainList
      */
     public function testComplainList()
     {
@@ -1133,7 +1133,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::complainAdd
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::complainAdd
      */
     public function testComplainAdd()
     {
@@ -1142,7 +1142,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::complainDelAll
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::complainDelAll
      */
     public function testComplainDelAll()
     {
@@ -1151,7 +1151,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::complainDel
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::complainDel
      */
     public function testComplainDel()
     {
@@ -1160,7 +1160,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::banClient
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::banClient
      */
     public function testBanClient()
     {
@@ -1169,7 +1169,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::banList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::banList
      */
     public function testBanList()
     {
@@ -1178,7 +1178,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::banAdd
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::banAdd
      */
     public function testBanAdd()
     {
@@ -1187,7 +1187,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::banDel
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::banDel
      */
     public function testBanDel()
     {
@@ -1196,7 +1196,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::banDelAll
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::banDelAll
      */
     public function testBanDelAll()
     {
@@ -1205,7 +1205,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::ftInitUpload
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::ftInitUpload
      */
     public function testFtInitUpload()
     {
@@ -1214,7 +1214,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::ftInitDowload
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::ftInitDowload
      */
     public function testFtInitDowload()
     {
@@ -1223,7 +1223,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::ftList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::ftList
      */
     public function testFtList()
     {
@@ -1232,7 +1232,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::ftGetFileList
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::ftGetFileList
      */
     public function testFtGetFileList()
     {
@@ -1241,7 +1241,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::ftGetFileInfo
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::ftGetFileInfo
      */
     public function testFtGetFileInfo()
     {
@@ -1250,7 +1250,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::ftStop
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::ftStop
      */
     public function testFtStop()
     {
@@ -1259,7 +1259,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::ftDeleteFile
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::ftDeleteFile
      */
     public function testFtDeleteFile()
     {
@@ -1268,7 +1268,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::ftCreateDir
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::ftCreateDir
      */
     public function testFtCreateDir()
     {
@@ -1277,7 +1277,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::ftRenameFile
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::ftRenameFile
      *
      */
     public function testFtRenameFile()
@@ -1287,7 +1287,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::customSearch
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::customSearch
      *
      */
     public function testCustomSearch()
@@ -1297,7 +1297,7 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers CommandAwareQuery::customInfo
+     * @covers devmx\Teamspeak3\Query\CommandAwareQuery::customInfo
      *
      */
     public function testCustomInfo()
