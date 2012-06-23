@@ -68,8 +68,7 @@ class CachingDecoratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers devmx\Teamspeak3\Query\Transport\Decorator\Caching\CachingDecorator::getCacheAbleCommands
-     * @todo Implement testGetCacheAbleCommands().
+     * @covers devmx\Teamspeak3\Query\Transport\Decorator\CachingDecorator::getCacheAbleCommands
      */
     public function testSetGetCacheAbleCommands()
     {

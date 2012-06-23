@@ -68,7 +68,7 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
         
     /**
      * @dataProvider whoamiProvider
-     * @covers devmx\Teamspeak3\Query\ServerQuery::refreshWhoAmI
+     * @covers devmx\Teamspeak3\Query\ServerQuery::whoAmI
      * @covers devmx\Teamspeak3\Query\ServerQuery::isOnVirtualServer
      * @covers devmx\Teamspeak3\Query\ServerQuery::isLoggedIn
      * @covers devmx\Teamspeak3\Query\ServerQuery::getLoginName
@@ -424,8 +424,8 @@ class ServerQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers devmx\Teamspeak3\Query\ServerQuery::__sleep
-     * @covers devmx\Teamspeak3\Query\ServerQuery::__wakeup
+     * @covers devmx\Teamspeak3\Query\ServerQuery::serialize
+     * @covers devmx\Teamspeak3\Query\ServerQuery::unserialize
      * @covers devmx\Teamspeak3\Query\ServerQuery::recoverState
      */
     public function testSerializeUnserialize()

@@ -113,8 +113,7 @@ class DelayingDecoratorTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @covers devmx\Teamspeak3\Query\Transport\Decorator\Caching\CachingDecorator::getDelayableCommands
-     * @todo Implement testGetDelayableCommands().
+     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DelayingDecorator::getDelayableCommands
      */
     public function testSetGetDelayableCommands()
     {
@@ -127,7 +126,7 @@ class DelayingDecoratorTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @covers devmx\Teamspeak3\Query\Transport\Decorator\Caching\CachingDecorator::connect
+     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DelayingDecorator::connect
      * A call to connect should be delayed.
      */
     public function testConnect()

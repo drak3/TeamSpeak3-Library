@@ -44,9 +44,9 @@ class QueryTransportTest extends \PHPUnit_Framework_TestCase
 
         
     /**
-     * @covers devmx\Teamspeak3\Query\QueryTransport::setTranslator
-     * @covers devmx\Teamspeak3\Query\QueryTransport::getTranslator
-     * @covers devmx\Teamspeak3\Query\QueryTransport::__construct
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::setTranslator
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::getTranslator
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::__construct
      */
     public function testSetGetTranslator()
     {
@@ -55,9 +55,9 @@ class QueryTransportTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers devmx\Teamspeak3\Query\QueryTransport::setHandler
-     * @covers devmx\Teamspeak3\Query\QueryTransport::getHandler
-     * @covers devmx\Teamspeak3\Query\QueryTransport::__construct
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::setHandler
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::getHandler
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::__construct
      */
     public function testSetGetHandler()
     {
@@ -67,8 +67,8 @@ class QueryTransportTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @covers devmx\Teamspeak3\Query\QueryTransport::getTransmission
-     * @covers devmx\Teamspeak3\Query\QueryTransport::__construct
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::getTransmission
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::__construct
      */
     public function testGetTransmission()
     {
@@ -76,9 +76,9 @@ class QueryTransportTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers devmx\Teamspeak3\Query\QueryTransport::connect
-     * @covers devmx\Teamspeak3\Query\QueryTransport::isConnected
-     * @covers devmx\Teamspeak3\Query\QueryTransport::checkWelcomeMessage
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::connect
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::isConnected
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::checkWelcomeMessage
      */
     public function testConnect()
     {
@@ -90,7 +90,7 @@ class QueryTransportTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @expectedException \devmx\Teamspeak3\Query\Exception\InvalidServerException
-     * @covers devmx\Teamspeak3\Query\QueryTransport::connect 
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::connect 
      */
     public function testFailedConnect() {
         $this->transmission->addToReceive("TS2\n");
@@ -112,7 +112,7 @@ EOF;
 
     
     /**
-     * @covers devmx\Teamspeak3\Query\QueryTransport::getAllEvents
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::getAllEvents
      */
     public function testGetAllEvents()
     {
@@ -132,7 +132,7 @@ EOF;
     
 
     /**
-     * @covers devmx\Teamspeak3\Query\QueryTransport::sendCommand
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::sendCommand
      */
     public function testSendCommand()
     {
@@ -147,7 +147,7 @@ EOF;
     }
     
     /**
-     *@covers devmx\Teamspeak3\Query\QueryTransport::getAllEvents 
+     *@covers devmx\Teamspeak3\Query\Transport\QueryTransport::getAllEvents 
      */
     public function testGetAllEvents_DryRun() {
         $this->connectTransport();
@@ -169,7 +169,7 @@ EOF;
     }
 
     /**
-     * @covers devmx\Teamspeak3\Query\QueryTransport::query
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::query
      */
     public function testQuery()
     {
@@ -182,7 +182,7 @@ EOF;
     }
 
     /**
-     * @covers devmx\Teamspeak3\Query\QueryTransport::waitForEvent
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::waitForEvent
      */
     public function testWaitForEvent()
     {
@@ -228,7 +228,7 @@ EOF;
     }
 
     /**
-     * @covers devmx\Teamspeak3\Query\QueryTransport::disconnect
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::disconnect
      */
     public function testDisconnect()
     {
@@ -240,7 +240,7 @@ EOF;
     }
 
     /**
-     * @covers devmx\Teamspeak3\Query\QueryTransport::__clone
+     * @covers devmx\Teamspeak3\Query\Transport\QueryTransport::__clone
      */
     public function test__clone()
     {
