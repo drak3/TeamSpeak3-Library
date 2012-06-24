@@ -21,13 +21,13 @@ namespace devmx\Teamspeak3\Query\Transport\Decorator\Logging\Proxy;
  *
  * @author drak3
  */
-class MonologProxy implements LoggingInterface
+class MonologProxy implements \devmx\Teamspeak3\Query\Transport\Decorator\Logging\LoggingInterface
 {
     protected $logger;
     
     protected $logLevelMap = array(
         self::LOGGING_LEVEL_INFO => \Monolog\Logger::INFO,
-        self::LOGGING_LEVEL_NOTICE => \Monolog\Logger::DEBUG,
+        self::LOGGING_LEVEL_NOTICE => \Monolog\Logger::INFO, //to support 1.0 too
         self::LOGGING_LEVEL_WARNING => \Monolog\Logger::WARNING,
         self::LOGGING_LEVEL_ERROR => \Monolog\Logger::ERROR,
         self::LOGGING_LEVEL_FATAL => \Monolog\Logger::CRITICAL
@@ -39,7 +39,7 @@ class MonologProxy implements LoggingInterface
     
     public function addLog($message, $logLevel) {
         $level = isset($this->logLevelMap[$logLevel]) ? $this->logLevelMap[$logLevel] : \Monolog\Logger::INFO;
-        $this->logger->addRecord($message, $level);
+        $this->logger->addRecord($level, $message);
     }
 }
 

@@ -8,11 +8,13 @@
     },
     "require-dev": {
         "pimple/pimple": "1.0.*",
-        "doctrine/common": "2.2.*"
+        "doctrine/common": ">=2.2.0",
+        "monolog/monolog": ">=1.0.0"
     },
     "suggest": {
         "pimple/pimple": "To use the preconfigured container",
-        "doctrine/common": "To use more cache backends"
+        "doctrine/common": "To use more cache backends",
+        "monolog/monolog": "Provides a logging backend",
     },
     "autoload": {
         "psr-0": {"devmx": "src"}
