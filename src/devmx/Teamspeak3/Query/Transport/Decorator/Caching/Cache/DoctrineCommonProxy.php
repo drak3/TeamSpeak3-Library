@@ -28,7 +28,7 @@ class DoctrineCommonProxy implements CacheInterface
     
     protected $defaultTtl;
     
-    public function __construct(\Doctrine\Common\Cache $cache, $defaultTtl=0) {
+    public function __construct(\Doctrine\Common\Cache\Cache $cache, $defaultTtl=0) {
         $this->cache = $cache;
         $this->defaultTtl = $defaultTtl;
     }
