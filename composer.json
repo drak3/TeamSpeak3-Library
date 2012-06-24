@@ -7,10 +7,12 @@
         "php": ">=5.3.2"
     },
     "require-dev": {
-        "pimple/pimple": "1.0.*"
+        "pimple/pimple": "1.0.*",
+        "doctrine/common": "2.2.*"
     },
     "suggest": {
-        "pimple/pimple": "To use the preconfigured container"
+        "pimple/pimple": "To use the preconfigured container",
+        "doctrine/common": "To use more cache backends"
     },
     "autoload": {
         "psr-0": {"devmx": "src"}
