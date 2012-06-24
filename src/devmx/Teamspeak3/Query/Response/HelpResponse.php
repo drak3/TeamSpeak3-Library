@@ -38,7 +38,7 @@ class HelpResponse extends CommandResponse
      * @param string $errorMessage
      * @param array $errorItems 
      */
-    public function __construct(Command $cmd, $helpText, $errorID, $errorMessage, $errorItems) {
+    public function __construct(Command $cmd, $helpText, $errorID=0, $errorMessage='ok', $errorItems=array()) {
         parent::__construct($cmd, array(), $errorID, $errorMessage, $errorItems);
         $this->helpText = $helpText;
     }
