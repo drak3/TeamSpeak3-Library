@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -16,15 +15,18 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace devmx\Teamspeak3\Query\Transport\Common;
+use devmx\Teamspeak3\Query\Exception;
+use devmx\Teamspeak3\Query\Command;
+use devmx\Teamspeak3\Query\Response\CommandResponse;
+use devmx\Teamspeak3\Query\Response\Event;
 
 /**
- * 
- *
+ * The Responsehandler handles all output given by the Query.
+ * It checks if the server is valid, checks commands and events for completeness and parses them
  * @author drak3
  */
-class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandlerInterface
+class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareResponseHandlerInterface
 {
     /**
      * The Length of the message sent by a common query on connect
@@ -60,17 +62,27 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     /**
      * The string between two data packages (e.g. key/value pair)
      */
-    const SEPERAOR_DATA = " ";
+    const SEPERATOR_DATA = " ";
 
     /**
      * The string between a key/value pair
      */
     const SEPERATOR_KEY_VAL = "=";
     
-
-    const BAN_ERROR = 3329;
+    /**
+     * When you got banned but reconnect to a server, the server throws an error with this error-id 
+     */
+    const BAN_ERROR_ID = 3329;
     
-    const FLOOD_BAN_ERROR = 3331;
+    /**
+     * When you got banned in action, the server throws an error with this error-id
+     */
+    const FLOOD_BAN_ERROR_ID = 3331;
+    
+    /**
+     * The event prefix 
+     */
+    const EVENT_PREFIX = 'notify';
 
     /**
      * The chars masked by the query and their replacements
@@ -89,13 +101,25 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
         "\\t" => "\t",
         "\\v" => "\v",
     );
-
+    
     /**
      * The regular expression to describe the error block of a response
      * @var string
      */
-    protected $errorRegex = "/error id=[0-9]* msg=[a-zA-Z\\\\]*/";
-
+    protected $errorRegex = "/^error id=[0-9]* msg=[a-zA-Z\\\\]*/";
+    
+    /**
+     * The laxErrorRegex can be used to parse a error message that is not at the beginning of the string
+     * @var string 
+     */
+    protected $laxErrorRegex = "/error id=[0-9]* msg=[a-zA-Z\\\\]*/";
+    
+    /**
+     * The regular expression to describe the extra_message of a (flood)ban response
+     * @var string
+     */
+    protected $floodBanRegex = "/you may retry in (\d*) seconds/i";
+    
     /**
      * Replaces all masked characters with their regular replacements (e.g. \\ with \)
      * uses $unEscapeMap
@@ -111,58 +135,159 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     /**
      * Parses a response coming from the query for a given command
      * Event notifications occured before sending the command are parsed too
-     * @param \devmx\Teamspeak3\Query\Command $cmd
-     * @param string $raw
-     * @return Array in form Array('response' => $responseObject, 'events' => Array($eventobject1,$eventobject2));  
+     * This method does simply the following:
+     * Split up the response by line break (static::SEPERATOR_RESPONSE) 
+     *  Iterate over the pieces and decide of which type they are:
+     *      error (matches $this->errorRegex):                      put it into error
+     *      event (first chars are notify (static::EVENT_PREFIX)):  put it into events[]
+     *      everything else:                                        append it+static::SEPERATOR_RESPONSE to data
+     * error is then parsed as the error messages,
+     * the events are parsed and put under the 'events' key of the return array
+     * the data is parsed as response items
+     * @param Command $cmd the command which caused this response
+     * @param string $raw the raw query response
+     * @return \devmx\Teamspeak3\Query\Response[] in form Array('response' => $responseObject, 'events' => Array($eventobject1,$eventobject2));  
      */
-    public function getResponseInstance(\devmx\Teamspeak3\Query\Command $cmd, $raw)
+    public function getResponseInstance(Command $cmd, $raw)
     {
         $response = Array('response' => NULL, 'events' => Array());
         $parsed = Array();
 
-        $raw = \trim($raw, "\r\n");
-        $parsed = \explode(self::SEPERATOR_RESPONSE, $raw);
-
-        //find error message
-        foreach($parsed as $key=>$value) {
-            if($this->match($this->errorRegex, $value)) {
-                $error = $value;
-                unset($parsed[$key]);
-                break;
-            }
-        }
+        
+        $parsed = \explode(static::SEPERATOR_RESPONSE, $raw);
+        
+        $error = '';
+        $events = array();
         $data = '';
-        foreach($parsed as $part) {
-            if(substr($part, 0, strlen($this->getEventPrefix())) === $this->getEventPrefix()) {
-                $response['events'][] = $this->parseEvent($part);
+        
+        foreach($parsed as $line) {
+            if($this->match( $this->errorRegex, $line )) {
+                $error = $line;
+            } elseif(substr($line, 0, strlen(static::EVENT_PREFIX)) === static::EVENT_PREFIX) {
+                $events[] = $this->parseEvent($line);
+            } else {
+                $data .= $line.static::SEPERATOR_RESPONSE;
             }
-            else {
-                $data = $part;
-            }
-        }
+        } 
+        
+        $data = \trim($data, static::SEPERATOR_RESPONSE);
         
         $response['response'] = $this->parseResponse($cmd, $error, $data);
+        $response['events'] = $events;
         return $response;
     }
     
-    protected function getEventPrefix() {
-        return 'notify';
+    /**
+     * Parses Events coming from the query
+     * @param string $raw the raw response
+     * @return \devmx\Teamspeak3\Query\Event[] all events found in the raw string
+     */
+    public function getEventInstances($raw)
+    {
+        $ret = array();
+        $events = \explode(static::SEPERATOR_RESPONSE, rtrim($raw));
+        foreach ($events as $rawevent)
+        {
+            $ret[] = $this->parseEvent($rawevent);
+        }
+        return $ret;
     }
+    
+    /**
+     * Checks if the given string is a complete event.
+     * currently this just checks if the string is non empty, and if it ends with the response seperator (usually "\n")
+     * @param string $raw
+     * @return boolean
+     */
+    public function isCompleteEvent($raw)
+    {
+        if ($raw !== '' && $raw[strlen($raw)-1] === static::SEPERATOR_RESPONSE)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    /**
+     * Checks if the given string is a complete response
+     * The function is doing that by checking for a error section
+     * @param string $raw
+     * @return boolean 
+     */
+    public function isCompleteResponse($raw)
+    {
+        if(strlen($raw) === 0 || !($raw[strlen($raw)-1] === static::SEPERATOR_RESPONSE)) {
+            return false;
+        }
+        $lines = \explode(static::SEPERATOR_RESPONSE, $raw);
+        foreach($lines as $line) {
+            if($this->match($this->errorRegex, $line)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Returns the length of a normal welcomemessage
+     * @return int
+     */
+    public function getWelcomeMessageLength()
+    {
+        return static::WELCOME_LENGTH;
+    }
+    
+    /**
+     * Checks if the provided string is the identifyer of a valid Teamspeak3-Server
+     * @param string $ident
+     * @return boolean
+     */
+    public function isValidQueryIdentifyer($ident)
+    {
+        return \rtrim($ident) == static::WELCOME_IDENTIFY;
+    }
+    
+    /**
+     * Checks if the given query response contains a ban message
+     * @param string $raw
+     * @return boolean 
+     */
+    public function containsBanMessage($raw) {
+        return (boolean) $this->parsePossibleBanMessage($raw);
+    }
+    
+    /**
+     * Tries to extract the bantime out of a ban message
+     * @param string $raw
+     * @return int returns the bantime on success 0 else
+     */
+    public function extractBanTime($raw) {
+        if(!($parsed =$this->parsePossibleBanMessage($raw))) {
+            return 0;
+        }
+        else {
+            return $this->extractBanTimeFromParsed($parsed);
+        }
+    }    
 
     /**
      * Parses a response (no events in it) for a given command
-     * Splits up the response in data and error message and builds a response object
-     * @param \devmx\Teamspeak3\Query\Command $cmd
-     * @param string $response
+     * Builds up a response object
+     * @param Command $cmd the command which caused this response
+     * @param string $error the error message
+     * @param string $data the response data
      * @return \devmx\Teamspeak3\Query\Response 
      */
-    protected function parseResponse(\devmx\Teamspeak3\Query\Command $cmd, $error, $data='')
+    protected function parseResponse(Command $cmd, $error, $data='')
     {
         $parsedError = $this->parseData($error);
         $errorID = $parsedError[0]['id'];
         $errorMessage = $parsedError[0]['msg'];
 
-        if ($data !== '') // parsed[1] holds the data if it is a fetching command
+        if ($data !== '')
         {
             $items = $this->parseData($data);
         }
@@ -171,10 +296,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
             $items = Array();
         }
 
-
-        $responseClass = new \devmx\Teamspeak3\Query\CommandResponse($cmd, $items, $errorID, $errorMessage, $parsedError[0]);
-        $responseClass->setRawResponse($data."\n".$error);
-        return $responseClass;
+        return new CommandResponse($cmd, $items, $errorID, $errorMessage, $parsedError[0]);
     }
 
     /**
@@ -185,14 +307,12 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     protected function parseEvent($event)
     {
         $reason = '';
-        $event = explode(self::SEPERAOR_DATA, $event, 2);
+        $event = explode(static::SEPERATOR_DATA, $event, 2);
         $reason = $this->parseValue($event[0]); //the eventtype or eventreason is a single word at the beginnning of the event
         $event = $event[1];
         $data = $this->parseData($event); //the rest is a single block of data
 
-        $eventClass = new \devmx\Teamspeak3\Query\Event($reason, $data);
-        $eventClass->setRawResponse($event);
-        return $eventClass;
+        return new Event($reason, $data);
     }
 
     /**
@@ -201,23 +321,19 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
      * then in data packages (or key value pairs) (sperated by ' ')
      * if the datapackage is a key value pair it split this at '='
      * @param string $data
-     * @return Array in form Array(0=>Array('key0'=>'val0','key1'=>'val1'), 1=>Array('key0'=>'val2','key1','val3'));
+     * @return array in form Array(0=>Array('key0'=>'val0','key1'=>'val1'), 1=>Array('key0'=>'val2','key1','val3'));
      */
     protected function parseData($data)
     {
         $parsed = Array();
-        $items = \explode(self::SEPERATOR_ITEM, $data); //split up into single lists or blocks
+        $items = \explode(static::SEPERATOR_ITEM, $data); //split up into single lists or blocks
         foreach ($items as $itemkey => $item)
         {
-            $keyvals = explode(self::SEPERAOR_DATA, $item); //split up into data items or keyvalue pairs
+            $keyvals = explode(static::SEPERATOR_DATA, $item); //split up into data items or keyvalue pairs
             foreach ($keyvals as $keyval)
             {
-                $keyval = explode(self::SEPERATOR_KEY_VAL, $keyval, 2); //parses key value pairs
-                if (\trim($keyval[0]) === '')
-                {
-                    continue;
-                }
-                $keyval[1] = isset($keyval[1]) ? $keyval[1] : NULL;
+                $keyval = explode(static::SEPERATOR_KEY_VAL, $keyval, 2); //parses key value pairs
+                $keyval[1] = isset($keyval[1]) ? $keyval[1] : null;
                 $parsed[$itemkey][$keyval[0]] = $this->parseValue($keyval[1]);
             }
         }
@@ -227,137 +343,73 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\ResponseHandl
     /**
      * Parses a value from the query
      * detects the following types:
-     * int,boolean,null and string, where strings got unescaped
+     * int,boolean,null and string, where strings get unescaped
      * @param string $val
-     * @return string|int|boolean|null 
+     * @return string|int|boolean|null
      */
     protected function parseValue($val)
     {
-        $val = \trim($val);
         if (ctype_digit($val))
         {
             return (int) $val;
         }
-        if ($this->match("/^true$/Di", $val))
-        {
-            return TRUE;
-        }
-        if ($this->match("/^false$/Di", $val))
-        {
-            return FALSE;
-        }
-        if ($val === '' || $val === NULL)
+        if ($val === '' || $val === null)
         {
             return '';
-        }
-
+        }      
 
         return $this->unescape($val);
     }
-
-    /**
-     * Checks if the given string is a complete event.
-     * because of actual restrictions of the query protocol this function only checks if the strin is nonempty
-     * @param type $raw
-     * @return type 
-     */
-    public function isCompleteEvent($raw)
-    {
-        $this->checkForBan($raw);
-        if ($raw !== '' && $raw[strlen($raw)-1] === self::SEPERATOR_RESPONSE)
-        {
-            return TRUE;
-        }
-        else
-        {
-            return FALSE;
-        }
-    }
-
-    /**
-     * Checks if the given string is a complete response
-     * The function is doing that by checking for a error section
-     * @param string $raw
-     * @return boolean 
-     */
-    public function isCompleteResponse($raw)
-    {
-        $this->checkForBan($raw);
-        if ($this->match($this->errorRegex, $raw) && $raw[strlen($raw)-1] == "\n")
-        {
-            return TRUE;
-        }
-        else
-        {
-            return FALSE;
-        }
-    }
-
-    /**
-     * Parses Events coming from the query
-     * @param string $raw
-     * @return array array of \devmx\Teamspeak3\Query\Event
-     */
-    public function getEventInstances($raw)
-    {
-        $events = \explode(self::SEPERATOR_RESPONSE, rtrim($raw));
-        foreach ($events as $rawevent)
-        {
-            $ret[] = $this->parseEvent($rawevent);
-        }
-        return $ret;
-    }
-
-    /**
-     * Returns the length of a normal welcomemessage
-     * @return type 
-     */
-    public function getWelcomeMessageLength()
-    {
-        return self::WELCOME_LENGTH;
-    }
-
-    /**
-     * Checks if the given string is a valid welcomemessage,
-     * by checking length and for identifyer
-     * @param string $welcome
-     * @return boolean
-     */
-    public function isWelcomeMessage($welcome)
-    {
-        return (\strstr($welcome, self::WELCOME_IDENTIFY) && count(explode("\n", $welcome)) === 3 && $welcome[strlen($welcome)-1] === "\n");
-    }
     
-    private function match($regex, $raw, $exceptionOnFail=false) {
+    /**
+     * Wrapper for preg_match to detect reliable
+     * @param string $regex the regular expression
+     * @param string $raw the string to match on
+     * @return boolean|array if the match failed, false is returned, else the return of preg_match is returned
+     * @throws Exception\RuntimeException 
+     */
+    private function match($regex, $raw) {
         $parsed = array();
         $matched = preg_match($regex, $raw, $parsed);
         if(  preg_last_error() !== PREG_NO_ERROR) {
-            throw new \RuntimeException('Error while using preg_match try to increase your pcre.backtrack_limit '. "\n". $raw, preg_last_error());
+            throw new Exception\RuntimeException('Error while using preg_match try to increase your pcre.backtrack_limit '. "\n". $raw, preg_last_error());
         }
         if($matched === 0) {
-            if($exceptionOnFail) {
-                throw new \InvalidArgumentException('Cannot parse '.$raw);
-            }
             return false;
         }
         return $parsed;
     }
     
     /**
-     * Checks if the raw response contains a Ban message and throws Exception
-     * @todo Add the ban time to the message
+     * Parses a message from the server which may contain a ban message
      * @param string $raw
-     * @throws \RuntimeException 
+     * @return boolean 
      */
-    private function checkForBan($raw) {
-        $parsed = $this->match($this->errorRegex, $raw);
+    protected function parsePossibleBanMessage($raw) {
+        $parsed = $this->match($this->laxErrorRegex, $raw);
         if($parsed) {
-            $parsed = $this->parseData($parsed[0]);
-            if(isset($parsed[0]['id']) && ($parsed[0]['id'] == self::BAN_ERROR || $parsed[0]['id'] == self::FLOOD_BAN_ERROR)) {
-                throw new \RuntimeException("You are banned");
+            $parsed = $this->parseData($raw);
+            if(isset($parsed[0]['id']) && ($parsed[0]['id'] == static::BAN_ERROR_ID || $parsed[0]['id'] == static::FLOOD_BAN_ERROR_ID)) {
+                return $parsed;
             }
         }
-    } 
+        return false;
+    }
+    
+    /**
+     * Extracts the ban time out of the parsed error message
+     * @param array $error the parsed error section
+     * @return int|string the time to wait
+     */
+    private function extractBanTimeFromParsed($error) {
+        if(isset($error[0]['extra_msg'])) {
+            $time = $this->match($this->floodBanRegex, $error[0]['extra_msg']);
+            if($time !== false) {
+                return (int) $time[1];
+            }
+        }
+        return 0;
+    }
 
 }
 

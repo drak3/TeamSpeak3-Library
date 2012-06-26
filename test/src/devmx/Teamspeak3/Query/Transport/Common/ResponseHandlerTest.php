@@ -137,20 +137,12 @@ EOF;
         $cmd = new Command('foo');
         $parsed = $this->handler->getResponseInstance($cmd, $raw);
         $parsed = $parsed['response'];
-        $this->assertInstanceOF('\devmx\Teamspeak3\Query\CommandResponse', $parsed);
+        $this->assertInstanceOF('\devmx\Teamspeak3\Query\Response\CommandResponse', $parsed);
         $this->assertEquals(0, $parsed->getErrorID());
         $this->assertEquals('[spacer1]---', $parsed->getValue('channel_name', 2));
     }
     
-    public function testGetResponseInstance_Raw() {
-        $raw = <<<'EOF'
-id=asdf foo=bar asdf=a\sb
-error id=0 msg=ok extra_message=you\sfailed
-EOF;
-        $parsed = $this->handler->getResponseInstance(new Command('foo'), $raw);
-        $this->assertEquals($raw, $parsed['response']->getRawResponse());
-    }
-   
+       
     public function testIsCompleteResponse()
     {
         $this->assertTrue($this->handler->isCompleteResponse('This\sis\sa\sresponse'."\n".'error id=0 msg=ok'."\n"));
@@ -170,7 +162,7 @@ notifysomeothercrap asdfg=345 bar=foo
 EOF;
         $parsedEvents = $this->handler->getEventInstances($events);
         $this->assertEquals(2,count($parsedEvents));
-        $this->assertInstanceOf('\devmx\Teamspeak3\Query\Event', $parsedEvents[0], $parsedEvents[1]);
+        $this->assertInstanceOf('\devmx\Teamspeak3\Query\Response\Event', $parsedEvents[0], $parsedEvents[1]);
         $this->assertEquals(114, $parsedEvents[0]->getValue('cid'));
         $this->assertEquals('notifysomeothercrap', $parsedEvents[1]->getReason());
     }
@@ -192,15 +184,8 @@ EOF;
         $this->assertEquals('ok', $parsed['response']->getErrorMessage());
     }
 
-    public function testIsWelcomeMessage()
-    {
-        $message = <<<'EOF'
-TS3
-Welcome to the TeamSpeak 3 ServerQuery interface, type "help" for a list of commands and "help <command>" for information on a specific command.
-EOF;
-        $message .= "\r\n";
-        $this->assertTrue($this->handler->isWelcomeMessage($message));
-        $this->assertFalse($this->handler->isWelcomeMessage("TS3\n"));
+    public function testIsValidQueryIdentifyer() {
+        $this->assertTrue($this->handler->isValidQueryIdentifyer("TS3\n"));
     }
     
     public function testIsCompleteEvent() {
@@ -214,30 +199,32 @@ EOF;
     public function testSpecialValues() {
         $cmd = new Command('foo');
         
-        $toParse = "foo= jkl bar=true asdf=false\nerror id=0 msg=ok";
+        $toParse = "foo= jkl asdf=123\nerror id=0 msg=ok";
         
         $response = $this->handler->getResponseInstance($cmd, $toParse);
         $response = $response['response'];
         
-        $parsed = array(array('foo'=>'', 'jkl'=>'' , 'bar'=>true, 'asdf'=>false));
+        $parsed = array(array('foo'=>'', 'jkl'=>'' , 'asdf'=>123));
         
         $this->assertEquals($parsed, $response->getItems());
     }
     
-    /**
-     * @expectedException \RuntimeException 
-     */
-    public function testBanDetection() {
-        $toParse = "\nerror id=3329 msg=banned";
-        $this->handler->isCompleteResponse($toParse);
+    public function testGetBanTime() {
+        $toParse = "\n\rerror id=3329 msg=connection\\sfailed,\\syou\\sare\\sbanned extra_msg=you\\smay\\sretry\\sin\\s508\\sseconds\\n\\r";
+        $this->assertTrue($this->handler->containsBanMessage($toParse));
+        $this->assertEquals(508, $this->handler->extractBanTime($toParse));
     }
     
-    /**
-     * @expectedException \RuntimeException 
-     */
-    public function testBanDetection_FloodBan() {
-        $toParse = "foo= bar=true asdf=false\nerror id=3331 msg=banned\n";
-        $this->handler->isCompleteResponse($toParse);
+    
+    public function testGetBanTime_FloodBan() {
+        $toParse = 'foo= bar=true asdf=false'."\n".'error id=3331 msg=banned\r';
+        $this->assertTrue($this->handler->containsBanMessage($toParse));
+        $this->assertEquals(0, $this->handler->extractBanTime($toParse));
+    }
+    
+    public function testGetBanTime_NoBan() {
+        $toParse = 'foo= bar=true asdf=false'."\n".'error id=3332 msg=banned extra_msg=you\smay\sretry\sin\s63\sseconds\n\r'."\n";
+        $this->assertFalse($this->handler->containsBanMessage($toParse));
     }
     
 }

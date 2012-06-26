@@ -1,10 +1,20 @@
 {
-    "name": "devmx/Teamspeak3-Library",
+    "name": "devmx/Teamspeak3-Library-dev",
     "type": "library",
-    "description": "Library using TeamSpeak3-Featuers via PHP",
+    "description": "Developement repository of the TeamSpeak3-Library",
     "license": "LGPLv3",
     "require": {
         "php": ">=5.3.2"
+    },
+    "require-dev": {
+        "pimple/pimple": "1.0.*",
+        "doctrine/common": ">=2.2.0",
+        "monolog/monolog": ">=1.0.0"
+    },
+    "suggest": {
+        "pimple/pimple": "To use the preconfigured container",
+        "doctrine/common": "To use more cache backends",
+        "monolog/monolog": "Provides a logging backend",
     },
     "autoload": {
         "psr-0": {"devmx": "src"}

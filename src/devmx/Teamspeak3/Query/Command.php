@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -16,30 +15,16 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace devmx\Teamspeak3\Query;
 
 /**
- * 
- *
+ * This class represents a command which can be sent to a Teamspeak3-Query
  * @author drak3
  */
 class Command
 {
 
-    /**
-     * A simple builder which drops support for multiple values of params
-     * @deprecated currently its just a alias for new Command();
-     * @param string $name
-     * @param array $options
-     * @param array $params 
-     * @return Command
-     */
-    public static function simpleCommand($cmdname, array $params = Array(), array $options = Array())
-    {
-        return new Command($cmdname, $params, $options);
-    }
-
+    
     /**
      * The name of the command
      * @var string 
@@ -54,25 +39,27 @@ class Command
 
     /**
      * The parameters of the command. Since a parameter could have
-     * @var array of (string => array(string))  or (string => string)
+     * @var array of (string=>string)  or (int => array)
      */
     protected $parameters = Array();
 
     /**
-     *
-     * @param type $name
+     * Constructor
+     * @param string $name
      * @param array $parameters
      * @param array $options the options in form Array("foo", "bar") 
      */
-    public function __construct($name, array $parameters = Array(), array $options = Array())
+    public function __construct($name, array $parameters = array(), array $options = array())
     {
         $this->name = $name;
         $this->options = $options;
         $this->parameters = $parameters;
+        sort($this->options);
+        array_multisort($this->parameters);
     }
 
     /**
-     * returns the name of the Command
+     * Returns the name of the Command
      * @return string name 
      */
     public function getName()
@@ -91,7 +78,7 @@ class Command
 
     /**
      * Returns the parameters of the command
-     * @return array of (String => array of string) 
+     * @return array of (String => string) or (int => array of (String => String)) 
      */
     public function getParameters()
     {
@@ -109,13 +96,12 @@ class Command
     }
 
     /**
-     *
-     * @param type $name the name of the parameter
-     * @param misc $else the value returned if the parameter is not set
-     * @param int  $index the index of the parameter value
+     * Returns the parameter value for the given name
+     * @param string $name the name of the parameter
+     * @param mixed $else the value returned if the parameter is not set
      * @return array of string 
      */
-    public function getParameter($name, $else = NULL, $index = 0)
+    public function getParameter($name, $else = NULL)
     {
         if(isset($this->parameters[$name])) {
             return $this->parameters[$name];
@@ -128,52 +114,22 @@ class Command
     /**
      * Test for equality of two commands
      * order of parameter does not matter for this test
+     * @todo add unittests to cover new command structure
      * @param Command $c
      * @return boolean 
      */
     public function equals(Command $c)
     {
-        $found = FALSE;
-        if ($c->getName() !== $this->getName())
-        {
+        if($this->getName() !== $c->getName()) {
             return false;
         }
-        if (count($this->getOptions()) !== count($c->getOptions()))
-        {
-            return FALSE;
+        if( $this->getParameters() !== $c->getParameters() ) {
+            return false;
         }
-        foreach ($this->getOptions() as $op)
-        {
-            $found = FALSE;
-            foreach ($c->getOptions() as $op2)
-            {
-                if ($op === $op2)
-                {
-                    $found = TRUE;
-                    break;
-                }
-            }
-            if (!$found) return FALSE;
+        if($this->getOptions() !== $c->getOptions()) {
+            return false;
         }
-
-        if (count($this->getParameters()) !== count($c->getParameters()))
-        {
-            return FALSE;
-        }
-        foreach ($this->getParameters() as $pname1 => $pvalue1)
-        {
-            $found = FALSE;
-            foreach ($c->getParameters() as $pname2 => $pvalue2)
-            {
-                if ($pname1 === $pname2 && $pvalue1 === $pvalue2)
-                {
-                    $found = TRUE;
-                    break;
-                }
-            }
-            if (!$found) return FALSE;
-        }
-        return TRUE;
+        return true;
     }
 
 }

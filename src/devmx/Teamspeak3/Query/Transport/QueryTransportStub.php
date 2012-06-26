@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -17,31 +16,71 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace devmx\Teamspeak3\Query\Transport;
+use \devmx\Teamspeak3\Query\Exception;
+use \devmx\Teamspeak3\Query\Response\CommandResponse;
+use \devmx\Teamspeak3\Query\Response\Event;
+use \devmx\Teamspeak3\Query\Command;
 
 /**
- *
+ * This class is a implementation of the TransportInterface that holds no real connections to the outside.
+ * It mainly provides methods for easy unittesting.
  * @author drak3
  */
 class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportInterface
 {
+    /**
+     * If the query is connected or not
+     * @var boolean
+     */
     protected $isConnected = false;
+    
+    /**
+     * Events that should be delivered
+     * @var array of array of \devmx\Teamspeak3\Query\Events 
+     */
     protected $events = array(array());
+    
+    /**
+     * Responses that should be received
+     * @var array of \devmx\Teamspeak3\Query\CommandResponse
+     */
     protected $responses = array();
     
+    /**
+     * If we are expecting to be connected
+     * @var boolean
+     */
+    protected $expectConnection = true;
     
-    public function addResponse(\devmx\Teamspeak3\Query\CommandResponse $r, $times=1 ) {
+    /**
+     * Adds a response for a specific command, so it could be received by sendCommand
+     * @param CommandResponse $r the response to be received
+     * @param int $times how often the response should be available
+     */
+    public function addResponse(CommandResponse $r, $times=1 ) {
         for($i=0;$i<$times; $i++) {
             $this->responses[] = $r;
         }
     }
     
-    public function addResponses() {
-        foreach(func_get_args() as $response) {
+    /**
+     * Adds multiple responses at once
+     * @param array of \devmx\Teamspeak3\Query\CommandResponse $responses responses to add
+     */
+    public function addResponses(array $responses) {
+        foreach($responses as $response) {
             $this->addResponse($response);
         } 
     }
     
-    public function addEvent(\devmx\Teamspeak3\Query\Event $e, $times=1, $newCharge=false) {
+    /**
+     * Adds a event to be received either by getAllEvents or waitForEvent
+     * The events are organized in charges, if you add a event to a new charge, it will be returned by call after that invocation which returned the previous charge
+     * @param Event $e the event to add
+     * @param int $times how often the event should be added
+     * @param boolean $newCharge if this is set to true, the event will be added to a new charge
+     */
+    public function addEvent(Event $e, $times=1, $newCharge=false) {
         $events = array();
         for($i=0; $i<$times; $i++) {
             $events[] = $e;
@@ -56,9 +95,20 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
     }
     
     /**
-     * Connects to the Server
+     * If you call this method with false a exception is thrown on a connect call
+     * @param boolean $expect 
+     */
+    public function expectConnection($expect=true) {
+        $this->expectConnection = $expect;
+    }
+    
+    /**
+     * Connects the query
      */
     public function connect() {
+        if(!$this->expectConnection) {
+            throw new Exception\LogicException("No connect expected");
+        }
         $this->isConnected = true;
     }
     
@@ -77,7 +127,7 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
      */
     public function getAllEvents() {
         if(!$this->isConnected()) {
-            throw new \LogicException('Cannot send command, not connected');
+            throw new Exception\LogicException('Cannot get events, not connected');
         }
         if(!isset($this->events[0])) {
             return array();
@@ -89,12 +139,12 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
 
     /**
      * Sends a command to the query and returns the result plus all occured events
-     * @param \devmx\Teamspeak3\Query\Command $command
+     * @param Command $command
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
-    public function sendCommand(\devmx\Teamspeak3\Query\Command $command) {
+    public function sendCommand(Command $command) {
         if(!$this->isConnected()) {
-            throw new \LogicException('Cannot send command, not connected');
+            throw new Exception\LogicException('Cannot send command, not connected');
         }
         foreach($this->responses as $key=>$possibleResponse) {
             if($possibleResponse->getCommand()->equals($command)) {
@@ -102,11 +152,14 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
                 return $possibleResponse;
             }
         }
-        throw new \LogicException('No suitable response for command '.$command->getName());
+        throw new Exception\LogicException('No suitable response for command '.$command->getName());
     }
     
     /**
      * Wrapper for new Command and sendcommand
+     * @param string $name the name of the command
+     * @param array $args the arguments of the command
+     * @param array $options the options of the command
      * @return \devmx\Teamspeak3\Query\CommandResponse
      */
     public function query($name, array $args=Array(),array $options=Array()) {
@@ -116,26 +169,42 @@ class QueryTransportStub implements \devmx\Teamspeak3\Query\Transport\TransportI
     /**
      * Waits until an event occurs
      * This method is blocking, it returns only if a event occurs, so avoid calling this method if you aren't registered to any events
+     * @param float the timeout in second how long to wait for an event. If there is no event after the given timeout, an empty array is returned
+     *   -1 means that the method may wait forever
      * @return array array of all occured events (e.g if two events occur together it is possible to get 2 events) 
      */
-    public function waitForEvent() {
+    public function waitForEvent($timeout=-1) {
         $events = $this->getAllEvents();
         if($events === array())  {
-            throw new \LogicException('cannot wait for events');
+            throw new Exception\LogicException('cannot wait for events');
         }
         return $events;
     }
-
+    
+    /**
+     * Disconnects the query 
+     */
     public function disconnect() {
         $this->isConnected = false;
     }
     
+    /**
+     * This method checks if all responses were received, if not, it throws an LogicException
+     * @throws Exception\LogicException 
+     */
     public function assertAllResponsesReceived() {
         if(!empty($this->responses)) {
-            throw new \LogicException('Assertion that all responses are received failed');
+            $msg = "Unreceived commands:\n";
+            foreach($this->responses as $r)  {
+                $msg .= $r->getCommand()->getName()."\n";
+            }
+            throw new Exception\LogicException($msg);
         }
     }
     
+    /**
+     * Wakes the query up 
+     */
     public function __wakeup() {
             $this->connect();
     }

@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -17,40 +16,55 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace devmx\Teamspeak3\FileTransfer;
+use devmx\Transmission\TransmissionInterface;
 
 /**
- * 
- *
+ * An upload task
+ * This class uploads data, identified by a key, to a Teamspeak3-Filetransfer service
  * @author drak3
  */
-class Uploader extends AbstractTransferer
+class Uploader
 {
 
     /**
-     *
+     * The transmission on which the transfer is executed
      * @var \devmx\Transmission\TransmissionInterface
      */
     protected $transmission;
-    protected $key;
-    protected $data;
+    
     /**
-     * @param \devmx\Transmission\TransmissionInterface $transmission 
-     * @param string $key the key which identifies the ressource
-     * @param string $data the data to load up
+     * the key identifying this upload 
+     * @var string
      */
-    public function __construct(\devmx\Transmission\TransmissionInterface $transmission, $key, $data)
+    protected $key;
+    
+    /**
+     * the data to upload
+     * @var string
+     */
+    protected $data;
+    
+    /**
+     * Constructor
+     * @param TransmissionInterface $transmission the transmission on which the upload should be performed (default ft-port is 30033)
+     * @param string $key the key which identifies the ressource to upload (normally sent by the Ts3-Query when invoking ftinitupload command successfully)
+     * @param string $data the data to load up  
+     */
+    public function __construct( TransmissionInterface $transmission, $key, $data)
     {
         $this->transmission = $transmission;
         $this->key = $key;
         $this->data = $data;
     }
-
-    public function transfer()
+    
+    /**
+     * Uploads the specified data 
+     */
+    public function upload()
     {
-        $bytesToSend = strlen($this->data);
         $this->transmission->establish();
-        $this->sendFull($this->key, strlen($this->key));
-        $this->sendFull($this->data, $bytesToSend);
+        $this->transmission->send($this->key);
+        $this->transmission->send($this->data);
         $this->transmission->close();
     }
 

@@ -15,7 +15,7 @@ class DownloaderTest extends \PHPUnit_Framework_TestCase
     /**
      * Test whole transfer process
      */
-    public function testTransfer()
+    public function testDownload()
     {
        $transmission = new TransmissionStub('foo', 30033);
        $toRead = "this is a file\n with newlines in it \n".  str_repeat( 'asdf', 5124);
@@ -24,7 +24,7 @@ class DownloaderTest extends \PHPUnit_Framework_TestCase
        $this->assertEquals('', $transmission->getSentData());
        $this->assertFalse($transmission->isEstablished());
        $transmission->setToReceive($toRead);
-       $file = $downloader->transfer();
+       $file = $downloader->download();
        $this->assertEquals($toRead, $file);
        $this->assertEquals('foobar', $transmission->getSentData());
     }

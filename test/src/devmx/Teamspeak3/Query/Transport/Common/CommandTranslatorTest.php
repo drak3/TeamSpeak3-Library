@@ -2,6 +2,7 @@
 
 namespace devmx\Teamspeak3\Query\Transport\Common;
 use devmx\Teamspeak3\Query\Command;
+use devmx\Teamspeak3\Query\Exception\InvalidCommandException;
 
  
 
@@ -53,7 +54,7 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
         $cmd = new Command("test", Array(), Array("foo"));
         $this->assertEquals("test -foo\n", $this->translator->translate($cmd));
         $cmd = new Command("test", Array(), Array("foo", "bar"));
-        $this->assertEquals("test -foo -bar\n", $this->translator->translate($cmd));
+        $this->assertEquals("test -bar -foo\n", $this->translator->translate($cmd));
     }
     
     public function testEscaping() {
@@ -75,29 +76,38 @@ class CommandTranslatorTest extends \PHPUnit_Framework_TestCase
     
     /**
      *@dataProvider invalidCommandProvider
-     *@expectedException \InvalidArgumentException 
      */
-    public function testExceptionOnInvalidCommand($cmd) {
-        $this->translator->translate($cmd);
+    public function testExceptionOnInvalidCommand($cmd, $expectedMessage, $expectedType, $expectedValue) {
+        try {
+            $this->translator->translate($cmd);
+        }
+        catch(\devmx\Teamspeak3\Query\Exception\InvalidCommandException $e) {
+            $this->assertEquals($expectedMessage, $e->getMessage());
+            $this->assertEquals($expectedType, $e->getInvalidityType());
+            $this->assertEquals($expectedValue, $e->getInvalidValue());
+            return;
+        }
+        $this->fail('No exception thrown');
     }
     
     
     public function invalidCommandProvider() {
+        $time = new \DateTime();
         return Array (
-            Array(new Command(new \DateTime())),
-            Array(new Command("!asddf")),
-            Array(new Command("asdf", array("foo" => "bar"), Array(false) )),
-            Array(new Command("as df")),
-            Array(new Command("foo", array("fo\\bar"=>"bar"))),
-            Array(new Command("foo", array(), array("fo o"))),
-            Array(new Command('foo', array('foo'=>array(new \DateTime(), 123.3)))),
-            Array(new Command('foo', array('foo'=>new \DateTime()))),
+            Array(new Command($time), 'Invalid command "<object of class "DateTime">" because name "<object of class "DateTime">" is invalid.', InvalidCommandException::INVALID_NAME, $time),
+            Array(new Command("!asddf"), 'Invalid command "!asddf" because name "!asddf" is invalid.', InvalidCommandException::INVALID_NAME, "!asddf"),
+            Array(new Command("asdf", array("foo" => "bar"), Array(false) ), 'Invalid command "asdf" because option "<boolean false>" is invalid.', InvalidCommandException::INVALID_OPTION, false),
+            Array(new Command("as df"), 'Invalid command "as df" because name "as df" is invalid.', InvalidCommandException::INVALID_NAME, 'as df'),
+            Array(new Command("foo", array("foo\\bar"=>"bar")), 'Invalid command "foo" because parameter name "foo\bar" is invalid.', InvalidCommandException::INVALID_PARAMETER_NAME, 'foo\bar'),
+            Array(new Command("foo", array(), array("fo o")), 'Invalid command "foo" because option "fo o" is invalid.', InvalidCommandException::INVALID_OPTION, 'fo o'),
+            Array(new Command('foo', array('foo'=>$time)), 'Invalid command "foo" because parameter value "<object of class "DateTime">" is invalid.', InvalidCommandException::INVALID_PARAMETER_VALUE, $time),
+            Array(new Command('foo', array(), array('-asdf')), 'Invalid command "foo" because option "-asdf" is invalid.', InvalidCommandException::INVALID_OPTION, '-asdf')
         );
     }
     
     public function testBooleanToIntTranslation() {
         $cmd = new Command('foo', array('foo'=>true, 'bar'=>false));
-        $this->assertEquals("foo foo=1 bar=0\n", $this->translator->translate($cmd));
+        $this->assertEquals("foo bar=0 foo=1\n", $this->translator->translate($cmd));
     }
     
     public function testTranslateNameWithNumber() {

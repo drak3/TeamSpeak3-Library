@@ -3,7 +3,7 @@
 namespace devmx\Teamspeak3\Query\Transport\Decorator;
 use devmx\Teamspeak3\Query\Transport\QueryTransportStub;
 use devmx\Teamspeak3\Query\Command;
-use devmx\Teamspeak3\Query\CommandResponse;
+use devmx\Teamspeak3\Query\Response\CommandResponse;
 
 require_once dirname( __FILE__ ) . '/../../../../../../../src/devmx/Teamspeak3/Query/Transport/Decorator/TickingDecorator.php';
 

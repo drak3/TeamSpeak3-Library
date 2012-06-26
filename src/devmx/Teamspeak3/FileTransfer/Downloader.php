@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -16,14 +15,14 @@
   You should have received a copy of the GNU Lesser General Public License
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace devmx\Teamspeak3\FileTransfer;
+use devmx\Transmission\TransmissionInterface;
 
 /**
- * A download action for the Teamspeak3 ft-Interface
+ * A download action for the Teamspeak3 filetransfer-Interface
  * @author drak3
  */
-class Downloader extends AbstractTransferer
+class Downloader
 {
 
     /**
@@ -33,16 +32,18 @@ class Downloader extends AbstractTransferer
     protected $key;
 
     /**
-     * the excepted bytes of the data to read 
+     * The excepted bytes of the data to read
+     * @var int
      */
     protected $bytesToRead;
 
     /**
-     * @param \devmx\Transmission\TransmissionInterface $transmission the transmission on which the download is performed
-     * @param string $key the key to identify the ft-Session (normally sent by the Ts3-Query
-     * @param int $bytesToRead 
+     * Constructor
+     * @param TransmissionInterface $transmission the transmission on which the download is performed
+     * @param string $key the key to identify the filetransfer-Session (normally sent by the Ts3-Query when invoking ftinitdonwload command successfully)
+     * @param int $bytesToRead the length of the file to download
      */
-    public function __construct(\devmx\Transmission\TransmissionInterface $transmission, $key, $bytesToRead)
+    public function __construct(TransmissionInterface $transmission, $key, $bytesToRead)
     {
         $this->transmission = $transmission;
         $this->key = $key;
@@ -53,29 +54,11 @@ class Downloader extends AbstractTransferer
      * Downloads the file specified by the $key
      * @return string the downloaded file 
      */
-    public function transfer()
+    public function download()
     {
         if (!$this->transmission->isEstablished()) $this->transmission->establish();
-        $this->sendFull($this->key, strlen($this->key));
-        return $this->receiveFull($this->bytesToRead);
-    }
-
-    /**
-     * Reads data from the stream until $toRead bytes are received
-     * blocks until ALL bytes are read
-     * @param int $toRead Number of bytes to read
-     * @return string the read data
-     */
-    private function receiveFull($toRead)
-    {
-        $result = $cur = '';
-        while ($toRead > 0)
-        {
-            $cur = $this->transmission->receiveData($toRead);
-            $toRead -= strlen($cur);
-            $result .= $cur;
-        }
-        return $result;
+        $this->transmission->send($this->key);
+        return $this->transmission->receiveData($this->bytesToRead);
     }
 
 }

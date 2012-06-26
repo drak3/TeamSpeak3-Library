@@ -2,8 +2,8 @@
 
 namespace devmx\Teamspeak3\Query\Transport\Decorator;
 use devmx\Teamspeak3\Query\Command;
-use devmx\Teamspeak3\Query\CommandResponse;
-use devmx\Teamspeak3\Query\Event;
+use devmx\Teamspeak3\Query\Response\CommandResponse;
+use devmx\Teamspeak3\Query\Response\Event;
 require_once dirname( __FILE__ ) . '/../../../../../../../src/devmx/Teamspeak3/Query/Transport/Decorator/DebuggingDecorator.php';
 
 /**
@@ -51,8 +51,8 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetAllEvents_simple()
     {
-        $e = new \devmx\Teamspeak3\Query\Event('somereason', array());
-        $e2 = new \devmx\Teamspeak3\Query\Event('somereason', array());
+        $e = new Event('somereason', array());
+        $e2 = new Event('somereason', array());
         $this->transport->addEvent($e);
         $this->transport->addEvent($e2);
         $this->debug->connect();
@@ -64,8 +64,8 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getReceivedEvents
      */
     public function testGetAllEvents_charge() {
-        $e = new \devmx\Teamspeak3\Query\Event('somereason', array());
-        $e2 = new \devmx\Teamspeak3\Query\Event('somereason', array());
+        $e = new Event('somereason', array());
+        $e2 = new Event('somereason', array());
         $this->transport->addEvent($e);
         $this->transport->addEvent($e2, 1, true);
         $this->debug->connect();
@@ -157,8 +157,8 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
     {
         $cmd = new Command('foo');
         $cmd2 = new Command('bar', array('a'=>'b'));
-        $r1 = new \devmx\Teamspeak3\Query\CommandResponse($cmd, array());
-        $r2 = new \devmx\Teamspeak3\Query\CommandResponse($cmd2, array());
+        $r1 = new CommandResponse($cmd, array());
+        $r2 = new CommandResponse($cmd2, array());
         $this->transport->addResponse($r1);
         $this->transport->addResponse($r2);
         $this->debug->connect();
@@ -169,14 +169,14 @@ class DebuggingDecoratorTest extends \PHPUnit_Framework_TestCase
     }
      
     /**
-     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getCloned
+     * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::getNumberOfClones
      * @covers devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator::__clone
      */
-    public function testGetCloned()
+    public function testGetTotalClones()
     {
-        $this->assertEquals(0, DebuggingDecorator::getCloned());
+        $this->assertEquals(0, DebuggingDecorator::getNumberOfClones());
         $cloned = clone $this->debug;
-        $this->assertEquals(1, DebuggingDecorator::getCloned());
+        $this->assertEquals(1, DebuggingDecorator::getNumberOfClones());
     }
 
     

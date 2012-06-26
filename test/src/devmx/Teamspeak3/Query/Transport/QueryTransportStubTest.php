@@ -1,8 +1,8 @@
 <?php
 
 namespace devmx\Teamspeak3\Query\Transport;
-use devmx\Teamspeak3\Query\Event;
-use devmx\Teamspeak3\Query\CommandResponse;
+use devmx\Teamspeak3\Query\Response\Event;
+use devmx\Teamspeak3\Query\Response\CommandResponse;
 use devmx\Teamspeak3\Query\Command;
 require_once dirname( __FILE__ ) . '/../../../../../../src/devmx/Teamspeak3/Query/Transport/QueryTransportStub.php';
 
@@ -204,7 +204,7 @@ class QueryTransportStubTest extends \PHPUnit_Framework_TestCase
     public function testAddResponses() {
         $r1 = new CommandResponse(new Command('foo'));
         $r2 = new CommandResponse(new Command('bar'));
-        $this->stub->addResponses($r1, $r2);
+        $this->stub->addResponses(array($r1, $r2));
         $this->stub->connect();
         $this->assertEquals($r1, $this->stub->sendCommand(new Command('foo')));
         $this->assertEquals($r2, $this->stub->sendCommand(new Command('bar')));

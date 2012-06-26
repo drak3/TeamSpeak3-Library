@@ -1,5 +1,4 @@
 <?php
-
 /*
   This file is part of TeamSpeak3 Library.
 
@@ -18,23 +17,47 @@
  */
 namespace devmx\Teamspeak3\Query\Transport\Decorator;
 use devmx\Teamspeak3\Query\Command;
+
 /**
- *
+ * When you decorate a query with the TickingDecorator you can define the minimum time between two commands
+ * This could be useful if you get banned and there is no way to whitelist your ip
  * @author drak3
  */
-class TickingDecorator extends \devmx\Teamspeak3\Query\Transport\AbstractQueryDecorator
+class TickingDecorator extends AbstractQueryDecorator
 {
+    /**
+     * The time to wait between two commands in seconds
+     * @var int
+     */
     protected $tickTime = 0;
+    
+    /**
+     * Unix timestamp of the last command execution
+     * @var int
+     */
     protected $lastCommand = 0;
     
+    /**
+     * Sets the time to wait between two commands in seconds
+     * @param int $time the time in seconds
+     */
     public function setTickTime($time) {
         $this->tickTime = $time;
     }
     
+    /**
+     * Returns the ticktime (time to wait between two commands) in seconds
+     * @return int time in seconds
+     */
     public function getTickTime() {
         return $this->tickTime;
     }
     
+    /**
+     * Sends a command to the query and returns the results
+     * @param Command $cmd
+     * @return \devmx\Teamspeak3\Query\CommandResponse
+     */
     public function sendCommand(Command $cmd) {
         $now = $this->getTime();
         $timeSinceLastCommand = $now - $this->lastCommand;
@@ -45,10 +68,20 @@ class TickingDecorator extends \devmx\Teamspeak3\Query\Transport\AbstractQueryDe
         return $this->decorated->sendCommand($cmd);
     }
     
+    /**
+     * Sleeps for the given amount of seconds
+     * this method exists mainly to ease unittesting
+     * @param int $seconds 
+     */
     protected function sleep($seconds) {
         \sleep($seconds);
     }
     
+    /**
+     * Returns the current unix timestamp
+     * this method exists mainly to ease unittesting
+     * @return int
+     */
     protected function getTime() {
         return \microtime(true);
     }
