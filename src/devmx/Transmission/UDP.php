@@ -22,10 +22,10 @@ namespace devmx\Transmission;
  *
  * @author drak3
  */
-class TCP extends StreamTransmission
+class UDP extends StreamTransmission
 {
     protected function setHost($host, $address=null) {
-        parent::setHost($host, 'tcp://'.$host);
+        parent::setHost($host, 'udp://'.$host);
     }
 }
 
