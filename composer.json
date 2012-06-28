@@ -14,7 +14,7 @@
     "suggest": {
         "pimple/pimple": "To use the preconfigured container",
         "doctrine/common": "To use more cache backends",
-        "monolog/monolog": "Provides a logging backend",
+        "monolog/monolog": "Provides a logging backend"
     },
     "autoload": {
         "psr-0": {"devmx": "src"}
