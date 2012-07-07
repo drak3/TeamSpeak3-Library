@@ -49,10 +49,10 @@ class EventEmittingDecorator extends EventDispatcher implements TransportInterfa
     /**
      * @var TransportInterface
      */
-    protected $transport;
+    protected $decorated;
     
     public function __construct(TransportInterface $transport) {
-        $this->transport = $transport;
+        $this->decorated = $transport;
     }   
     
     /**
@@ -60,8 +60,8 @@ class EventEmittingDecorator extends EventDispatcher implements TransportInterfa
      */
     public function connect()
     {
-        $this->transport->connect();
-        $this->dispatch('query.connect', new Event\QueryTransportEvent($this));
+        $this->decorated->connect();
+        $this->dispatch('query.connect', new QueryTransportEvent($this));
     }
     
     /**
@@ -69,8 +69,8 @@ class EventEmittingDecorator extends EventDispatcher implements TransportInterfa
      */
     public function disconnect()
     {
-        $this->transport->disconnect();
-        $this->dispatch('query.disconnect', new Event\QueryTransportEvent($this));
+        $this->decorated->disconnect();
+        $this->dispatch('query.disconnect', new QueryTransportEvent($this));
     }
     
     /**
@@ -99,7 +99,7 @@ class EventEmittingDecorator extends EventDispatcher implements TransportInterfa
         return $this->dispatch('query.filter-command', new CommandFilterEvent($this, $command))->getCommand();
     }
     
-    protected function filterResponse(Response $response) {
+    protected function filterResponse(CommandResponse $response) {
         return $this->dispatch('query.response', new ResponseEvent($this, $response))->getResponse();
     }
      
@@ -122,7 +122,7 @@ class EventEmittingDecorator extends EventDispatcher implements TransportInterfa
      * @return array
      */
     protected function filterEvents(array $events) {
-        $filtered = $this->dispatch('query.events', new QueryEventsEvent($events));
+        $filtered = $this->dispatch('query.events', new QueryEventsEvent($this, $events));
         return $filtered->getEvents();
     }
     

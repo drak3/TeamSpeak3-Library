@@ -26,19 +26,19 @@ use devmx\Teamspeak3\Query\Response\Event;
  */
 class QueryEventsEvent extends QueryTransportEvent
 {
-    protected $event;
+    protected $events;
     
-    public function __construct(TransportInterface $transport, Event $event) {
-        parent::construct($transport);
-        $this->setEvent($event);
+    public function __construct(TransportInterface $transport, array $events) {
+        parent::__construct($transport);
+        $this->setEvents($events);
     }
     
-    public function setEvent(Event $event) {
-        $this->event = $event;
+    public function setEvents(array $events) {
+        $this->events = $events;
     }
     
-    public function getEvent() {
-        return $this->event;
+    public function getEvents() {
+        return $this->events;
     }
 }
 

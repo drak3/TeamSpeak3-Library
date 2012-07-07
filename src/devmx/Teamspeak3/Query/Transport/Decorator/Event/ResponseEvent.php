@@ -30,7 +30,7 @@ class ResponseEvent extends QueryTransportEvent
     protected $response;
     
     public function __construct(TransportInterface $transport, CommandResponse $response) {
-        parent::construct($transport);
+        parent::__construct($transport);
         $this->setResponse($response);
     }
     
