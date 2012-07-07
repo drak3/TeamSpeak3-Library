@@ -9,12 +9,14 @@
     "require-dev": {
         "pimple/pimple": "1.0.*",
         "doctrine/common": ">=2.2.0",
-        "monolog/monolog": ">=1.0.0"
+        "monolog/monolog": ">=1.0.0",
+        "symfony/event-dispatcher": ">=2.0.0"
     },
     "suggest": {
         "pimple/pimple": "To use the preconfigured container",
         "doctrine/common": "To use more cache backends",
-        "monolog/monolog": "Provides a logging backend"
+        "monolog/monolog": "Provides a logging backend",
+        "symfony/event-dispatcher": "To use the EventEmittingDecorator"
     },
     "autoload": {
         "psr-0": {"devmx": "src"}
