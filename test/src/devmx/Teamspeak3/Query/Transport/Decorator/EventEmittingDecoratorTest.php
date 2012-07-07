@@ -84,7 +84,7 @@ class EventEmittingDecoratorTest extends \PHPUnit_Framework_TestCase
         
         $listener = new ListenerStub();
         $listener->setValidator(function($event) use ($that) {
-            $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\Event\QueryTransportEvent', $event);
+            $that->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\Event\QueryTransportEvent', $event);
         });
         $this->decorator->addListener('query.disconnect', array($listener, 'listen'));
         $this->decorator->disconnect();
