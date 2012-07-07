@@ -62,9 +62,11 @@ class EventEmittingDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testConnect()
     {
+        $that = $this;
+        
         $listener = new ListenerStub();
-        $listener->setValidator(function($event) {
-            $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\Event\QueryTransportEvent', $event);
+        $listener->setValidator(function($event) use ($that) {
+            $that->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\Event\QueryTransportEvent', $event);
         });
         $this->decorator->addListener('query.connect', array($listener, 'listen'));
         $this->decorator->connect();
@@ -78,8 +80,10 @@ class EventEmittingDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testDisconnect()
     {
+        $that = $this;
+        
         $listener = new ListenerStub();
-        $listener->setValidator(function($event) {
+        $listener->setValidator(function($event) use ($that) {
             $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\Event\QueryTransportEvent', $event);
         });
         $this->decorator->addListener('query.disconnect', array($listener, 'listen'));
