@@ -10,7 +10,7 @@
         "pimple/pimple": "1.0.*",
         "doctrine/common": ">=2.2.0",
         "monolog/monolog": ">=1.0.0",
-        "symfony/event-dispatcher": ">=2.0.0"
+        "symfony/event-dispatcher": ">=2.1.0"
     },
     "suggest": {
         "pimple/pimple": "To use the preconfigured container",
@@ -20,5 +20,6 @@
     },
     "autoload": {
         "psr-0": {"devmx": "src"}
-    }
+    },
+    "minimum-stability": "dev"
 }
