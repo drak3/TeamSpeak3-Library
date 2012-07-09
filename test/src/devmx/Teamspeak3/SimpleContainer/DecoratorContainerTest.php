@@ -25,6 +25,9 @@ class DecoratorContainerTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testBasicCreation() {
+        if(PHP_VERSION_ID >= 50310 && PHP_VERSION_ID <= 50313) {
+            $this->markTestSkipped("This test will segfault out of unknown reasons");
+        }
         $this->container['order'] = array('caching.in_memory');
         $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\CachingDecorator', $this->container['decorated']);
     }
