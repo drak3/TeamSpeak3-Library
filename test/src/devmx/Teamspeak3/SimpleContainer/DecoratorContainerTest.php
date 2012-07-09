@@ -25,7 +25,7 @@ class DecoratorContainerTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testBasicCreation() {
-        if(PHP_VERSION_ID >= 50310 && PHP_VERSION_ID <= 50313) {
+        if(PHP_VERSION_ID >= 50310 && PHP_VERSION_ID <= 50400) {
             $this->markTestSkipped("This test will segfault out of unknown reasons");
         }
         $this->container['order'] = array('caching.in_memory');
@@ -33,7 +33,7 @@ class DecoratorContainerTest extends \PHPUnit_Framework_TestCase
     }
     
     public function testFullCreation() {
-        if(PHP_VERSION_ID >= 50310 && PHP_VERSION_ID <= 50313) {
+        if(PHP_VERSION_ID >= 50310 && PHP_VERSION_ID <= 50400) {
             $this->markTestSkipped("This test will segfault out of unknown reasons");
         }
         $this->container['order'] = array('caching.in_memory', 'profiling', 'debugging');
@@ -41,7 +41,7 @@ class DecoratorContainerTest extends \PHPUnit_Framework_TestCase
     }
     
     public function testExternalDecorator() {
-        if(PHP_VERSION_ID >= 50310 && PHP_VERSION_ID <= 50313) {
+        if(PHP_VERSION_ID >= 50310 && PHP_VERSION_ID <= 50400) {
             $this->markTestSkipped("This test will segfault out of unknown reasons");
         }
         $this->container['order'] = array('stub1', 'profiling', 'debugging', 'stub2');
