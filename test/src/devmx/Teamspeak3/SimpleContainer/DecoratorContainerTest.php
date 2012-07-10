@@ -31,7 +31,7 @@ class DecoratorContainerTest extends \PHPUnit_Framework_TestCase
     
     public function testFullCreation() {
         if(PHP_VERSION_ID >= 50310 && PHP_VERSION_ID <= 50400) {
-            $this->markTestSkipped("This test will segfault out of unknown reasons");
+            //$this->markTestSkipped("This test will segfault out of unknown reasons");
         }
         $this->container['order'] = array('caching.in_memory', 'profiling', 'debugging');
         $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator', $this->container['decorated']);
@@ -39,19 +39,19 @@ class DecoratorContainerTest extends \PHPUnit_Framework_TestCase
     
     public function testExternalDecorator() {
         if(PHP_VERSION_ID >= 50310 && PHP_VERSION_ID <= 50400) {
-            $this->markTestSkipped("This test will segfault out of unknown reasons");
+            //$this->markTestSkipped("This test will segfault out of unknown reasons");
         }
         $this->container['order'] = array('stub1', 'profiling', 'debugging', 'stub2');
         $that = $this;
         $this->container['stub1'] = $this->container->share(function($c) use ($that) {
           return $that->getMockBuilder('\devmx\Teamspeak3\Query\Transport\Decorator\AbstractQueryDecorator')
-                      ->setConstructorArgs(array($c['_prev']('stub1', $c)))
+                      ->setConstructorArgs(array($c->getPreviousDecorator('stub1', $c)))
                       ->getMockForAbstractClass();  
         });
         
         $this->container['stub2'] = $this->container->share(function($c) use ($that) {
           return $that->getMockBuilder('\devmx\Teamspeak3\Query\Transport\Decorator\AbstractQueryDecorator')
-                      ->setConstructorArgs(array($c['_prev']('stub2', $c)))
+                      ->setConstructorArgs(array($c->getPreviousDecorator('stub2')))
                       ->getMockForAbstractClass();  
         });
         

@@ -26,11 +26,11 @@ class DecoratorContainer extends \Pimple {
     
     public function __construct() {
         $this['decorated'] = $this->share(function($c){
-             return $c['_last'];
+            return $c['_last'];
         });
                         
         $this['caching.in_memory'] = $this->share(function($c) {
-            $toDecorate = $c['_prev']('caching.in_memory', $c);
+            $toDecorate = $c->getPreviousDecorator('caching.in_memory');
             $cache = $c['caching.in_memory.cache'];
             return new CachingDecorator($toDecorate, $cache);
         });
@@ -42,22 +42,11 @@ class DecoratorContainer extends \Pimple {
         $this['caching.in_memory.cache.cachetime'] = 0.5;
         
         $this['debugging'] = $this->share(function($c){
-            return new DebuggingDecorator($c['_prev']('debugging', $c));
+            return new DebuggingDecorator($c->getPreviousDecorator('debugging'));
         });
         
         $this['profiling'] = $this->share(function($c){
-            return new ProfilingDecorator($c['_prev']('profiling', $c));
-        });
-      
-        $this['_prev'] = $this->protect(function($current, $c){
-            $prev = $c['undecorated'];
-            foreach($c['order'] as $name) {
-                if($name === $current) {
-                    return $prev;
-                }
-                $prev = $c[$name];
-            }
-            throw new \LogicException("Unkown decorator name $current");
+            return new ProfilingDecorator($c->getPreviousDecorator('profiling'));
         });
         
         $this['_last'] = $this->share(function($c){
@@ -66,6 +55,17 @@ class DecoratorContainer extends \Pimple {
             }
             return $c[$c['order'][count($c['order'])-1]];          
         });
+    }
+    
+    public function getPreviousDecorator($current) {
+        $prev = $this['undecorated'];
+            foreach($this['order'] as $name) {
+                if($name === $current) {
+                    return $prev;
+                }
+                $prev = $this[$name];
+            }
+            throw new \LogicException("Unkown decorator name $current");
     }
 }
 
