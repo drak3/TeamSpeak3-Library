@@ -50,9 +50,14 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
     const MSG_OK = "ok";
 
     /**
-     * The string between two responses/events
+     * A character between two responses/events
      */
     const SEPERATOR_RESPONSE = "\n";
+    
+    /**
+     * The characters that can occur between responses/events
+     */
+    const DELIMITERS_RESPONSE = "\r\n";
 
     /**
      * The string between two items (List of data)
@@ -152,7 +157,8 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
     {
         $response = Array('response' => NULL, 'events' => Array());
         $parsed = Array();
-
+        
+        $raw = trim($raw, static::DELIMITERS_RESPONSE);
         
         $parsed = \explode(static::SEPERATOR_RESPONSE, $raw);
         
@@ -224,6 +230,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
         }
         $lines = \explode(static::SEPERATOR_RESPONSE, $raw);
         foreach($lines as $line) {
+            $line = ltrim($line);
             if($this->match($this->errorRegex, $line)) {
                 return true;
             }
