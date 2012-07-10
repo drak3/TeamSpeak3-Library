@@ -23,9 +23,6 @@ class SimpleContainerTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testCompleteCreation() {
-        if(PHP_VERSION_ID >= 50312 && PHP_VERSION_ID < 50400) {
-            //$this->markTestSkipped();
-        }
         $this->assertInstanceOf('\devmx\Teamspeak3\Query\CommandAwareQuery', $this->container['query']);
         $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator', $this->container['query.transport']);
     }
