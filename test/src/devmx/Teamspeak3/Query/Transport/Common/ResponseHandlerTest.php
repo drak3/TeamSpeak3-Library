@@ -217,7 +217,7 @@ EOF;
     
     
     public function testGetBanTime_FloodBan() {
-        $toParse = 'foo= bar=true asdf=false'."\n".'error id=3331 msg=banned\r';
+        $toParse = 'foo= bar=true asdf=false'."\n".'error id=3331 msg=banned'."\r\n";
         $this->assertTrue($this->handler->containsBanMessage($toParse));
         $this->assertEquals(0, $this->handler->extractBanTime($toParse));
     }
@@ -225,6 +225,12 @@ EOF;
     public function testGetBanTime_NoBan() {
         $toParse = 'foo= bar=true asdf=false'."\n".'error id=3332 msg=banned extra_msg=you\smay\sretry\sin\s63\sseconds\n\r'."\n";
         $this->assertFalse($this->handler->containsBanMessage($toParse));
+    }
+    
+    public function testRNDelimiting() {
+        $toParse= 'foo=bar asdfg=jkl'."\n\r".'error id=0 msg=ok'."\r\n";
+        $response = $this->handler->getResponseInstance(new Command('foo'), $toParse);
+        $this->assertEquals(0, $response['response']->getErrorID());
     }
     
 }
