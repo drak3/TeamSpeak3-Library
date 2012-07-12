@@ -55,11 +55,6 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
     const SEPERATOR_RESPONSE = "\n";
     
     /**
-     * The characters that can occur between responses/events
-     */
-    const DELIMITERS_RESPONSE = "\r\n";
-
-    /**
      * The string between two items (List of data)
      */
     const SEPERATOR_ITEM = "|";
@@ -158,7 +153,7 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
         $response = Array('response' => NULL, 'events' => Array());
         $parsed = Array();
         
-        $raw = trim($raw, static::DELIMITERS_RESPONSE);
+        $raw = trim($raw);
         
         $parsed = \explode(static::SEPERATOR_RESPONSE, $raw);
         
@@ -167,16 +162,17 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
         $data = '';
         
         foreach($parsed as $line) {
-            if($this->match( $this->errorRegex, $line )) {
-                $error = $line;
+            if($this->match( $this->errorRegex, ltrim($line, "\r") )) {
+                $error = ltrim($line, "\r");
             } elseif(substr($line, 0, strlen(static::EVENT_PREFIX)) === static::EVENT_PREFIX) {
-                $events[] = $this->parseEvent($line);
+                $events[] = $this->parseEvent(trim($line));
             } else {
-                $data .= $line.static::SEPERATOR_RESPONSE;
+                $data .= $line . static::SEPERATOR_RESPONSE;
             }
         } 
         
-        $data = \trim($data, static::SEPERATOR_RESPONSE);
+        $data = \trim($data);
+        $error = \trim($error);
         
         $response['response'] = $this->parseResponse($cmd, $error, $data);
         $response['events'] = $events;
@@ -225,9 +221,9 @@ class ResponseHandler implements \devmx\Teamspeak3\Query\Transport\BanAwareRespo
      */
     public function isCompleteResponse($raw)
     {
-        if(strlen($raw) === 0 || !($raw[strlen($raw)-1] === static::SEPERATOR_RESPONSE)) {
+        if(strlen(trim($raw)) === 0 || !($raw[strlen($raw)-1] === static::SEPERATOR_RESPONSE)) {
             return false;
-        }
+        }        
         $lines = \explode(static::SEPERATOR_RESPONSE, $raw);
         foreach($lines as $line) {
             $line = ltrim($line);
