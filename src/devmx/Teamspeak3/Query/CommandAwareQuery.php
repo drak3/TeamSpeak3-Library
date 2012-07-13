@@ -16,7 +16,7 @@
   along with TeamSpeak3 Library. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace devmx\Teamspeak3\Query;
-use devmx\Teamspeak3\Query\CommandResponse;
+use devmx\Teamspeak3\Query\Response\CommandResponse;
 use devmx\Teamspeak3\Query\Command;
 use devmx\Teamspeak3\Query\Response;
 
