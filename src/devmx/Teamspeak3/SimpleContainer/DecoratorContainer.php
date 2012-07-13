@@ -21,6 +21,12 @@ use devmx\Teamspeak3\Query\Transport\Decorator\CachingDecorator;
 use devmx\Teamspeak3\Query\Transport\Decorator\Caching\Cache\InMemoryCache;
 use devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator;
 use devmx\Teamspeak3\Query\Transport\Decorator\ProfilingDecorator;
+use devmx\Teamspeak3\Query\Transport\Decorator\DelayingDecorator;
+use devmx\Teamspeak3\Query\Transport\Decorator\EventEmittingDecorator;
+use devmx\Teamspeak3\Query\Transport\Decorator\LoggingDecorator;
+use devmx\Teamspeak3\Query\Transport\Decorator\Logging\Proxy\MonologProxy;
+use Monolog\Logger;
+use devmx\Teamspeak3\Query\Transport\Decorator\TickingDecorator;
 
 class DecoratorContainer extends \Pimple {
     
@@ -49,6 +55,38 @@ class DecoratorContainer extends \Pimple {
             return new ProfilingDecorator($c->getPreviousDecorator('profiling'));
         });
         
+        $this['delaying'] = $this->share(function($c){
+            return new DelayingDecorator($c->getPreviousDecorator('delaying'));
+        });
+        
+        $this['event-emitting'] = $this->share(function($c){
+            return new EventEmittingDecorator($c->getPreviousDecorator('event-emitting'));
+        });
+        
+        $this['logging'] = $this->share(function($c) {
+            return new LoggingDecorator($c->getPreviousDecorator('logging') , $c['logging.logger']);
+        });
+        
+        $this['logging.logger'] = $this->share(function($c) {
+            return $this['logging.logger.monolog-proxy'];
+        });
+        
+        $this['logging.logger.monolog-proxy'] = $this->share(function($c) {
+           return new MonologProxy($c['logging.logger.monolog']);
+        });
+        
+        $this['logging.logger.monolog'] = $this->share(function($c) {
+           return new \Monolog\Logger('devmx.teamspeak3'); 
+        });
+        
+        $this['ticking'] = $this->share(function($c) {
+            $decorator = new TickingDecorator($this->getPreviousDecorator('ticking'));
+            $decorator->setTickTime($c['ticking.tick-time']);
+            return $decorator;
+        });
+        
+        $this['ticking.tick-time'] = 2;
+        
         $this['_last'] = $this->share(function($c){
             if(count($c['order']) === 0) {
                 return $c['undecorated'];
@@ -59,13 +97,13 @@ class DecoratorContainer extends \Pimple {
     
     public function getPreviousDecorator($current) {
         $prev = $this['undecorated'];
-            foreach($this['order'] as $name) {
-                if($name === $current) {
-                    return $prev;
-                }
-                $prev = $this[$name];
+        foreach($this['order'] as $name) {
+            if($name === $current) {
+                return $prev;
             }
-            throw new \LogicException("Unkown decorator name $current");
+            $prev = $this[$name];
+        }
+        throw new \LogicException("Unkown decorator name $current");
     }
 }
 

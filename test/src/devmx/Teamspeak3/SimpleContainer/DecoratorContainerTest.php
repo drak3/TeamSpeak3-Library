@@ -30,8 +30,8 @@ class DecoratorContainerTest extends \PHPUnit_Framework_TestCase
     }
     
     public function testFullCreation() {
-        $this->container['order'] = array('caching.in_memory', 'profiling', 'debugging');
-        $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\DebuggingDecorator', $this->container['decorated']);
+        $this->container['order'] = array('caching.in_memory', 'profiling', 'debugging', 'ticking', 'delaying', 'event-emitting', 'logging');
+        $this->assertInstanceOf('\devmx\Teamspeak3\Query\Transport\Decorator\LoggingDecorator', $this->container['decorated']);
     }
     
     public function testExternalDecorator() {
