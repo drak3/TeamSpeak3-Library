@@ -68,7 +68,7 @@ class DecoratorContainer extends \Pimple {
         });
         
         $this['logging.logger'] = $this->share(function($c) {
-            return $this['logging.logger.monolog-proxy'];
+            return $c['logging.logger.monolog-proxy'];
         });
         
         $this['logging.logger.monolog-proxy'] = $this->share(function($c) {
@@ -80,7 +80,7 @@ class DecoratorContainer extends \Pimple {
         });
         
         $this['ticking'] = $this->share(function($c) {
-            $decorator = new TickingDecorator($this->getPreviousDecorator('ticking'));
+            $decorator = new TickingDecorator($c->getPreviousDecorator('ticking'));
             $decorator->setTickTime($c['ticking.tick-time']);
             return $decorator;
         });
