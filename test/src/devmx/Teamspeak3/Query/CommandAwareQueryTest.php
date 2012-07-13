@@ -35,6 +35,13 @@ class CommandAwareQueryTest extends \PHPUnit_Framework_TestCase
 
         $this->commandQuery->connect();
     }
+    
+    public function testCheck() {
+        $query = new CommandAwareQuery($this->stub);
+        $r = new Response\CommandResponse(new Command('channellist'));
+        $this->stub->addResponse($r);
+        $this->assertEquals($r, $query->channelList());        
+    }
 
     /**
      * @covers \devmx\Teamspeak3\Query\CommandAwareQuery::version
