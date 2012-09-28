@@ -414,7 +414,7 @@ class StreamTransmission implements TransmissionInterface
      * @param int $timeout the timeout in seconds 
      */
     protected function open($host, $port, &$errno, &$errmsg, $timeout) {
-        $this->stream = \fsockopen($host, $port, $errno, $errmsg, $timeout);
+        $this->stream = @\fsockopen($host, $port, $errno, $errmsg, $timeout);
     }
     
     /**
@@ -424,7 +424,7 @@ class StreamTransmission implements TransmissionInterface
      * @param int $microseconds 
      */
     protected function setTimeout($seconds, $microseconds) {
-        return \stream_set_timeout($this->stream , $seconds , $microseconds);
+        return @\stream_set_timeout($this->stream , $seconds , $microseconds);
     }
     
     /**
@@ -434,7 +434,7 @@ class StreamTransmission implements TransmissionInterface
      * @return string
      */
     protected function getLine($length) {
-        return \fgets($this->stream, $length);
+        return @\fgets($this->stream, $length);
     }
     
     /**
@@ -443,7 +443,7 @@ class StreamTransmission implements TransmissionInterface
      * @param int $mode 
      */
     protected function setBlocking($mode) {
-        return \stream_set_blocking($this->stream, $mode);
+        return @\stream_set_blocking($this->stream, $mode);
     }
     
     /**
@@ -453,7 +453,7 @@ class StreamTransmission implements TransmissionInterface
      * @return int bytes written
      */
     protected function write($data) {
-        return \fwrite($this->stream, $data);
+        return @\fwrite($this->stream, $data);
     }
     
     /**
@@ -461,7 +461,7 @@ class StreamTransmission implements TransmissionInterface
      * (wrapper for fclose)
      */
     protected function closeStream() {
-        return \fclose($this->stream);
+        return @\fclose($this->stream);
     }
     
     /**
@@ -470,7 +470,7 @@ class StreamTransmission implements TransmissionInterface
      * @return boolean
      */
     protected function hasEof() {
-        return \feof($this->stream);
+        return @\feof($this->stream);
     }
     
 }
